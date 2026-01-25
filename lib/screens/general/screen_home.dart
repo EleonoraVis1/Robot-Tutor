@@ -14,6 +14,8 @@
 import 'dart:async';
 
 // Flutter external package imports
+import 'package:csc322_starter_app/widgets/general/course_card.dart';
+import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
@@ -66,16 +68,56 @@ class _ScreenHomeState extends ConsumerState<ScreenHome> {
   //////////////////////////////////////////////////////////////////////////
   @override
   Widget build(BuildContext context) {
-    // Return the scaffold
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        shape: ShapeBorder.lerp(CircleBorder(), StadiumBorder(), 0.5),
-        onPressed: () =>
-            Snackbar.show(SnackbarDisplayType.SB_INFO, 'You clicked the floating button on the home screen!', context),
-        splashColor: Theme.of(context).primaryColor,
-        child: Icon(FontAwesomeIcons.plus),
+      backgroundColor: Colors.grey[100],
+      appBar: WidgetPrimaryAppBar(title: const Text('Welcome')),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20),
+            const Text(
+              'Hello! 👋\nWhat would you like to learn today?',
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 30),
+            // Courses section
+            const Text(
+              'Courses',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                children: const [
+                  CourseCard(
+                    title: 'Math',
+                    icon: Icons.calculate,
+                  ),
+                  CourseCard(
+                    title: 'Korean',
+                    icon: Icons.language,
+                  ),
+                  CourseCard(
+                    title: 'Physics',
+                    icon: Icons.science,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-      body: Center(child: Text('Home')),
     );
   }
 }

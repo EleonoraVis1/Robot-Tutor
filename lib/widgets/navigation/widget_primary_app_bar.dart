@@ -77,11 +77,7 @@ class _PrimaryAppBar extends ConsumerState<WidgetPrimaryAppBar> {
       title: widget.title,
       elevation: 0,
       actions: [
-        IconButton(
-          icon: const Icon(Icons.add, color: CustomColors.statusError),
-          onPressed: () =>
-              Snackbar.show(SnackbarDisplayType.SB_INFO, 'You clicked the action button in the app bar!', context),
-        ),
+        
         if (widget.actionButtons != null)
           ...widget.actionButtons!.map((e) {
             return e;

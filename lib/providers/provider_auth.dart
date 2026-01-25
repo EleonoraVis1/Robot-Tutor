@@ -455,13 +455,13 @@ class ProviderAuth extends ChangeNotifier {
 
     // Wait 1 second before calling sign out to allow for listeners to be cancelled before
     // firebase unauths
-    Future.delayed(const Duration(seconds: 1), () async {
+    //Future.delayed(const Duration(seconds: 1), () async {
       await FirebaseAuth.instance.signOut();
       // await Firebase.app().delete();
       _emailVerified = false;
       isSigningOut = false;
       notifyListeners();
-    });
+    //});
   }
 
   ///////////////////////////////////////////////////////////////////

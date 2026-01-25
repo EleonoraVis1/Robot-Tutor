@@ -68,7 +68,7 @@ class _ScreenAlternateState extends ConsumerState<ScreenAlternate> {
   Widget build(BuildContext context) {
     // Return the scaffold
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
+      /*floatingActionButton: FloatingActionButton(
         shape: ShapeBorder.lerp(CircleBorder(), StadiumBorder(), 0.5),
         onPressed: () => Snackbar.show(
           SnackbarDisplayType.SB_INFO,
@@ -77,7 +77,7 @@ class _ScreenAlternateState extends ConsumerState<ScreenAlternate> {
         ),
         splashColor: Theme.of(context).primaryColor,
         child: Icon(FontAwesomeIcons.plus),
-      ),
+      ),*/
       body: Center(child: Text('Alternate')),
     );
   }
