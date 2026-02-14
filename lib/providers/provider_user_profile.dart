@@ -42,6 +42,17 @@ class ProviderUserProfile extends ChangeNotifier {
 
   PermissionLevel get permissionLevel => _userProfile.permissionLevel;
 
+  // *** ADDED: UserRole getter/setter ***
+  UserRole get userRole => _userProfile.userRole;
+  set userRole(UserRole value) {
+    _userProfile.userRole = value;
+    notifyListeners();
+  }
+
+  // *** ADDED: Convenience bool helpers for role checks ***
+  bool get isStudent => _userProfile.userRole == UserRole.STUDENT;
+  bool get isSupervisor => _userProfile.userRole == UserRole.SUPERVISOR;
+
   String get uid => _userProfile.uid;
   set uid(String value) {
     _userProfile.uid = value;
@@ -98,7 +109,8 @@ class ProviderUserProfile extends ChangeNotifier {
     notifyListeners();
   }
 
-  AccountCreationStep get accountCreationStep => _userProfile.accountCreationStep;
+  AccountCreationStep get accountCreationStep =>
+      _userProfile.accountCreationStep;
   set accountCreationStep(AccountCreationStep value) {
     _userProfile.accountCreationStep = value;
     notifyListeners();
@@ -161,12 +173,6 @@ class ProviderUserProfile extends ChangeNotifier {
     // user has authed this device since the last known password change
     await _providerAuth.ensurePasswordUpToDate();
 
-    // If the user is authed, ensure that the email in firebase
-    // is the same as the one in the user profile (it may be out of
-    // sync if it was changed via the app but the user clicked to cancel
-    // via a confirmation e-mail to the old e-mail)
-    //await _authProvider.ensureEmailInFirebaseMatchesProfile(userProfile);
-
     // Update primary variables
     _userProfile = userProfile;
     _dataLoaded = true;
@@ -178,7 +184,6 @@ class ProviderUserProfile extends ChangeNotifier {
 
   ////////////////////////////////////////////////////////////////////////////////////////////
   // CLOUD ACCESS METHODS
-  ////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -251,7 +256,10 @@ class ProviderUserProfile extends ChangeNotifier {
   // Writes the user profile to the DB using the DB helper.
   ////////////////////////////////////////////////////////////////////////////////////////////
   Future<bool> writeUserProfileToDb({merge = true}) async {
-    bool success = await DBUserProfile.writeUserProfile(_userProfile, merge: merge);
+    bool success = await DBUserProfile.writeUserProfile(
+      _userProfile,
+      merge: merge,
+    );
     _dataLoaded = true;
     notifyListeners();
     return success;
@@ -259,11 +267,8 @@ class ProviderUserProfile extends ChangeNotifier {
 
   ////////////////////////////////////////////////////////////////////////////////
   // Deletes the account data associated with the current user.
-  //
-  // This method deletes the account data by calling the corresponding method in
-  // the DBUserProfile class.
   ////////////////////////////////////////////////////////////////////////////////
   Future<void> deleteAccountData() async {
-    await DBUserProfile.deleteAccountData(); // Delete the account data associated with the current user
+    await DBUserProfile.deleteAccountData();
   }
 }

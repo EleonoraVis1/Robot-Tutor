@@ -79,19 +79,13 @@ class _ScreenHomeState extends ConsumerState<ScreenHome> {
             const SizedBox(height: 20),
             const Text(
               'Hello! 👋\nWhat would you like to learn today?',
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 30),
             // Courses section
             const Text(
               'Courses',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             Expanded(
@@ -100,18 +94,9 @@ class _ScreenHomeState extends ConsumerState<ScreenHome> {
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
                 children: const [
-                  CourseCard(
-                    title: 'Math',
-                    icon: Icons.calculate,
-                  ),
-                  CourseCard(
-                    title: 'Korean',
-                    icon: Icons.language,
-                  ),
-                  CourseCard(
-                    title: 'Physics',
-                    icon: Icons.science,
-                  ),
+                  CourseCard(title: 'Math', icon: Icons.calculate),
+                  CourseCard(title: 'Korean', icon: Icons.language),
+                  CourseCard(title: 'Physics', icon: Icons.science),
                 ],
               ),
             ),

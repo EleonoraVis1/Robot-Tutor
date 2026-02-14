@@ -12,13 +12,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Enum definition for account creation status
-enum AccountCreationStep { ACC_STEP_ONBOARDING_PROFILE_CONTACT_INFO, ACC_STEP_ONBOARDING_COMPLETE }
+enum AccountCreationStep {
+  ACC_STEP_ONBOARDING_PROFILE_CONTACT_INFO,
+  ACC_STEP_ONBOARDING_COMPLETE,
+}
 
 // Enum definition for permission level
 // NOTE: Do NOT change the order of these enums. They are used for permissions
 // checking (e.g., Developer has access to Beta and Production, but not vice versa by
 // the fact that Developer is the highest enum value)
 enum PermissionLevel { PRODUCTION, BETA, DEVELOPER }
+
+// *** ADDED: Enum definition for user role (student vs supervisor) ***
+enum UserRole { STUDENT, SUPERVISOR }
 
 //////////////////////////////////////////////////////////////////////////
 // Model class definitition
@@ -33,8 +39,13 @@ class UserProfile {
   String _email = "";
   PermissionLevel _permissionLevel = PermissionLevel.PRODUCTION;
   int _accountCreationTime = 0;
-  DateTime _dateLastPasswordChange = DateTime.now().add(const Duration(days: -365));
-  AccountCreationStep _accountCreationStep = AccountCreationStep.ACC_STEP_ONBOARDING_PROFILE_CONTACT_INFO;
+  DateTime _dateLastPasswordChange = DateTime.now().add(
+    const Duration(days: -365),
+  );
+  AccountCreationStep _accountCreationStep =
+      AccountCreationStep.ACC_STEP_ONBOARDING_PROFILE_CONTACT_INFO;
+  // *** ADDED: User role field, defaults to STUDENT ***
+  UserRole _userRole = UserRole.STUDENT;
 
   ////////////////////////////////////////////////////////////////////////
   // CONSTRUCTORS
@@ -48,8 +59,9 @@ class UserProfile {
     this._permissionLevel,
     this._accountCreationTime,
     this._dateLastPasswordChange,
-    this._accountCreationStep,
-  );
+    this._accountCreationStep, {
+    UserRole userRole = UserRole.STUDENT, // *** ADDED: optional named param ***
+  }) : _userRole = userRole;
 
   // Named Constructor
   UserProfile.empty() {
@@ -59,27 +71,39 @@ class UserProfile {
     _email = "";
     _permissionLevel = PermissionLevel.PRODUCTION;
     _accountCreationTime = 0;
-    _accountCreationStep = AccountCreationStep.ACC_STEP_ONBOARDING_PROFILE_CONTACT_INFO;
+    _accountCreationStep =
+        AccountCreationStep.ACC_STEP_ONBOARDING_PROFILE_CONTACT_INFO;
+    _userRole = UserRole.STUDENT; // *** ADDED ***
   }
 
   ////////////////////////////////////////////////////////////////////////
   // Creates a new User profile and populates using the JSON object passed
   // in as parameter
   ////////////////////////////////////////////////////////////////////////
-  UserProfile.defFromJsonDbObject(Map<String, dynamic> jsonObject, String firebaseUid) {
+  UserProfile.defFromJsonDbObject(
+    Map<String, dynamic> jsonObject,
+    String firebaseUid,
+  ) {
     firstName = jsonObject["first_name"] ?? "";
     lastName = jsonObject["last_name"] ?? "";
     email = jsonObject["email"] ?? "";
     uid = firebaseUid;
     permissionLevel = _getPermissionLevelFromString(
-      jsonObject["permission_level"] ?? _getStringFromPermissionLevel(PermissionLevel.PRODUCTION),
+      jsonObject["permission_level"] ??
+          _getStringFromPermissionLevel(PermissionLevel.PRODUCTION),
     );
     _dateLastPasswordChange =
         (jsonObject["date_last_password_change"] as Timestamp?)?.toDate() ??
         DateTime.now().add(const Duration(days: -365));
     accountCreationStep = getStepFromString(
       jsonObject["account_creation_step"] ??
-          getStringFromStep(AccountCreationStep.ACC_STEP_ONBOARDING_PROFILE_CONTACT_INFO),
+          getStringFromStep(
+            AccountCreationStep.ACC_STEP_ONBOARDING_PROFILE_CONTACT_INFO,
+          ),
+    );
+    // *** ADDED: Read user_role from DB, default to STUDENT if missing ***
+    userRole = _getUserRoleFromString(
+      jsonObject["user_role"] ?? _getStringFromUserRole(UserRole.STUDENT),
     );
   }
 
@@ -94,7 +118,9 @@ class UserProfile {
   set permissionLevel(PermissionLevel value) => _permissionLevel = value;
   set accountCreationTime(int value) => _accountCreationTime = value;
   set dateLastPasswordChange(DateTime value) => _dateLastPasswordChange = value;
-  set accountCreationStep(AccountCreationStep value) => _accountCreationStep = value;
+  set accountCreationStep(AccountCreationStep value) =>
+      _accountCreationStep = value;
+  set userRole(UserRole value) => _userRole = value; // *** ADDED ***
 
   ////////////////////////////////////////////////////////////////////////
   // GETTERS
@@ -108,6 +134,7 @@ class UserProfile {
   int get accountCreationTime => _accountCreationTime;
   DateTime get dateLastPasswordChange => _dateLastPasswordChange;
   AccountCreationStep get accountCreationStep => _accountCreationStep;
+  UserRole get userRole => _userRole; // *** ADDED ***
 
   ////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////
@@ -119,15 +146,20 @@ class UserProfile {
   // by checking if key data items exist
   ////////////////////////////////////////////////////////////////////////
   bool isMissingKeyData() {
-    return (uid.isEmpty || firstName.isEmpty || lastName.isEmpty || email.isEmpty);
+    return (uid.isEmpty ||
+        firstName.isEmpty ||
+        lastName.isEmpty ||
+        email.isEmpty);
   }
 
   ////////////////////////////////////////////////////////////////
   // Converts from enum status to string (for DB usage)
   ////////////////////////////////////////////////////////////////
   String getStringFromStep(AccountCreationStep step) {
-    if (step == AccountCreationStep.ACC_STEP_ONBOARDING_PROFILE_CONTACT_INFO) return "Contact";
-    if (step == AccountCreationStep.ACC_STEP_ONBOARDING_COMPLETE) return "Complete";
+    if (step == AccountCreationStep.ACC_STEP_ONBOARDING_PROFILE_CONTACT_INFO)
+      return "Contact";
+    if (step == AccountCreationStep.ACC_STEP_ONBOARDING_COMPLETE)
+      return "Complete";
     return "Contact";
   }
 
@@ -135,8 +167,10 @@ class UserProfile {
   // Converts from String to enum status (for DB usage)
   ////////////////////////////////////////////////////////////////
   AccountCreationStep getStepFromString(String stepStr) {
-    if (stepStr == "Contact") return AccountCreationStep.ACC_STEP_ONBOARDING_PROFILE_CONTACT_INFO;
-    if (stepStr == "Complete") return AccountCreationStep.ACC_STEP_ONBOARDING_COMPLETE;
+    if (stepStr == "Contact")
+      return AccountCreationStep.ACC_STEP_ONBOARDING_PROFILE_CONTACT_INFO;
+    if (stepStr == "Complete")
+      return AccountCreationStep.ACC_STEP_ONBOARDING_COMPLETE;
     return AccountCreationStep.ACC_STEP_ONBOARDING_COMPLETE;
   }
 
@@ -161,6 +195,19 @@ class UserProfile {
     return PermissionLevel.PRODUCTION;
   }
 
+  // *** ADDED: UserRole string converters ***
+  String _getStringFromUserRole(UserRole role) {
+    if (role == UserRole.STUDENT) return "Student";
+    if (role == UserRole.SUPERVISOR) return "Supervisor";
+    return "Student";
+  }
+
+  UserRole _getUserRoleFromString(String roleStr) {
+    if (roleStr == "Student") return UserRole.STUDENT;
+    if (roleStr == "Supervisor") return UserRole.SUPERVISOR;
+    return UserRole.STUDENT;
+  }
+
   ////////////////////////////////////////////////////////////////////////
   // Converts to JSON for saving to noSQL database
   ////////////////////////////////////////////////////////////////////////
@@ -169,15 +216,19 @@ class UserProfile {
     Map<String, dynamic> jsonObject = {};
 
     // Add all fields to the json map
-    //dbObject[""] = uid; // FYI: Not currently stored in DB
     jsonObject["first_name"] = firstName;
     jsonObject["last_name"] = lastName;
     jsonObject["email"] = email;
-    jsonObject["email_lowercase"] = email.toLowerCase(); // Added for bf_manage_share_request GCF
-    jsonObject["permission_level"] = _getStringFromPermissionLevel(permissionLevel);
+    jsonObject["email_lowercase"] = email.toLowerCase();
+    jsonObject["permission_level"] = _getStringFromPermissionLevel(
+      permissionLevel,
+    );
     jsonObject["account_creation_time"] = accountCreationTime;
     jsonObject["date_last_password_change"] = _dateLastPasswordChange;
-    jsonObject["account_creation_step"] = getStringFromStep(accountCreationStep);
+    jsonObject["account_creation_step"] = getStringFromStep(
+      accountCreationStep,
+    );
+    jsonObject["user_role"] = _getStringFromUserRole(userRole); // *** ADDED ***
 
     // Return the JSON object
     return jsonObject;
