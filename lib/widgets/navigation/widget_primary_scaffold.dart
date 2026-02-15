@@ -11,6 +11,7 @@
 // Dart imports
 
 // Flutter external package imports
+import 'package:csc322_starter_app/screens/general/screen_home_admin.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -110,9 +111,9 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   // Takes in the current tab index and returns the appropriate
   // screen to display.
   ////////////////////////////////////////////////////////////////
-  Widget _getScreenToDisplay(int currentTabIndex) {
+  Widget _getScreenToDisplay(int currentTabIndex, bool isAdmin) {
     if (currentTabIndex == BottomNavSelection.HOME_SCREEN.index)
-      return ScreenHome();
+      return isAdmin ? ScreenHomeAdmin() : ScreenHome();
     else if (currentTabIndex == BottomNavSelection.ALTERNATE_SCREEN.index)
       return ScreenAlternate();
     else
@@ -150,6 +151,9 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   Widget build(BuildContext context) {
     // Get providers
     final currentTabIndex = ref.watch(providerPrimaryBottomNavTabIndex);
+    final userProfile = ref.watch(providerUserProfile);
+    final isAdmin = userProfile.admin == 1;
+
 
     // Return the scaffold
     return Scaffold(
@@ -159,7 +163,7 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
         title: _getAppBarTitle(currentTabIndex),
       ),
       drawer: WidgetAppDrawer(),
-      body: _getScreenToDisplay(currentTabIndex),
+      body: _getScreenToDisplay(currentTabIndex, isAdmin),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentTabIndex,
         onTap: (index) {

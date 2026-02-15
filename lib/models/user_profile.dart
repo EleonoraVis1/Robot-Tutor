@@ -28,6 +28,7 @@ class UserProfile {
   // Instance variables
   ////////////////////////////////////////////////////////////////////////
   String _uid = "";
+  int _admin = 0;
   String _firstName = "";
   String _lastName = "";
   String _email = "";
@@ -42,6 +43,7 @@ class UserProfile {
   // Positional Constructor
   UserProfile(
     this._uid,
+    this._admin,
     this._firstName,
     this._lastName,
     this._email,
@@ -54,6 +56,7 @@ class UserProfile {
   // Named Constructor
   UserProfile.empty() {
     _uid = "";
+    _admin = 0;
     _lastName = "";
     _firstName = "";
     _email = "";
@@ -71,6 +74,7 @@ class UserProfile {
     lastName = jsonObject["last_name"] ?? "";
     email = jsonObject["email"] ?? "";
     uid = firebaseUid;
+    admin = 0;
     permissionLevel = _getPermissionLevelFromString(
       jsonObject["permission_level"] ?? _getStringFromPermissionLevel(PermissionLevel.PRODUCTION),
     );
@@ -87,6 +91,7 @@ class UserProfile {
   // SETTERS
   ////////////////////////////////////////////////////////////////////////
   set uid(String value) => _uid = value;
+  set admin(int value) => _admin = value;
   set firstName(String value) => _firstName = value;
   set lastName(String value) => _lastName = value;
   set email(String value) => _email = value;
@@ -100,6 +105,7 @@ class UserProfile {
   // GETTERS
   ////////////////////////////////////////////////////////////////////////
   String get uid => _uid;
+  int get admin => _admin;
   String get firstName => _firstName;
   String get lastName => _lastName;
   String get email => _email;
@@ -173,6 +179,7 @@ class UserProfile {
     jsonObject["first_name"] = firstName;
     jsonObject["last_name"] = lastName;
     jsonObject["email"] = email;
+    jsonObject["admin"] = admin;
     jsonObject["email_lowercase"] = email.toLowerCase(); // Added for bf_manage_share_request GCF
     jsonObject["permission_level"] = _getStringFromPermissionLevel(permissionLevel);
     jsonObject["account_creation_time"] = accountCreationTime;
