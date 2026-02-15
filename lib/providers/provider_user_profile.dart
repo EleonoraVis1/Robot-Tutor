@@ -48,6 +48,12 @@ class ProviderUserProfile extends ChangeNotifier {
     notifyListeners();
   }
 
+  UserType get userType => _userProfile.userType;
+  set userType(UserType value) {
+    _userProfile.userType = value;
+    notifyListeners();
+  }
+
   String get firstName => _userProfile.firstName;
   set firstName(String value) {
     _userProfile.firstName = value;

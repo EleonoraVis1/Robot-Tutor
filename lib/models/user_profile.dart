@@ -20,6 +20,8 @@ enum AccountCreationStep { ACC_STEP_ONBOARDING_PROFILE_CONTACT_INFO, ACC_STEP_ON
 // the fact that Developer is the highest enum value)
 enum PermissionLevel { PRODUCTION, BETA, DEVELOPER }
 
+enum UserType { STUDENT, SUPERVISOR }
+
 //////////////////////////////////////////////////////////////////////////
 // Model class definitition
 //////////////////////////////////////////////////////////////////////////
@@ -28,6 +30,7 @@ class UserProfile {
   // Instance variables
   ////////////////////////////////////////////////////////////////////////
   String _uid = "";
+  UserType _userType = UserType.STUDENT;
   String _firstName = "";
   String _lastName = "";
   String _email = "";
@@ -42,6 +45,7 @@ class UserProfile {
   // Positional Constructor
   UserProfile(
     this._uid,
+    this._userType,
     this._firstName,
     this._lastName,
     this._email,
@@ -54,6 +58,7 @@ class UserProfile {
   // Named Constructor
   UserProfile.empty() {
     _uid = "";
+    _userType = UserType.STUDENT;
     _lastName = "";
     _firstName = "";
     _email = "";
@@ -71,6 +76,9 @@ class UserProfile {
     lastName = jsonObject["last_name"] ?? "";
     email = jsonObject["email"] ?? "";
     uid = firebaseUid;
+    userType = _getUserTypeFromString(
+      jsonObject["user_type"] ?? _getStringFromUserType(UserType.STUDENT),
+    );
     permissionLevel = _getPermissionLevelFromString(
       jsonObject["permission_level"] ?? _getStringFromPermissionLevel(PermissionLevel.PRODUCTION),
     );
@@ -87,6 +95,7 @@ class UserProfile {
   // SETTERS
   ////////////////////////////////////////////////////////////////////////
   set uid(String value) => _uid = value;
+  set userType(UserType value) => _userType = value;
   set firstName(String value) => _firstName = value;
   set lastName(String value) => _lastName = value;
   set email(String value) => _email = value;
@@ -100,6 +109,7 @@ class UserProfile {
   // GETTERS
   ////////////////////////////////////////////////////////////////////////
   String get uid => _uid;
+  UserType get userType => _userType;
   String get firstName => _firstName;
   String get lastName => _lastName;
   String get email => _email;
@@ -151,6 +161,12 @@ class UserProfile {
     return "Production";
   }
 
+  String _getStringFromUserType(UserType userType) {
+    if (userType == UserType.STUDENT) return "Student";
+    if (userType == UserType.SUPERVISOR) return "Supervisor";
+    return "Production";
+  }
+
   ////////////////////////////////////////////////////////////////////////
   // Converts from String to enum status for permission level
   ////////////////////////////////////////////////////////////////////////
@@ -159,6 +175,12 @@ class UserProfile {
     if (permissionLevelStr == "Beta") return PermissionLevel.BETA;
     if (permissionLevelStr == "Developer") return PermissionLevel.DEVELOPER;
     return PermissionLevel.PRODUCTION;
+  }
+
+  UserType _getUserTypeFromString(String userTypeStr) {
+    if (userTypeStr == "Student") return UserType.STUDENT;
+    if (userTypeStr == "Supervisor") return UserType.SUPERVISOR;
+    return UserType.STUDENT;
   }
 
   ////////////////////////////////////////////////////////////////////////
@@ -173,6 +195,7 @@ class UserProfile {
     jsonObject["first_name"] = firstName;
     jsonObject["last_name"] = lastName;
     jsonObject["email"] = email;
+    jsonObject["user_type"] = userType;
     jsonObject["email_lowercase"] = email.toLowerCase(); // Added for bf_manage_share_request GCF
     jsonObject["permission_level"] = _getStringFromPermissionLevel(permissionLevel);
     jsonObject["account_creation_time"] = accountCreationTime;
