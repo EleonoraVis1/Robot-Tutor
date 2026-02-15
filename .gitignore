@@ -27,3 +27,10 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+
+
+# Android Studio
+.idea/
+
+# Flutter logs
+*.log
