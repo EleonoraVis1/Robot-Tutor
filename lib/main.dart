@@ -39,8 +39,12 @@ import 'theme/theme.dart';
 final ProviderContainer providerContainer = ProviderContainer();
 
 // Create providers
-final providerUserProfile = ChangeNotifierProvider<ProviderUserProfile>((ref) => ProviderUserProfile());
-final providerAuth = ChangeNotifierProvider<ProviderAuth>((ref) => ProviderAuth());
+final providerUserProfile = ChangeNotifierProvider<ProviderUserProfile>(
+  (ref) => ProviderUserProfile(),
+);
+final providerAuth = ChangeNotifierProvider<ProviderAuth>(
+  (ref) => ProviderAuth(),
+);
 
 //////////////////////////////////////////////////////////////////////////
 // MAIN entry point to start app.
@@ -56,7 +60,9 @@ Future<void> main() async {
   await UtilFile.init();
 
   // Get references to providers that will be needed in other providers
-  final ProviderUserProfile userProfileProvider = providerContainer.read(providerUserProfile);
+  final ProviderUserProfile userProfileProvider = providerContainer.read(
+    providerUserProfile,
+  );
   final ProviderAuth authProvider = providerContainer.read(providerAuth);
 
   // Initialize providers
@@ -64,7 +70,9 @@ Future<void> main() async {
   authProvider.initProviders(userProfileProvider);
 
   // Run the app
-  runApp(UncontrolledProviderScope(container: providerContainer, child: MyApp()));
+  runApp(
+    UncontrolledProviderScope(container: providerContainer, child: MyApp()),
+  );
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -88,18 +96,35 @@ class _MyAppState extends State<MyApp> {
   final GoRouter _router = GoRouter(
     initialLocation: ScreenLoginValidation.routeName,
     routes: [
-      GoRoute(path: ScreenLoginValidation.routeName, builder: (context, state) => const ScreenLoginValidation()),
-      GoRoute(path: ScreenSettings.routeName, builder: (context, state) => ScreenSettings()),
-      GoRoute(path: ScreenProfileEdit.routeName, builder: (context, state) => const ScreenProfileEdit()),
+      GoRoute(
+        path: ScreenLoginValidation.routeName,
+        builder: (context, state) => const ScreenLoginValidation(),
+      ),
+      GoRoute(
+        path: ScreenSettings.routeName,
+        builder: (context, state) => ScreenSettings(),
+      ),
+      GoRoute(
+        path: ScreenProfileEdit.routeName,
+        builder: (context, state) => const ScreenProfileEdit(),
+      ),
       GoRoute(
         path: WidgetPrimaryScaffold.routeName,
-        builder: (BuildContext context, GoRouterState state) => const WidgetPrimaryScaffold(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const WidgetPrimaryScaffold(),
       ),
-      GoRoute(path: ScreenHomeStudent.routeName, builder: (BuildContext context, GoRouterState state) => ScreenHomeStudent()),
-      GoRoute(path: ScreenHomeSupervisor.routeName, builder: (BuildContext context, GoRouterState state) => ScreenHomeSupervisor()),
+      GoRoute(
+        path: ScreenHomeStudent.routeName,
+        builder: (BuildContext context, GoRouterState state) => ScreenHomeStudent(),
+      ),
+      GoRoute(
+        path: ScreenHomeSupervisor.routeName,
+        builder: (BuildContext context, GoRouterState state) => ScreenHomeSupervisor(),
+      ),
       GoRoute(
         path: ScreenAlternate.routeName,
-        builder: (BuildContext context, GoRouterState state) => ScreenAlternate(),
+        builder: (BuildContext context, GoRouterState state) =>
+            ScreenAlternate(),
       ),
     ],
   );
@@ -108,6 +133,10 @@ class _MyAppState extends State<MyApp> {
   // Primary Flutter method overriden which describes the layout
   // and bindings for this widget.
   //////////////////////////////////////////////////////////////////////////
+
+  // ToDO: start something
+  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
