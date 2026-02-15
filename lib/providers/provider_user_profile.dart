@@ -48,9 +48,9 @@ class ProviderUserProfile extends ChangeNotifier {
     notifyListeners();
   }
 
-  int get admin => _userProfile.admin;
-  set admin(int value) {
-    _userProfile.admin = value;
+  UserType get userType => _userProfile.userType;
+  set userType(UserType value) {
+    _userProfile.userType = value;
     notifyListeners();
   }
 
