@@ -11,7 +11,8 @@
 // Dart imports
 
 // Flutter external package imports
-import 'package:csc322_starter_app/screens/general/screen_home_admin.dart';
+import 'package:csc322_starter_app/models/user_profile.dart';
+import 'package:csc322_starter_app/screens/general/screen_home_supervisor.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -20,7 +21,7 @@ import 'package:flutter/material.dart';
 
 // App relative file imports
 import '../../screens/general/screen_alternate.dart';
-import '../../screens/general/screen_home.dart';
+import '../../screens/general/screen_home_student.dart';
 import 'widget_primary_app_bar.dart';
 import 'widget_app_drawer.dart';
 import '../../main.dart';
@@ -111,13 +112,13 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   // Takes in the current tab index and returns the appropriate
   // screen to display.
   ////////////////////////////////////////////////////////////////
-  Widget _getScreenToDisplay(int currentTabIndex, bool isAdmin) {
+  Widget _getScreenToDisplay(int currentTabIndex, bool isSupervisor) {
     if (currentTabIndex == BottomNavSelection.HOME_SCREEN.index)
-      return isAdmin ? ScreenHomeAdmin() : ScreenHome();
+      return isSupervisor ? ScreenHomeSupervisor() : ScreenHomeStudent();
     else if (currentTabIndex == BottomNavSelection.ALTERNATE_SCREEN.index)
       return ScreenAlternate();
     else
-      return ScreenHome();
+      return ScreenHomeStudent();
   }
 
   ////////////////////////////////////////////////////////////////
@@ -152,7 +153,7 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
     // Get providers
     final currentTabIndex = ref.watch(providerPrimaryBottomNavTabIndex);
     final userProfile = ref.watch(providerUserProfile);
-    final isAdmin = userProfile.admin == 1;
+    final isSupervisor = userProfile.userType == UserType.SUPERVISOR;
 
 
     // Return the scaffold
@@ -163,7 +164,7 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
         title: _getAppBarTitle(currentTabIndex),
       ),
       drawer: WidgetAppDrawer(),
-      body: _getScreenToDisplay(currentTabIndex, isAdmin),
+      body: _getScreenToDisplay(currentTabIndex, isSupervisor),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentTabIndex,
         onTap: (index) {

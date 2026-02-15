@@ -63,7 +63,8 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
-  int _isAdmin = 0;
+  UserType _userType = UserType.STUDENT;
+  
 
   ////////////////////////////////////////////////////////////////
   // Runs the following code once upon initialization
@@ -80,7 +81,7 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
         _lastNameController.text = _providerUserProfile.lastName;
       }
 
-      _isAdmin = _providerUserProfile.admin;
+      _userType = _providerUserProfile.userType;
 
       // Now initialized; run super method
       _isInit = false;
@@ -187,7 +188,7 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
       // Update profile information and write to database
       _providerUserProfile.firstName = _firstNameController.text.trim();
       _providerUserProfile.lastName = _lastNameController.text.trim();
-      _providerUserProfile.admin = _isAdmin;
+      _providerUserProfile.userType = _userType;
       _providerUserProfile.accountCreationStep = AccountCreationStep.ACC_STEP_ONBOARDING_COMPLETE;
       _providerUserProfile.writeUserProfileToDb();
 
@@ -479,23 +480,24 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                       decoration: InputDecoration(labelText: 'Last Name'),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
-                    child: CheckboxListTile(
-                      title: const Text("Is Admin?"),
-                      value: _isAdmin == 1,
-                      onChanged: (value) {
-                        setState(() {
-                          if (value == true)
-                          _isAdmin = 1;
-                          else
-                          _isAdmin = 0;
-                        });
-                      },
-                      controlAffinity: ListTileControlAffinity.leading,
-                      contentPadding: EdgeInsets.zero,
+                  if(_providerUserProfile.accountCreationStep != AccountCreationStep.ACC_STEP_ONBOARDING_COMPLETE)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: CheckboxListTile(
+                        title: const Text("Is Supervisor?"),
+                        value: _userType == UserType.SUPERVISOR,
+                        onChanged: (value) {
+                          setState(() {
+                            if (value == true)
+                            _userType = UserType.SUPERVISOR;
+                            else
+                            _userType = UserType.STUDENT;
+                          });
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: EdgeInsets.zero,
+                      ),
                     ),
-                  ),
                   ///////////////////////////////////////////////////////////////////////
                   /// Continue Button and Cancel Button
                   ///////////////////////////////////////////////////////////////////////
