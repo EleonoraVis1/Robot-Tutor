@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "835052484226",
+    "project_id": "robot-tutor",
+    "storage_bucket": "robot-tutor.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:835052484226:android:d1692cea07276c8998669b",
+        "android_client_info": {
+          "package_name": "com.example.robot_tutor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHc8Nh2z5Zr5tdoWIlTsnaq-bXj9nTjHQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
