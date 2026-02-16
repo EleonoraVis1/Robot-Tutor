@@ -195,7 +195,7 @@ class UserProfile {
     jsonObject["first_name"] = firstName;
     jsonObject["last_name"] = lastName;
     jsonObject["email"] = email;
-    jsonObject["user_type"] = userType;
+    jsonObject["user_type"] = _getStringFromUserType(userType);
     jsonObject["email_lowercase"] = email.toLowerCase(); // Added for bf_manage_share_request GCF
     jsonObject["permission_level"] = _getStringFromPermissionLevel(permissionLevel);
     jsonObject["account_creation_time"] = accountCreationTime;
