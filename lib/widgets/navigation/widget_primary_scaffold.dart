@@ -12,7 +12,7 @@
 
 // Flutter external package imports
 import 'package:csc322_starter_app/models/user_profile.dart';
-import 'package:csc322_starter_app/screens/general/screen_home_supervisor.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -20,8 +20,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // App relative file imports
-import '../../screens/general/screen_alternate.dart';
-import '../../screens/general/screen_home_student.dart';
+import '../../screens/general/students/screen_subject_student.dart';
+import '../../screens/general/students/screen_home_student.dart';
 import 'widget_primary_app_bar.dart';
 import 'widget_app_drawer.dart';
 import '../../main.dart';
@@ -170,18 +170,7 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
         onTap: (index) {
           ref.read(providerPrimaryBottomNavTabIndex.notifier).state = index;
         },
-        items: [
-          BottomNavigationBarItem(
-            label: "Home",
-            activeIcon: Icon(FontAwesomeIcons.house),
-            icon: Icon(FontAwesomeIcons.house),
-          ),
-          BottomNavigationBarItem(
-            label: "Alternate",
-            activeIcon: Icon(FontAwesomeIcons.building),
-            icon: Icon(FontAwesomeIcons.building),
-          ),
-        ],
+        items: [],
       ),
     );
   }

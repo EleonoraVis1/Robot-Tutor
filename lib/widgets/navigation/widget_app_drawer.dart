@@ -60,7 +60,29 @@ class WidgetAppDrawer extends StatelessWidget {
                 automaticallyImplyLeading: false,
               ),
               // Divider(),
-              ListTile(leading: Icon(Icons.home), title: Text('Home'), onTap: () => Navigator.of(context).pop()),
+              ListTile(
+                leading: Icon(Icons.home), 
+                title: Text('Home'), 
+                onTap: () => Navigator.of(context).pop()
+              ),
+              ListTile(
+                leading: Icon(Icons.person),
+                title: Text('Profile'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  context.push(ScreenProfileEdit.routeName);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.book_online_outlined), 
+                title: Text('Quizzes'), 
+                onTap: () => Navigator.of(context).pop()
+              ),
+              ListTile(
+                leading: Icon(Icons.bolt_outlined), 
+                title: Text('BAY-min Persona'), 
+                onTap: () => Navigator.of(context).pop()
+              ),
               Divider(),
               ListTile(
                 leading: Icon(Icons.settings),
@@ -71,16 +93,6 @@ class WidgetAppDrawer extends StatelessWidget {
                   context.push(ScreenSettings.routeName, extra: false);
                 },
               ),
-              ListTile(
-                leading: Icon(Icons.person),
-                title: Text('Profile'),
-                onTap: () {
-                  // Close the drawer
-                  Navigator.of(context).pop();
-                  context.push(ScreenProfileEdit.routeName);
-                },
-              ),
-              Divider(),
               ListTile(
                 leading: Icon(Icons.exit_to_app),
                 title: Text('Logout'),

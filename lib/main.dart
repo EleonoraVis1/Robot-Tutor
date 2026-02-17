@@ -12,7 +12,7 @@
 // Dart imports
 
 // Flutter external package imports
-import 'package:csc322_starter_app/screens/general/screen_home_supervisor.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -20,8 +20,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 
 // App relative file imports
-import 'screens/general/screen_alternate.dart';
-import 'screens/general/screen_home_student.dart';
+import 'screens/general/students/screen_subject_student.dart';
+import 'screens/general/students/screen_home_student.dart';
 import 'widgets/navigation/widget_primary_scaffold.dart';
 import 'screens/auth/screen_login_validation.dart';
 import 'screens/settings/screen_profile_edit.dart';
@@ -115,11 +115,13 @@ class _MyAppState extends State<MyApp> {
       ),
       GoRoute(
         path: ScreenHomeStudent.routeName,
-        builder: (BuildContext context, GoRouterState state) => ScreenHomeStudent(),
+        builder: (BuildContext context, GoRouterState state) =>
+            ScreenHomeStudent(),
       ),
       GoRoute(
         path: ScreenHomeSupervisor.routeName,
-        builder: (BuildContext context, GoRouterState state) => ScreenHomeSupervisor(),
+        builder: (BuildContext context, GoRouterState state) =>
+            ScreenHomeSupervisor(),
       ),
       GoRoute(
         path: ScreenAlternate.routeName,
