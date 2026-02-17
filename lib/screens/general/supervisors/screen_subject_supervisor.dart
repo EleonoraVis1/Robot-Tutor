@@ -50,7 +50,10 @@ class _ScreenSubjectSupervisorState extends ConsumerState<ScreenSubjectSuperviso
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text('Blank Screen')),
+      body: Center(child: Text('Subjects')),
+      appBar: AppBar(
+        title: Text("Subjects"),
+      ),
     );
   }
 }

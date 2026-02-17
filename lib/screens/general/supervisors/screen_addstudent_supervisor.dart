@@ -50,7 +50,10 @@ class _ScreenAddStudentSupervisorState extends ConsumerState<ScreenAddStudentSup
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text('Blank Screen')),
+      body: Center(child: Text('Add student')),
+      appBar: AppBar(
+        title: Text("Add Students"),
+      ),
     );
   }
 }

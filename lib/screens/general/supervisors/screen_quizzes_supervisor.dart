@@ -50,7 +50,10 @@ class _ScreenQuizzesSupervisorState extends ConsumerState<ScreenQuizzesSuperviso
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text('Blank Screen')),
+      body: Center(child: Text('Quizzes')),
+      appBar: AppBar(
+        title: Text("Quizzes"),
+      ),
     );
   }
 }

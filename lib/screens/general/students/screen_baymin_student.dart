@@ -50,7 +50,10 @@ class _ScreenBaymindStudentState extends ConsumerState<ScreenBayminStudent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text('Blank Screen')),
+      body: Center(child: Text('BAY-min Persona')),
+      appBar: AppBar(
+        title: Text("Baymin Persona"),
+      ),
     );
   }
 }

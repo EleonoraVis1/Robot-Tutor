@@ -50,7 +50,10 @@ class _ScreenChathistorySupervisorState extends ConsumerState<ScreenChathistoryS
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text('Blank Screen')),
+      body: Center(child: Text('Chat history')),
+      appBar: AppBar(
+        title: Text("Chat History"),
+      ),
     );
   }
 }

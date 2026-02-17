@@ -19,7 +19,6 @@ import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent
 import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistory_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_module_supervisor.dart';
-import 'package:csc322_starter_app/screens/general/supervisors/screen_quizcreation_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_quizzes_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_subject_supervisor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -168,11 +167,6 @@ class _MyAppState extends State<MyApp> {
             ScreenModuleSupervisor(),
       ),
       GoRoute(
-        path: ScreenQuizcreationSupervisor.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenQuizcreationSupervisor(),
-      ),
-      GoRoute(
         path: ScreenQuizzesSupervisor.routeName,
         builder: (BuildContext context, GoRouterState state) =>
             ScreenQuizzesSupervisor(),
@@ -197,7 +191,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: _router,
-      title: 'CSC 322 Starter Project',
+      title: 'BAY-min tutor',
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: ThemeMode.light,
