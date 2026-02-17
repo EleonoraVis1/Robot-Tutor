@@ -1,15 +1,3 @@
-// -----------------------------------------------------------------------
-// Filename: screen_home.dart
-// Original Author: Dan Grissom
-// Creation Date: 10/31/2024
-// Copyright: (c) 2024 CSC322
-// Description: This file contains the screen for a dummy home screen
-//               history screen.
-
-//////////////////////////////////////////////////////////////////////////
-// Imports
-//////////////////////////////////////////////////////////////////////////
-
 // Flutter imports
 import 'dart:async';
 

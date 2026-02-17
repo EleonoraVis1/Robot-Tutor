@@ -1,15 +1,3 @@
-// -----------------------------------------------------------------------
-// Filename: screen_alternative.dart
-// Original Author: Dan Grissom
-// Creation Date: 10/31/2024
-// Copyright: (c) 2024 CSC322
-// Description: This file contains the screen for a dummy alternative screen
-//               history screen.
-
-//////////////////////////////////////////////////////////////////////////
-// Imports
-//////////////////////////////////////////////////////////////////////////
-
 // Flutter imports
 import 'dart:async';
 
@@ -24,17 +12,17 @@ import '../../../util/message_display/snackbar.dart';
 //////////////////////////////////////////////////////////////////////////
 // StateFUL widget which manages state. Simply initializes the state object.
 //////////////////////////////////////////////////////////////////////////
-class ScreenAlternate extends ConsumerStatefulWidget {
+class ScreenQuizcreationSupervisor extends ConsumerStatefulWidget {
   static const routeName = '/quizcreation_supervisor';
 
   @override
-  ConsumerState<ScreenAlternate> createState() => _ScreenAlternateState();
+  ConsumerState<ScreenQuizcreationSupervisor> createState() => _ScreenQuizCreationSupervisorState();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // The actual STATE which is managed by the above widget.
 //////////////////////////////////////////////////////////////////////////
-class _ScreenAlternateState extends ConsumerState<ScreenAlternate> {
+class _ScreenQuizCreationSupervisorState extends ConsumerState<ScreenQuizcreationSupervisor> {
   // The "instance variables" managed in this state
   bool _isInit = true;
 

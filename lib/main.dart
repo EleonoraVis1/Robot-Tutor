@@ -12,7 +12,16 @@
 // Dart imports
 
 // Flutter external package imports
+import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_module_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent_supervisor.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistory_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_module_supervisor.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_quizcreation_supervisor.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_quizzes_supervisor.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_subject_supervisor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -119,14 +128,59 @@ class _MyAppState extends State<MyApp> {
             ScreenHomeStudent(),
       ),
       GoRoute(
+        path: ScreenSubjectStudent.routeName,
+        builder: (BuildContext context, GoRouterState state) =>
+            ScreenSubjectStudent(),
+      ),
+      GoRoute(
+        path: ScreenQuizzesStudent.routeName,
+        builder: (BuildContext context, GoRouterState state) =>
+            ScreenQuizzesStudent(),
+      ),
+      GoRoute(
+        path: ScreenModuleStudent.routeName,
+        builder: (BuildContext context, GoRouterState state) =>
+            ScreenModuleStudent(),
+      ),
+      GoRoute(
+        path: ScreenBayminStudent.routeName,
+        builder: (BuildContext context, GoRouterState state) =>
+            ScreenBayminStudent(),
+      ),
+      GoRoute(
         path: ScreenHomeSupervisor.routeName,
         builder: (BuildContext context, GoRouterState state) =>
             ScreenHomeSupervisor(),
       ),
       GoRoute(
-        path: ScreenAlternate.routeName,
+        path: ScreenAddStudentSupervisor.routeName,
         builder: (BuildContext context, GoRouterState state) =>
-            ScreenAlternate(),
+            ScreenAddStudentSupervisor(),
+      ),
+      GoRoute(
+        path: ScreenChathistorySupervisor.routeName,
+        builder: (BuildContext context, GoRouterState state) =>
+            ScreenChathistorySupervisor(),
+      ),
+      GoRoute(
+        path: ScreenModuleSupervisor.routeName,
+        builder: (BuildContext context, GoRouterState state) =>
+            ScreenModuleSupervisor(),
+      ),
+      GoRoute(
+        path: ScreenQuizcreationSupervisor.routeName,
+        builder: (BuildContext context, GoRouterState state) =>
+            ScreenQuizcreationSupervisor(),
+      ),
+      GoRoute(
+        path: ScreenQuizzesSupervisor.routeName,
+        builder: (BuildContext context, GoRouterState state) =>
+            ScreenQuizzesSupervisor(),
+      ),
+      GoRoute(
+        path: ScreenSubjectSupervisor.routeName,
+        builder: (BuildContext context, GoRouterState state) =>
+            ScreenSubjectSupervisor(),
       ),
     ],
   );

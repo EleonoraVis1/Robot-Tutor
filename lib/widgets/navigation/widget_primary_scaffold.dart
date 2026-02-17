@@ -115,8 +115,6 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   Widget _getScreenToDisplay(int currentTabIndex, bool isSupervisor) {
     if (currentTabIndex == BottomNavSelection.HOME_SCREEN.index)
       return isSupervisor ? ScreenHomeSupervisor() : ScreenHomeStudent();
-    else if (currentTabIndex == BottomNavSelection.ALTERNATE_SCREEN.index)
-      return ScreenAlternate();
     else
       return ScreenHomeStudent();
   }
@@ -165,13 +163,6 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
       ),
       drawer: WidgetAppDrawer(),
       body: _getScreenToDisplay(currentTabIndex, isSupervisor),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentTabIndex,
-        onTap: (index) {
-          ref.read(providerPrimaryBottomNavTabIndex.notifier).state = index;
-        },
-        items: [],
-      ),
     );
   }
 }
