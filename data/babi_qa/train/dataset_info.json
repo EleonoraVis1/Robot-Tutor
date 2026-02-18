@@ -1,0 +1,75 @@
+{
+  "builder_name": "parquet",
+  "citation": "@misc{weston2015aicomplete,\n      title={Towards AI-Complete Question Answering: A Set of Prerequisite Toy Tasks},\n      author={Jason Weston and Antoine Bordes and Sumit Chopra and Alexander M. Rush and Bart van Merri\u00ebnboer and Armand Joulin and Tomas Mikolov},\n      year={2015},\n      eprint={1502.05698},\n      archivePrefix={arXiv},\n      primaryClass={cs.AI}\n}\n",
+  "config_name": "en-10k-qa1",
+  "dataset_name": "babi_qa",
+  "dataset_size": 1823850,
+  "description": "The (20) QA bAbI tasks are a set of proxy tasks that evaluate reading\ncomprehension via question answering. Our tasks measure understanding\nin several ways: whether a system is able to answer questions via chaining facts,\nsimple induction, deduction and many more. The tasks are designed to be prerequisites\nfor any system that aims to be capable of conversing with a human.\nThe aim is to classify these tasks into skill sets,so that researchers\ncan identify (and then rectify)the failings of their systems.\n",
+  "download_checksums": {
+    "hf://datasets/facebook/babi_qa@821006e33d6ff3674fd888792a4dd1c04648f69f/en-10k-qa1/train/0000.parquet": {
+      "num_bytes": 51147,
+      "checksum": null
+    },
+    "hf://datasets/facebook/babi_qa@821006e33d6ff3674fd888792a4dd1c04648f69f/en-10k-qa1/test/0000.parquet": {
+      "num_bytes": 9410,
+      "checksum": null
+    }
+  },
+  "download_size": 60557,
+  "features": {
+    "story": {
+      "feature": {
+        "id": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "type": {
+          "names": [
+            "context",
+            "question"
+          ],
+          "_type": "ClassLabel"
+        },
+        "text": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "supporting_ids": {
+          "feature": {
+            "dtype": "string",
+            "_type": "Value"
+          },
+          "_type": "Sequence"
+        },
+        "answer": {
+          "dtype": "string",
+          "_type": "Value"
+        }
+      },
+      "_type": "Sequence"
+    }
+  },
+  "homepage": "https://research.fb.com/downloads/babi/",
+  "license": "Creative Commons Attribution 3.0 License",
+  "size_in_bytes": 1884407,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 1657998,
+      "num_examples": 2000,
+      "dataset_name": "babi_qa"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 165852,
+      "num_examples": 200,
+      "dataset_name": "babi_qa"
+    }
+  },
+  "version": {
+    "version_str": "1.2.0",
+    "major": 1,
+    "minor": 2,
+    "patch": 0
+  }
+}
