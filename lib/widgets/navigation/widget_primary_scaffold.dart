@@ -20,7 +20,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // App relative file imports
-import '../../screens/general/students/screen_subject_student.dart';
 import '../../screens/general/students/screen_home_student.dart';
 import 'widget_primary_app_bar.dart';
 import 'widget_app_drawer.dart';

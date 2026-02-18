@@ -12,6 +12,8 @@
 import 'package:csc322_starter_app/models/user_profile.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_quizzes_supervisor.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_subject_supervisor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +45,8 @@ class WidgetAppDrawer extends StatelessWidget {
         builder: (BuildContext context, WidgetRef ref, Widget? child) {
           final ProviderAuth _providerAuth = ref.watch(providerAuth);
           final ProviderUserProfile _providerUserProfile = ref.watch(providerUserProfile);
+          final userProfile = ref.watch(providerUserProfile);
+          final isSupervisor = userProfile.userType == UserType.SUPERVISOR;
 
           return Column(
             children: <Widget>[
@@ -62,7 +66,7 @@ class WidgetAppDrawer extends StatelessWidget {
                 // ,
                 automaticallyImplyLeading: false,
               ),
-              // Divider(),
+              Divider(),
               ListTile(
                 leading: Icon(Icons.home), 
                 title: Text('Home'), 
@@ -76,22 +80,32 @@ class WidgetAppDrawer extends StatelessWidget {
                   context.push(ScreenProfileEdit.routeName);
                 },
               ),
+              if (isSupervisor)
+                ListTile(
+                  leading: Icon(Icons.list_alt_outlined), 
+                  title: Text('Subjects'), 
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    context.push(ScreenSubjectSupervisor.routeName);
+                  }
+                ),
               ListTile(
                 leading: Icon(Icons.book_online_outlined), 
                 title: Text('Quizzes'), 
                 onTap: () {
                   Navigator.of(context).pop();
-                  context.push(ScreenQuizzesStudent.routeName);
+                  context.push(isSupervisor ? ScreenQuizzesSupervisor.routeName : ScreenQuizzesStudent.routeName);
                 }
               ),
-              ListTile(
-                leading: Icon(Icons.bolt_outlined), 
-                title: Text('BAY-min Persona'), 
-                onTap: () {
-                  Navigator.of(context).pop();
-                  context.push(ScreenBayminStudent.routeName);
-                }
-              ),
+              if (!isSupervisor)
+                ListTile(
+                  leading: Icon(Icons.bolt_outlined), 
+                  title: Text('BAY-min Persona'), 
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    context.push(ScreenBayminStudent.routeName);
+                  }
+                ),
               Divider(),
               ListTile(
                 leading: Icon(Icons.settings),

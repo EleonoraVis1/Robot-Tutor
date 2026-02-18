@@ -20,6 +20,7 @@ import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistor
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_module_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_quizzes_supervisor.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_studentinfo_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_subject_supervisor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -28,7 +29,6 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 
 // App relative file imports
-import 'screens/general/students/screen_subject_student.dart';
 import 'screens/general/students/screen_home_student.dart';
 import 'widgets/navigation/widget_primary_scaffold.dart';
 import 'screens/auth/screen_login_validation.dart';
@@ -127,11 +127,6 @@ class _MyAppState extends State<MyApp> {
             ScreenHomeStudent(),
       ),
       GoRoute(
-        path: ScreenSubjectStudent.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenSubjectStudent(),
-      ),
-      GoRoute(
         path: ScreenQuizzesStudent.routeName,
         builder: (BuildContext context, GoRouterState state) =>
             ScreenQuizzesStudent(),
@@ -155,6 +150,11 @@ class _MyAppState extends State<MyApp> {
         path: ScreenAddStudentSupervisor.routeName,
         builder: (BuildContext context, GoRouterState state) =>
             ScreenAddStudentSupervisor(),
+      ),
+      GoRoute(
+        path: ScreenStudentinfoSupervisor.routeName,
+        builder: (BuildContext context, GoRouterState state) =>
+            ScreenStudentinfoSupervisor(),
       ),
       GoRoute(
         path: ScreenChathistorySupervisor.routeName,

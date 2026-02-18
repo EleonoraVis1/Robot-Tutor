@@ -1,4 +1,6 @@
+import 'package:csc322_starter_app/screens/general/students/screen_module_student.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SubjectCard extends StatelessWidget {
   final String title;
@@ -14,7 +16,7 @@ class SubjectCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
-          // TODO: navigate to subject screen
+          context.push(ScreenModuleStudent.routeName);
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

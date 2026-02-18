@@ -4,15 +4,21 @@ import 'dart:async';
 // Flutter external package imports
 import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent_supervisor.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_module_supervisor.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_studentinfo_supervisor.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 // App relative file imports
 import '../../../util/message_display/snackbar.dart';
 
-const List<Map<String, String>> _kPlaceholderStudents = [];
+const List<Map<String, String>> _kPlaceholderStudents = [
+  {'name': 'Alex James (Test Student)', 'email': 'alexjames@gmail.com'}
+];
 
 //////////////////////////////////////////////////////////////////////////
 // StateFUL widget which manages state. Simply initializes the state object.
@@ -57,12 +63,27 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
   //////////////////////////////////////////////////////////////////////////
   // Primary Flutter method overridden which describes the layout and bindings for this widget.
   //////////////////////////////////////////////////////////////////////////
+  void _openAddStudents() {
+    context.push(ScreenAddStudentSupervisor.routeName);
+  }
+
+  void _openStudentInfo() {
+    context.push(ScreenStudentinfoSupervisor.routeName);
+  }
+
   @override
   Widget build(BuildContext context) {
     final profileProvider = ref.watch(providerUserProfile);
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      body: _buildSupervisorView(profileProvider)      
+      body: _buildSupervisorView(profileProvider),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blue,
+        shape: ShapeBorder.lerp(CircleBorder(), StadiumBorder(), 0.5),
+        onPressed: _openAddStudents,
+        splashColor: Theme.of(context).primaryColor,
+        child: Icon(FontAwesomeIcons.plus, color: Colors.black),
+      ), 
     );
   }
 
@@ -139,9 +160,7 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
           title: Text(student['name'] ?? ''),
           subtitle: Text(student['email'] ?? ''),
           trailing: const Icon(Icons.chevron_right),
-          onTap: () {
-            // TODO: navigate to student detail screen
-          },
+          onTap: _openStudentInfo,
         );
       },
     );

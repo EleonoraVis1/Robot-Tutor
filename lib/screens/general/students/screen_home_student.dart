@@ -4,11 +4,13 @@ import 'dart:async';
 // Flutter external package imports
 import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_module_student.dart';
 import 'package:csc322_starter_app/widgets/general/subject_card.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 // App relative file imports
 import '../../../util/message_display/snackbar.dart';
@@ -63,6 +65,7 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
   //////////////////////////////////////////////////////////////////////////
   // Primary Flutter method overridden which describes the layout and bindings for this widget.
   //////////////////////////////////////////////////////////////////////////
+
   @override
   Widget build(BuildContext context) {
     final profileProvider = ref.watch(providerUserProfile);
@@ -100,14 +103,12 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
               crossAxisCount: 2,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              children: _kSubjects
-                  .map(
-                    (s) => SubjectCard(
-                      title: s['title'] as String,
-                      icon: s['icon'] as IconData,
-                    ),
-                  )
-                  .toList(),
+              children: _kSubjects.map((s) { 
+                  return SubjectCard(
+                    title: s['title'] as String,
+                    icon: s['icon'] as IconData,
+                  );
+                }).toList(),
             ),
           ),
         ],
