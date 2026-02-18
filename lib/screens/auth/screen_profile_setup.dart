@@ -63,6 +63,8 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
+  UserType _userType = UserType.STUDENT;
+  
 
   ////////////////////////////////////////////////////////////////
   // Runs the following code once upon initialization
@@ -78,6 +80,8 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
         _firstNameController.text = _providerUserProfile.firstName;
         _lastNameController.text = _providerUserProfile.lastName;
       }
+
+      _userType = _providerUserProfile.userType;
 
       // Now initialized; run super method
       _isInit = false;
@@ -184,6 +188,7 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
       // Update profile information and write to database
       _providerUserProfile.firstName = _firstNameController.text.trim();
       _providerUserProfile.lastName = _lastNameController.text.trim();
+      _providerUserProfile.userType = _userType;
       _providerUserProfile.accountCreationStep = AccountCreationStep.ACC_STEP_ONBOARDING_COMPLETE;
       _providerUserProfile.writeUserProfileToDb();
 
@@ -206,7 +211,7 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
     setState(() {
       editingPicture = false;
     });
-    Snackbar.show(SnackbarDisplayType.SB_SUCCESS, 'Profile Photo Saved Sucessfully', context);
+    Snackbar.show(SnackbarDisplayType.SB_SUCCESS, 'Profile Photo Saved Successfully', context);
     // Get the file that was chosen
   }
 
@@ -475,6 +480,24 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                       decoration: InputDecoration(labelText: 'Last Name'),
                     ),
                   ),
+                  if(_providerUserProfile.accountCreationStep != AccountCreationStep.ACC_STEP_ONBOARDING_COMPLETE)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: CheckboxListTile(
+                        title: const Text("Is Supervisor?"),
+                        value: _userType == UserType.SUPERVISOR,
+                        onChanged: (value) {
+                          setState(() {
+                            if (value == true)
+                            _userType = UserType.SUPERVISOR;
+                            else
+                            _userType = UserType.STUDENT;
+                          });
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
                   ///////////////////////////////////////////////////////////////////////
                   /// Continue Button and Cancel Button
                   ///////////////////////////////////////////////////////////////////////
