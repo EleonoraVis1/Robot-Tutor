@@ -13,7 +13,7 @@ import '../../../util/message_display/snackbar.dart';
 // StateFUL widget which manages state. Simply initializes the state object.
 //////////////////////////////////////////////////////////////////////////
 class ScreenChathistorySupervisor extends ConsumerStatefulWidget {
-  static const routeName = '/chathistory_supervisor';
+  static const routeName = '/chat_history';
 
   @override
   ConsumerState<ScreenChathistorySupervisor> createState() => _ScreenChathistorySupervisorState();
