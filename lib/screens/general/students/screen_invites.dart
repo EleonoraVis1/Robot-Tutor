@@ -3,6 +3,7 @@ import 'dart:async';
 
 // Flutter external package imports
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/models/invite.dart';
 import 'package:csc322_starter_app/providers/provides_invites.dart';
 import 'package:csc322_starter_app/widgets/general/invite_avatar.dart';
@@ -68,6 +69,7 @@ class _ScreenInvitesState extends ConsumerState<ScreenInvites> {
     final firestore = FirebaseFirestore.instance;
     final studentUid = FirebaseAuth.instance.currentUser!.uid;
     final supervisorUid = invite.supervisorUid;
+    final userProfile = ref.watch(providerUserProfile);
 
     final batch = firestore.batch();
 
@@ -103,6 +105,8 @@ class _ScreenInvitesState extends ConsumerState<ScreenInvites> {
 
     batch.set(supervisorStudentRef, {
       'uid': studentUid,
+      'fullName': userProfile.firstName + " " + userProfile.lastName,
+      'email': userProfile.email,
       'addedAt': FieldValue.serverTimestamp(),
     });
 

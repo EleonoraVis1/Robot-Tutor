@@ -8,11 +8,20 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path_provider/path_provider.dart';
 
+final authStateProvider = StreamProvider<User?>((ref) {
+  return FirebaseAuth.instance.authStateChanges();
+});
+
 final invitesProvider = StreamProvider<List<Invite>>((ref) {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user == null) {
-    return const Stream.empty();
-  }
+  final authAsync = ref.watch(authStateProvider);
+
+  return authAsync.when(
+    loading: () => const Stream.empty(),
+    error: (_, __) => const Stream.empty(),
+    data: (user) {
+      if (user == null) {
+        return const Stream.empty();
+      }
 
   final firestore = FirebaseFirestore.instance;
   final storage = FirebaseStorage.instance;
@@ -56,5 +65,7 @@ final invitesProvider = StreamProvider<List<Invite>>((ref) {
     }
 
     return invites;
-  });
+      });
+    },
+  );
 });

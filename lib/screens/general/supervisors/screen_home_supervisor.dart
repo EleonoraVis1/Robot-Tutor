@@ -3,10 +3,12 @@ import 'dart:async';
 
 // Flutter external package imports
 import 'package:csc322_starter_app/main.dart';
+import 'package:csc322_starter_app/providers/provider_students.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_module_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_studentinfo_supervisor.dart';
+import 'package:csc322_starter_app/widgets/general/student_avatar.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,10 +17,6 @@ import 'package:go_router/go_router.dart';
 
 // App relative file imports
 import '../../../util/message_display/snackbar.dart';
-
-const List<Map<String, String>> _kPlaceholderStudents = [
-  {'name': 'Alex James (Test Student)', 'email': 'alexjames@gmail.com'}
-];
 
 //////////////////////////////////////////////////////////////////////////
 // StateFUL widget which manages state. Simply initializes the state object.
@@ -91,6 +89,7 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
     final String firstName = profileProvider.dataLoaded
         ? profileProvider.firstName
         : 'Supervisor';
+    final studentsAsync = ref.watch(studentsProvider);
 
     return Padding(
       padding: const EdgeInsets.all(20.0),
@@ -109,9 +108,52 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
           ),
           const SizedBox(height: 24),
           Expanded(
-            child: _kPlaceholderStudents.isEmpty
-                ? _buildEmptyStudentState()
-                : _buildStudentList(),
+            child: studentsAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(child: Text('Error: $e')),
+              data: (students) {
+                if (students.isEmpty) {
+                  return _buildEmptyStudentState();  
+                }
+
+                return ListView.builder(
+                  itemCount: students.length,
+                  itemBuilder: (context, index) {
+                    final student = students[index];
+
+                    return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        leading: StudentAvatar(student: student),
+                        title: Text(
+                          student.fullName,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        subtitle: Text(student.email),
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: Colors.black54,
+                        ),
+                        onTap: _openStudentInfo,
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -140,29 +182,6 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildStudentList() {
-    return ListView.separated(
-      itemCount: _kPlaceholderStudents.length,
-      separatorBuilder: (_, __) => const Divider(height: 1),
-      itemBuilder: (context, index) {
-        final student = _kPlaceholderStudents[index];
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundColor: Colors.blueGrey[100],
-            child: Text(
-              student['name']![0].toUpperCase(),
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          title: Text(student['name'] ?? ''),
-          subtitle: Text(student['email'] ?? ''),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: _openStudentInfo,
-        );
-      },
     );
   }
 }
