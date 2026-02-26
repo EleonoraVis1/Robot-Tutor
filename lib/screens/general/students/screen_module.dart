@@ -12,17 +12,17 @@ import '../../../util/message_display/snackbar.dart';
 //////////////////////////////////////////////////////////////////////////
 // StateFUL widget which manages state. Simply initializes the state object.
 //////////////////////////////////////////////////////////////////////////
-class ScreenModuleSupervisor extends ConsumerStatefulWidget {
-  static const routeName = '/module_supervisor';
+class ScreenModule extends ConsumerStatefulWidget {
+  static const routeName = '/module_student';
 
   @override
-  ConsumerState<ScreenModuleSupervisor> createState() => _ScreenModuleSupervisorState();
+  ConsumerState<ScreenModule> createState() => _ScreenModuleState();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // The actual STATE which is managed by the above widget.
 //////////////////////////////////////////////////////////////////////////
-class _ScreenModuleSupervisorState extends ConsumerState<ScreenModuleSupervisor> {
+class _ScreenModuleState extends ConsumerState<ScreenModule> {
   // The "instance variables" managed in this state
   bool _isInit = true;
 
@@ -52,7 +52,7 @@ class _ScreenModuleSupervisorState extends ConsumerState<ScreenModuleSupervisor>
     return Scaffold(
       body: Center(child: Text('Module')),
       appBar: AppBar(
-        title: Text("Module"),
+        title: Text("Modules"),
       ),
     );
   }

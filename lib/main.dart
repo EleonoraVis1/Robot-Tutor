@@ -13,13 +13,11 @@
 
 // Flutter external package imports
 import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
-import 'package:csc322_starter_app/screens/general/students/screen_invites.dart';
-import 'package:csc322_starter_app/screens/general/students/screen_module_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistory_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
-import 'package:csc322_starter_app/screens/general/supervisors/screen_module_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_quizzes_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_studentinfo_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_subject_supervisor.dart';
@@ -133,19 +131,14 @@ class _MyAppState extends State<MyApp> {
             ScreenQuizzesStudent(),
       ),
       GoRoute(
-        path: ScreenModuleStudent.routeName,
+        path: ScreenModule.routeName,
         builder: (BuildContext context, GoRouterState state) =>
-            ScreenModuleStudent(),
+            ScreenModule(),
       ),
       GoRoute(
         path: ScreenBayminStudent.routeName,
         builder: (BuildContext context, GoRouterState state) =>
             ScreenBayminStudent(),
-      ),
-      GoRoute(
-        path: ScreenInvites.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenInvites(),
       ),
       GoRoute(
         path: ScreenHomeSupervisor.routeName,
@@ -166,11 +159,6 @@ class _MyAppState extends State<MyApp> {
         path: ScreenChathistorySupervisor.routeName,
         builder: (BuildContext context, GoRouterState state) =>
             ScreenChathistorySupervisor(),
-      ),
-      GoRoute(
-        path: ScreenModuleSupervisor.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenModuleSupervisor(),
       ),
       GoRoute(
         path: ScreenQuizzesSupervisor.routeName,

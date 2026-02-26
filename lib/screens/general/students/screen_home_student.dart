@@ -4,7 +4,7 @@ import 'dart:async';
 // Flutter external package imports
 import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
-import 'package:csc322_starter_app/screens/general/students/screen_module_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
 import 'package:csc322_starter_app/widgets/general/subject_card.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

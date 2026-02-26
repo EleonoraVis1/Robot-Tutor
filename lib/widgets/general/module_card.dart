@@ -2,11 +2,11 @@ import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class SubjectCard extends StatelessWidget {
+class ModuleCard extends StatelessWidget {
   final String title;
   final IconData icon;
 
-  const SubjectCard({required this.title, required this.icon});
+  const ModuleCard({required this.title, required this.icon});
 
   @override
   Widget build(BuildContext context) {

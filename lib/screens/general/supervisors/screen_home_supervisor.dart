@@ -6,7 +6,6 @@ import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/providers/provider_students.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent_supervisor.dart';
-import 'package:csc322_starter_app/screens/general/supervisors/screen_module_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_studentinfo_supervisor.dart';
 import 'package:csc322_starter_app/widgets/general/student_avatar.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';

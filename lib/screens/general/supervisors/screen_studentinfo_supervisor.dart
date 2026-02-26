@@ -2,14 +2,24 @@
 import 'dart:async';
 
 // Flutter external package imports
+import 'package:csc322_starter_app/main.dart';
+import 'package:csc322_starter_app/providers/provider_user_profile.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
+import 'package:csc322_starter_app/widgets/general/subject_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 // App imports
 import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistory_supervisor.dart';
-import 'package:csc322_starter_app/screens/general/supervisors/screen_module_supervisor.dart';
 import '../../../util/message_display/snackbar.dart';
+
+const List<Map<String, dynamic>> _kSubjects = [
+  {'title': 'Math', 'icon': Icons.calculate},
+  {'title': 'Korean', 'icon': Icons.language},
+  {'title': 'Physics', 'icon': Icons.science},
+  {'title': 'English', 'icon': Icons.menu_book},
+];
 
 //////////////////////////////////////////////////////////////////////////
 // Stateful widget
@@ -52,6 +62,8 @@ class _ScreenStudentinfoSupervisorState
     // Load data here if needed
   }
 
+  
+
   ////////////////////////////////////////////////////////////////
   // Navigation
   ////////////////////////////////////////////////////////////////
@@ -60,49 +72,41 @@ class _ScreenStudentinfoSupervisorState
   }
 
   void _openModuleInfo() {
-    context.push(ScreenModuleSupervisor.routeName);
+    context.push(ScreenModule.routeName);
   }
 
   @override
   Widget build(BuildContext context) {
+    final profileProvider = ref.watch(providerUserProfile);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Student Info"),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton.icon(
-                  onPressed: _openChatHistory,
-                  icon: const Icon(Icons.chat_bubble_outline),
-                  label: const Text("Chat History"),
-                ),
-              ],
+      backgroundColor: Colors.grey[100],
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Subjects',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 6,
-                  ),
-                  child: ListTile(
-                    title: Text("Test ${index + 1}"),
-                    onTap: _openModuleInfo,
-                  ),
-                );
-              },
+            const SizedBox(height: 16),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                children: _kSubjects.map((s) { 
+                    return SubjectCard(
+                      title: s['title'] as String,
+                      icon: s['icon'] as IconData,
+                    );
+                  }).toList(),
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      )
     );
   }
 }
