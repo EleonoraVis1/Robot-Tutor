@@ -64,8 +64,10 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
     context.push(ScreenAddStudentSupervisor.routeName);
   }
 
-  void _openStudentInfo() {
-    context.push(ScreenStudentinfoSupervisor.routeName);
+  void _openStudentInfo(String studentId) {
+    context.push(
+      '${ScreenStudentinfoSupervisor.routeName}/${studentId}',
+    );
   }
 
   @override
@@ -146,7 +148,9 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
                           size: 16,
                           color: Colors.black54,
                         ),
-                        onTap: _openStudentInfo,
+                        onTap: () {
+                          _openStudentInfo(student.id);
+                        },
                       ),
                     );
                   },

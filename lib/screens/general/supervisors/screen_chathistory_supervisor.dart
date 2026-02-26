@@ -1,58 +1,52 @@
-// Flutter imports
-import 'dart:async';
-
-// Flutter external package imports
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:csc322_starter_app/providers/provider_messages.dart';
+import 'package:csc322_starter_app/widgets/general/chat_bubble.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// App relative file imports
-import '../../../util/message_display/snackbar.dart';
-
-//////////////////////////////////////////////////////////////////////////
-// StateFUL widget which manages state. Simply initializes the state object.
-//////////////////////////////////////////////////////////////////////////
-class ScreenChathistorySupervisor extends ConsumerStatefulWidget {
+class ScreenChathistorySupervisor extends ConsumerWidget {
   static const routeName = '/chat_history';
 
-  @override
-  ConsumerState<ScreenChathistorySupervisor> createState() => _ScreenChathistorySupervisorState();
-}
+  final String studentUid;
 
-//////////////////////////////////////////////////////////////////////////
-// The actual STATE which is managed by the above widget.
-//////////////////////////////////////////////////////////////////////////
-class _ScreenChathistorySupervisorState extends ConsumerState<ScreenChathistorySupervisor> {
-  // The "instance variables" managed in this state
-  bool _isInit = true;
-
-  ////////////////////////////////////////////////////////////////
-  // Runs the following code once upon initialization
-  ////////////////////////////////////////////////////////////////
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      _init();
-      _isInit = false;
-      super.didChangeDependencies();
-    }
-  }
+  const ScreenChathistorySupervisor({
+    super.key,
+    required this.studentUid,
+  });
 
   @override
-  void initState() {
-    super.initState();
-  }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final messagesAsync =
+        ref.watch(chatMessagesProviderForStudent(studentUid));
 
-  ////////////////////////////////////////////////////////////////
-  // Initializes state variables and resources
-  ////////////////////////////////////////////////////////////////
-  Future<void> _init() async {}
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text('Chat history')),
       appBar: AppBar(
-        title: Text("Chat History"),
+        title: const Text('Chat History'),
+      ),
+      body: messagesAsync.when(
+        loading: () =>
+            const Center(child: CircularProgressIndicator()),
+        error: (e, _) =>
+            Center(child: Text('Error: $e')),
+        data: (messages) {
+          if (messages.isEmpty) {
+            return const Center(
+              child: Text('No messages yet'),
+            );
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: messages.length,
+            itemBuilder: (context, index) {
+              final msg = messages[index];
+
+              return ChatBubble(
+                message: msg.message,
+                isStudent: msg.from == 'student',
+              );
+            },
+          );
+        },
       ),
     );
   }

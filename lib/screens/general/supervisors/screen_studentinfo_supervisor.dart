@@ -25,9 +25,14 @@ const List<Map<String, dynamic>> _kSubjects = [
 // Stateful widget
 //////////////////////////////////////////////////////////////////////////
 class ScreenStudentinfoSupervisor extends ConsumerStatefulWidget {
+  
   static const routeName = '/studentinfo_supervisor';
+  final String studentUid;
 
-  const ScreenStudentinfoSupervisor({super.key});
+  const ScreenStudentinfoSupervisor({
+    super.key,
+    required this.studentUid,
+  }); 
 
   @override
   ConsumerState<ScreenStudentinfoSupervisor> createState() =>
@@ -86,6 +91,11 @@ class _ScreenStudentinfoSupervisorState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            ElevatedButton(onPressed: () {
+              context.push(
+                '${ScreenChathistorySupervisor.routeName}/${widget.studentUid}',
+              );
+            }, child: Icon(Icons.chat_bubble_outline_outlined)),
             const Text(
               'Subjects',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),

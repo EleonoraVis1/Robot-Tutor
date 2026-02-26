@@ -151,14 +151,18 @@ class _MyAppState extends State<MyApp> {
             ScreenAddStudentSupervisor(),
       ),
       GoRoute(
-        path: ScreenStudentinfoSupervisor.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenStudentinfoSupervisor(),
+        path: '${ScreenStudentinfoSupervisor.routeName}/:studentUid',
+        builder: (context, state) {
+          final studentUid = state.pathParameters['studentUid']!;
+          return ScreenStudentinfoSupervisor(studentUid: studentUid);
+        },
       ),
       GoRoute(
-        path: ScreenChathistorySupervisor.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenChathistorySupervisor(),
+        path: '${ScreenChathistorySupervisor.routeName}/:studentUid',
+        builder: (context, state) {
+          final studentUid = state.pathParameters['studentUid']!;
+          return ScreenChathistorySupervisor(studentUid: studentUid);
+        },
       ),
       GoRoute(
         path: ScreenQuizzesSupervisor.routeName,
