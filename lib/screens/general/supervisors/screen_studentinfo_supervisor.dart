@@ -86,16 +86,20 @@ class _ScreenStudentinfoSupervisorState
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Chat history',
+        child: const Icon(Icons.chat),
+        onPressed: () {
+          context.push(
+            '${ScreenChathistorySupervisor.routeName}/${widget.studentUid}',
+          );
+        },
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ElevatedButton(onPressed: () {
-              context.push(
-                '${ScreenChathistorySupervisor.routeName}/${widget.studentUid}',
-              );
-            }, child: Icon(Icons.chat_bubble_outline_outlined)),
             const Text(
               'Subjects',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
