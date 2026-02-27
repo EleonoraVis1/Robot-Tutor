@@ -4,6 +4,7 @@ import 'dart:async';
 // Flutter external package imports
 import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_chathistory_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
 import 'package:csc322_starter_app/widgets/general/subject_card.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
@@ -73,7 +74,16 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       //appBar: WidgetPrimaryAppBar(title: const Text('Welcome')),
-      body: _buildStudentView(profileProvider)
+      body: _buildStudentView(profileProvider),
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Chat history',
+        child: const Icon(Icons.chat),
+        onPressed: () {
+          context.push(
+            ScreenChathistoryStudent.routeName,
+          );
+        },
+      ),
     );
   }
 

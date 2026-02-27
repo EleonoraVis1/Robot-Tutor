@@ -3,14 +3,11 @@ import 'package:csc322_starter_app/widgets/general/chat_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ScreenChathistorySupervisor extends ConsumerWidget {
+class ScreenChathistoryStudent extends ConsumerWidget {
   static const routeName = '/chat_history_student';
 
-  final String studentUid;
-
-  const ScreenChathistorySupervisor({
+  const ScreenChathistoryStudent({
     super.key,
-    required this.studentUid,
   });
 
   @override

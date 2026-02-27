@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/chat_message.dart';
 
+final authStateProvider = StreamProvider<User?>((ref) {
+  return FirebaseAuth.instance.authStateChanges();
+});
+
 Query<Map<String, dynamic>> _chatQuery(String studentUid) {
   return FirebaseFirestore.instance
       .collection('conversations')
@@ -21,15 +25,21 @@ List<ChatMessage> _mapMessages(QuerySnapshot snapshot) {
 }
 
 final chatMessagesProvider =
-  StreamProvider<List<ChatMessage>>((ref) {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return const Stream.empty();
+    StreamProvider<List<ChatMessage>>((ref) {
+  final authAsync = ref.watch(authStateProvider);
 
-    return _chatQuery(user.uid)
-        .snapshots()
-        .map(_mapMessages);
+  return authAsync.when(
+    loading: () => const Stream.empty(),
+    error: (_, __) => const Stream.empty(),
+    data: (user) {
+      if (user == null) return const Stream.empty();
+
+      return _chatQuery(user.uid)
+          .snapshots()
+          .map(_mapMessages);
+    },
+  );
 });
-
 final chatMessagesProviderForStudent =
     StreamProvider.family<List<ChatMessage>, String>((ref, studentUid) {
   return _chatQuery(studentUid)

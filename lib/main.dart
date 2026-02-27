@@ -13,6 +13,7 @@
 
 // Flutter external package imports
 import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_chathistory_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent_supervisor.dart';
@@ -149,6 +150,11 @@ class _MyAppState extends State<MyApp> {
         path: ScreenAddStudentSupervisor.routeName,
         builder: (BuildContext context, GoRouterState state) =>
             ScreenAddStudentSupervisor(),
+      ),
+      GoRoute(
+        path: ScreenChathistoryStudent.routeName,
+        builder: (BuildContext context, GoRouterState state) =>
+            ScreenChathistoryStudent(),
       ),
       GoRoute(
         path: '${ScreenStudentinfoSupervisor.routeName}/:studentUid',

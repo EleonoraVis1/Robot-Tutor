@@ -86,6 +86,9 @@ class _ScreenStudentinfoSupervisorState
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        title: const Text('Student Info'),
+      ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Chat history',
         child: const Icon(Icons.chat),
