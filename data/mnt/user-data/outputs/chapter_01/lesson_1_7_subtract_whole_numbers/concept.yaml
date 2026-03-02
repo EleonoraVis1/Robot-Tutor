@@ -1,0 +1,61 @@
+# =============================================================================
+# GO Math Grade 4 — Chapter 1, Lesson 1.7
+# concept.yaml — concepts and worked examples only
+# Firestore path: subjects/math/grades/4/lessons/math_g4_ch1_l7
+# Schema version: 1.1
+# EGR302 Reachy Mini (BAY-min) Tutoring Robot — Data Pipeline
+# Role owner: Haneul (module/question design & data handling)
+# =============================================================================
+
+lesson_id: "math_g4_ch1_l7"
+subject: math
+grade: 4
+unit: 1
+chapter: 1
+lesson: 7
+title: "Subtract Whole Numbers"
+essential_question: "How can you subtract whole numbers?"
+standards: ["4.NBT.4", "4.NBT.3", "4.OA.3"]
+mathematical_practices: ["MP.1", "MP.5", "MP.8"]
+
+citation:
+  textbook: "GO Math Grade 4 California (Houghton Mifflin Harcourt)"
+  chapter: 1
+  lesson: 7
+  pages: [31, 32, 33, 34]
+
+has_visual: false
+
+concepts:
+  - id: c1
+    term: "subtraction algorithm"
+    definition: >
+      Line up the minuend and subtrahend by place value; subtract column
+      by column from right to left, regrouping (borrowing) when needed.
+    example: "16,421 − 14,831 = 1,590"
+
+  - id: c2
+    term: "inverse operations"
+    definition: >
+      Operations that undo each other. Addition and subtraction are inverse
+      operations — you can use addition to check a subtraction answer.
+    example: "1,590 + 14,831 = 16,421 ✓"
+
+  - id: c3
+    term: "estimate a difference"
+    definition: >
+      Round each number to a specified place value, then subtract.
+    example: "16,000 − 15,000 = 1,000 (estimate for 16,421 − 14,831)"
+
+worked_examples:
+  - id: we1
+    title: "Subtract 16,421 − 14,831"
+    has_visual: false
+    steps:
+      - "Estimate: 16,000 − 15,000 = 1,000."
+      - "Step 1 — Ones: 1 − 1 = 0. Tens: regroup 4 hundreds 2 tens → 3 hundreds 12 tens; 12 − 3 = 9."
+      - "Step 2 — Hundreds: regroup 6 thousands 3 hundreds → 5 thousands 13 hundreds; 13 − 8 = 5."
+      - "Step 3 — Thousands: 5 − 4 = 1. Ten-thousands: 1 − 1 = 0. Difference: 1,590."
+      - "Check: 1,590 + 14,831 = 16,421 ✓"
+    answer: "1,590 (Mt. Bona is 1,590 feet taller)"
+    citation_page: 31
