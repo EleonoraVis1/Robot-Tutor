@@ -1,0 +1,94 @@
+# =============================================================================
+# GO Math Grade 4 — Chapter 1, Lesson 1.4
+# concept.yaml — concepts and worked examples only
+# Firestore path: subjects/math/grades/4/lessons/math_g4_ch1_l4
+# Schema version: 1.1
+# EGR302 Reachy Mini (BAY-min) Tutoring Robot — Data Pipeline
+# Role owner: Haneul (module/question design & data handling)
+# =============================================================================
+
+lesson_id: "math_g4_ch1_l4"
+subject: math
+grade: 4
+unit: 1
+chapter: 1
+lesson: 4
+title: "Round Numbers"
+essential_question: "How can you round numbers?"
+standards: ["4.NBT.3"]
+mathematical_practices: ["MP.1", "MP.2", "MP.5", "MP.7"]
+
+citation:
+  textbook: "GO Math Grade 4 California (Houghton Mifflin Harcourt)"
+  chapter: 1
+  lesson: 4
+  pages: [17, 18, 19, 20]
+
+has_visual: true
+visual_handling: cite_only
+visual_description: >
+  Number lines used for rounding to nearest hundred-thousand (p. 17)
+  and nearest ten-thousand (p. 18 questions). Benchmark estimation
+  images with jars of shells and beads (p. 20).
+
+concepts:
+  - id: c1
+    term: "estimate"
+    definition: >
+      A number close to an exact amount that tells about how many or how much.
+    example: "138,202 rounded to the nearest hundred thousand is about 100,000."
+
+  - id: c2
+    term: "round"
+    definition: >
+      To replace a number with another number that tells about how many or how much.
+      Look at the digit one place to the right of the rounding place:
+      if it is 5 or greater, round up; if less than 5, round down.
+      When a number is exactly halfway, round to the greater number.
+    example: "5,725 rounded to the nearest thousand: hundreds digit is 7 ≥ 5, so round up to 6,000."
+
+  - id: c3
+    term: "benchmark"
+    definition: >
+      A known number of things that helps you understand the size or amount
+      of a different number of things; used in estimation.
+    example: "If 100 shells fill a small jar and a large jar holds about 5 times as many, estimate ≈ 500 shells."
+
+worked_examples:
+  - id: we1
+    title: "Round 138,202 to the nearest hundred thousand using a number line"
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: "Number line 100,000–200,000 with 138,202 and midpoint 150,000 marked (p. 17)."
+    steps:
+      - "Find the hundred-thousands 138,202 lies between: 100,000 < 138,202 < 200,000."
+      - "Halfway point = 150,000."
+      - "138,202 < 150,000, so it is closer to 100,000."
+      - "Rounded: 100,000."
+    answer: "100,000"
+    citation_page: 17
+
+  - id: we2
+    title: "Round 5,725 to the nearest thousand using place value"
+    has_visual: false
+    steps:
+      - "Find the thousands 5,725 lies between: 5,000 < 5,725 < 6,000."
+      - "Look at the digit to the right of the thousands place: hundreds digit = 7."
+      - "7 ≥ 5, so round up."
+      - "Rounded: 6,000."
+    answer: "6,000"
+    citation_page: 18
+
+  - id: we3
+    title: "Try This — Round to the underlined digit"
+    has_visual: false
+    items:
+      - expression: "6̲4,999"
+        answer: "60,000 (ten-thousands place; digit to right = 4 < 5, round down)"
+      - expression: "8̲50,000"
+        answer: "900,000 (hundred-thousands; digit = 5, round up)"
+      - expression: "30̲1,587"
+        answer: "300,000 (ten-thousands; digit = 1 < 5, round down)"
+      - expression: "1̲0,832"
+        answer: "10,000 (ten-thousands; digit = 0 < 5, round down)"
+    citation_page: 18
