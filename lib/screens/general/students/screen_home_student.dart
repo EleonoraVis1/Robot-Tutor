@@ -71,7 +71,6 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
     final profileProvider = ref.watch(providerUserProfile);
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       //appBar: WidgetPrimaryAppBar(title: const Text('Welcome')),
       body: _buildStudentView(profileProvider)
     );

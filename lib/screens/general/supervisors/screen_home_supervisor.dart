@@ -73,7 +73,6 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
   Widget build(BuildContext context) {
     final profileProvider = ref.watch(providerUserProfile);
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       body: _buildSupervisorView(profileProvider),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue,
@@ -104,7 +103,7 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
           const SizedBox(height: 6),
           const Text(
             'Here are your students:',
-            style: TextStyle(fontSize: 16, color: Colors.black54),
+            style: TextStyle(fontSize: 16),
           ),
           const SizedBox(height: 24),
           Expanded(
@@ -124,7 +123,6 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
                     return Container(
                       margin: const EdgeInsets.symmetric(vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.white,
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
@@ -145,7 +143,7 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
                         trailing: const Icon(
                           Icons.arrow_forward_ios,
                           size: 16,
-                          color: Colors.black54,
+                          color: Colors.grey,
                         ),
                         onTap: _openStudentInfo,
                       ),
