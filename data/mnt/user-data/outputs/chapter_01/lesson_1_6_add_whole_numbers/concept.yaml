@@ -1,0 +1,73 @@
+# =============================================================================
+# GO Math Grade 4 — Chapter 1, Lesson 1.6
+# concept.yaml — concepts and worked examples only
+# Firestore path: subjects/math/grades/4/lessons/math_g4_ch1_l6
+# Schema version: 1.1
+# EGR302 Reachy Mini (BAY-min) Tutoring Robot — Data Pipeline
+# Role owner: Haneul (module/question design & data handling)
+# =============================================================================
+
+lesson_id: "math_g4_ch1_l6"
+subject: math
+grade: 4
+unit: 1
+chapter: 1
+lesson: 6
+title: "Add Whole Numbers"
+essential_question: "How can you add whole numbers?"
+standards: ["4.NBT.4", "4.OA.3", "4.NBT.3"]
+mathematical_practices: ["MP.1", "MP.5", "MP.8"]
+
+citation:
+  textbook: "GO Math Grade 4 California (Houghton Mifflin Harcourt)"
+  chapter: 1
+  lesson: 6
+  pages: [27, 28, 29, 30]
+
+has_visual: false
+
+concepts:
+  - id: c1
+    term: "addition algorithm"
+    definition: >
+      Line up addends by place value, then add column by column
+      from right to left, regrouping (carrying) when a column sum ≥ 10.
+    example: "570,374 + 86,051 = 656,425"
+
+  - id: c2
+    term: "estimate a sum"
+    definition: >
+      Round each addend to a specified place value, then add the rounded values.
+    example: "2,717 + 222 ≈ 3,000 + 200 = 3,200"
+
+  - id: c3
+    term: "Commutative Property of Addition"
+    definition: "Changing the order of addends does not change the sum."
+    example: "4 + 5 = 5 + 4"
+
+  - id: c4
+    term: "Associative Property of Addition"
+    definition: "Changing the grouping of addends does not change the sum."
+    example: "4 + (7 + 3) = (4 + 7) + 3"
+
+worked_examples:
+  - id: we1
+    title: "Add 570,374 + 86,051"
+    has_visual: false
+    steps:
+      - "Step 1 — Add ones (4 + 1 = 5). Add tens (7 + 5 = 12 → write 2, carry 1)."
+      - "Step 2 — Add hundreds (1+3+0 = 4). Add thousands (0+6 = 6)."
+      - "Step 3 — Add ten-thousands (7+8 = 15 → write 5, carry 1)."
+      - "Step 4 — Add hundred-thousands (1+5+0 = 6). Final sum: 656,425."
+    answer: "656,425"
+    citation_page: 27
+
+  - id: we2
+    title: "Estimate, then find 2,717 + 222"
+    has_visual: false
+    steps:
+      - "Estimate: 2,717 ≈ 3,000 (nearest thousand); 222 ≈ 200 (nearest hundred). Estimate ≈ 3,200."
+      - "Exact: 2,717 + 222 = 2,939."
+      - "Is 2,939 reasonable? Yes, it is close to 3,200."
+    answer: "Exact: 2,939; Estimate: ≈ 3,200"
+    citation_page: 28
