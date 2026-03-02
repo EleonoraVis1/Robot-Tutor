@@ -1,0 +1,181 @@
+# =============================================================================
+# GO Math Grade 4 — Chapter 1 Metadata Summary
+# chapter_metadata.yaml
+# Schema version: 1.1
+# EGR302 Reachy Mini (BAY-min) Tutoring Robot — Data Pipeline
+# Role owner: Haneul (module/question design & data handling)
+#
+# File layout (v1.1):
+#   chapter_01/
+#     chapter_metadata.yaml            ← this file
+#     lesson_1_1_model_place_value/
+#       concept.yaml
+#       questions.yaml
+#     lesson_1_2_read_write_numbers/
+#       concept.yaml
+#       questions.yaml
+#     lesson_1_3_compare_order_numbers/
+#       concept.yaml
+#       questions.yaml
+#     lesson_1_4_round_numbers/
+#       concept.yaml
+#       questions.yaml
+#     lesson_1_5_rename_numbers/
+#       concept.yaml
+#       questions.yaml
+#     lesson_1_6_add_whole_numbers/
+#       concept.yaml
+#       questions.yaml
+#     lesson_1_7_subtract_whole_numbers/
+#       concept.yaml
+#       questions.yaml
+#     lesson_1_8_problem_solving_comparison/
+#       concept.yaml
+#       questions.yaml
+# =============================================================================
+
+chapter: 1
+title: "Place Value, Addition, and Subtraction to One Million"
+critical_area: "Place Value and Operations with Whole Numbers"
+grade: 4
+total_lessons: 8
+schema_version: "1.1"
+
+# ── Standards coverage map ───────────────────────────────────────────────────
+standards_coverage:
+  "4.NBT.1":
+    description: "Recognise that in a multi-digit whole number, a digit in one place represents ten times what it represents in the place to its right."
+    lessons: ["math_g4_ch1_l1", "math_g4_ch1_l5"]
+  "4.NBT.2":
+    description: "Read and write multi-digit whole numbers; compare two multi-digit numbers."
+    lessons: ["math_g4_ch1_l2", "math_g4_ch1_l3", "math_g4_ch1_l5"]
+  "4.NBT.3":
+    description: "Use place value understanding to round multi-digit whole numbers."
+    lessons: ["math_g4_ch1_l4", "math_g4_ch1_l6", "math_g4_ch1_l7"]
+  "4.NBT.4":
+    description: "Fluently add and subtract multi-digit whole numbers using the standard algorithm."
+    lessons: ["math_g4_ch1_l6", "math_g4_ch1_l7", "math_g4_ch1_l8"]
+  "4.OA.3":
+    description: "Solve multi-step word problems posed with whole numbers."
+    lessons: ["math_g4_ch1_l6", "math_g4_ch1_l7"]
+
+# ── Vocabulary introduced in Chapter 1 ──────────────────────────────────────
+vocabulary:
+  - term: "place value"
+    lesson_introduced: "math_g4_ch1_l1"
+  - term: "base-ten relationship"
+    lesson_introduced: "math_g4_ch1_l1"
+  - term: "place-value chart"
+    lesson_introduced: "math_g4_ch1_l1"
+  - term: "standard form"
+    lesson_introduced: "math_g4_ch1_l2"
+  - term: "word form"
+    lesson_introduced: "math_g4_ch1_l2"
+  - term: "expanded form"
+    lesson_introduced: "math_g4_ch1_l2"
+  - term: "period"
+    lesson_introduced: "math_g4_ch1_l2"
+  - term: "compare numbers"
+    lesson_introduced: "math_g4_ch1_l3"
+  - term: "order numbers"
+    lesson_introduced: "math_g4_ch1_l3"
+  - term: "estimate"
+    lesson_introduced: "math_g4_ch1_l4"
+  - term: "round"
+    lesson_introduced: "math_g4_ch1_l4"
+  - term: "benchmark"
+    lesson_introduced: "math_g4_ch1_l4"
+  - term: "rename / regroup"
+    lesson_introduced: "math_g4_ch1_l5"
+  - term: "addition algorithm"
+    lesson_introduced: "math_g4_ch1_l6"
+  - term: "Commutative Property of Addition"
+    lesson_introduced: "math_g4_ch1_l6"
+  - term: "Associative Property of Addition"
+    lesson_introduced: "math_g4_ch1_l6"
+  - term: "subtraction algorithm"
+    lesson_introduced: "math_g4_ch1_l7"
+  - term: "inverse operations"
+    lesson_introduced: "math_g4_ch1_l7"
+  - term: "bar model (tape diagram)"
+    lesson_introduced: "math_g4_ch1_l8"
+  - term: "comparison problem"
+    lesson_introduced: "math_g4_ch1_l8"
+
+# ── Visual routing ───────────────────────────────────────────────────────────
+# RAG usage: if a question targets a lesson in lessons_with_visuals,
+# Reachy MUST cite the textbook page and cannot fully answer without it.
+
+lessons_with_visuals:
+  - lesson_id: "math_g4_ch1_l1"
+    title: "Model Place Value Relationships"
+    visual_pages: [5, 6, 7]
+    handling: cite_only
+    visual_types: ["base-ten block diagrams", "place-value table"]
+
+  - lesson_id: "math_g4_ch1_l3"
+    title: "Compare and Order Numbers"
+    visual_pages: [14, 16]
+    handling: cite_only
+    visual_types: ["number lines", "pictograph"]
+
+  - lesson_id: "math_g4_ch1_l4"
+    title: "Round Numbers"
+    visual_pages: [17, 18, 19, 20]
+    handling: cite_only
+    visual_types: ["number lines", "benchmark estimation images"]
+
+  - lesson_id: "math_g4_ch1_l5"
+    title: "Rename Numbers"
+    visual_pages: [23, 24, 25]
+    handling: cite_only
+    visual_types: ["base-ten block quick pictures", "place-value charts"]
+
+  - lesson_id: "math_g4_ch1_l8"
+    title: "Problem Solving — Comparison Problems"
+    visual_pages: [35, 36, 37]
+    handling: cite_only
+    visual_types: ["bar models (tape diagrams)"]
+
+# NOTE: Lessons 1.6 and 1.7 have individual questions (q_g1) that reference
+# a place-value grid tool. Those questions carry per-question has_visual: true
+# flags in their questions.yaml files, but the lesson as a whole is text-safe
+# for concept delivery.
+lessons_text_safe:
+  - lesson_id: "math_g4_ch1_l2"
+    title: "Read and Write Numbers"
+  - lesson_id: "math_g4_ch1_l6"
+    title: "Add Whole Numbers"
+    note: "q_g1 references a place-value grid; all other questions are text-safe."
+  - lesson_id: "math_g4_ch1_l7"
+    title: "Subtract Whole Numbers"
+    note: "q_g1 references a place-value grid; q_w1 and q_w2 reference the Orange Groves table; all other questions are text-safe."
+
+# ── Question counts ──────────────────────────────────────────────────────────
+question_counts:
+  math_g4_ch1_l1: { guided: 4, independent: 6, word_problems: 3, total: 13 }
+  math_g4_ch1_l2: { guided: 2, independent: 6, word_problems: 4, total: 12 }
+  math_g4_ch1_l3: { guided: 4, independent: 8, word_problems: 4, total: 16 }
+  math_g4_ch1_l4: { guided: 5, independent: 4, word_problems: 4, total: 13 }
+  math_g4_ch1_l5: { guided: 6, independent: 4, word_problems: 4, total: 14 }
+  math_g4_ch1_l6: { guided: 4, independent: 5, word_problems: 3, total: 12 }
+  math_g4_ch1_l7: { guided: 4, independent: 5, word_problems: 3, total: 12 }
+  math_g4_ch1_l8: { guided: 4, independent: 4, word_problems: 0, total: 8 }
+  chapter_total: { guided: 33, independent: 42, word_problems: 25, total: 100 }
+
+# ── Pending decisions ────────────────────────────────────────────────────────
+pending_decisions:
+  - owner: "Josh/Kip"
+    issue: >
+      Confirm Firestore questions structure: subcollection
+      lessons/{lesson_id}/questions/{question_id} vs. array inside lesson document.
+      This affects ingestion script design — resolve before seeding.
+  - owner: "Haneul"
+    issue: >
+      Vision model integration for cite_only questions: define Reachy's
+      exact dialogue response when visual_handling is cite_only
+      (e.g., "I can explain the concept, but for the diagram please see page X of your textbook.").
+  - owner: "Landon"
+    issue: >
+      Firebase security rules: confirm read access scoping for student-facing
+      vs. supervisor-facing lesson content.
