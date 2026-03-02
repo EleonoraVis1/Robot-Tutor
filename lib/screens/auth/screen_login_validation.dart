@@ -13,6 +13,7 @@
 import 'dart:async';
 
 // Flutter external package imports
+import 'package:csc322_starter_app/screens/auth/screen_role.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
@@ -129,7 +130,7 @@ class _ScreenLoginValidationState extends ConsumerState<ScreenLoginValidation> {
         );
       } else if (_providerUserProfile.accountCreationStep ==
           AccountCreationStep.ACC_STEP_ONBOARDING_PROFILE_CONTACT_INFO) {
-        return const ScreenProfileSetup(isAuth: true);
+        return ScreenRole();
       } else {
         return const WidgetPrimaryScaffold();
       }

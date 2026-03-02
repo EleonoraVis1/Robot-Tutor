@@ -12,6 +12,9 @@
 // Dart imports
 
 // Flutter external package imports
+import 'package:csc322_starter_app/screens/auth/screen_auth.dart';
+import 'package:csc322_starter_app/screens/auth/screen_profile_setup.dart';
+import 'package:csc322_starter_app/screens/auth/screen_role.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_chathistory_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
@@ -105,8 +108,16 @@ class _MyAppState extends State<MyApp> {
     initialLocation: ScreenLoginValidation.routeName,
     routes: [
       GoRoute(
+        path: ScreenRole.routeName,
+        builder: (context, state) => ScreenRole(),
+      ),
+      GoRoute(
         path: ScreenLoginValidation.routeName,
         builder: (context, state) => const ScreenLoginValidation(),
+      ),
+      GoRoute(
+        path: ScreenProfileSetup.routeName,
+        builder: (context, state) => const ScreenProfileSetup(isAuth: true),
       ),
       GoRoute(
         path: ScreenSettings.routeName,
@@ -193,14 +204,6 @@ class _MyAppState extends State<MyApp> {
     ],
   );
 
-  //////////////////////////////////////////////////////////////////////////
-  // Primary Flutter method overriden which describes the layout
-  // and bindings for this widget.
-  //////////////////////////////////////////////////////////////////////////
-
-  // ToDO: start something
-  // This widget is the root of your application.
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -208,7 +211,7 @@ class _MyAppState extends State<MyApp> {
       title: 'BAY-min tutor',
       theme: lightTheme,
       darkTheme: darkTheme,
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
     );
   }
