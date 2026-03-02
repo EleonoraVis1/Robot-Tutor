@@ -1,0 +1,158 @@
+# =============================================================================
+# GO Math Grade 4 — Chapter 1, Lesson 1.5
+# questions.yaml — guided, independent, and word_problems only
+# Firestore path: subjects/math/grades/4/lessons/math_g4_ch1_l5
+# Schema version: 1.1
+# EGR302 Reachy Mini (BAY-min) Tutoring Robot — Data Pipeline
+# Role owner: Haneul (module/question design & data handling)
+# =============================================================================
+
+# PENDING DECISION: Josh/Kip to confirm whether questions should be
+# a subcollection (lessons/{lesson_id}/questions/{question_id}) in Firestore
+# or remain as an array inside the lesson document.
+# This affects ingestion script design — resolve before seeding.
+
+lesson_id: "math_g4_ch1_l5"
+subject: math
+grade: 4
+unit: 1
+chapter: 1
+lesson: 5
+title: "Rename Numbers"
+standards: ["4.NBT.1", "4.NBT.2"]
+
+citation:
+  textbook: "GO Math Grade 4 California (Houghton Mifflin Harcourt)"
+  chapter: 1
+  lesson: 5
+  pages: [23, 24, 25, 26]
+
+questions:
+  guided:
+    - id: q_g1
+      type: rename
+      # Textbook instructs students to draw a quick picture — implicit visual dependency flagged.
+      has_visual: true
+      visual_handling: cite_only
+      visual_description: "Quick-picture drawing space for base-ten blocks (p. 25)."
+      prompt: "Rename 150 as tens."
+      answer: "15 tens"
+      citation_page: 25
+
+    - id: q_g2
+      type: rename
+      has_visual: true
+      visual_handling: cite_only
+      visual_description: "Quick-picture drawing space for base-ten blocks (p. 25)."
+      prompt: "Rename 1,400 as hundreds."
+      answer: "14 hundreds"
+      citation_page: 25
+
+    - id: q_g3
+      type: rename
+      has_visual: false
+      prompt: "Rename 2 thousands 3 hundreds as hundreds."
+      answer: "23 hundreds"
+      citation_page: 25
+
+    - id: q_g4
+      type: rename
+      has_visual: false
+      prompt: "Rename 13 hundreds as thousands and hundreds."
+      answer: "1 thousand 3 hundreds"
+      citation_page: 25
+
+    - id: q_g5
+      type: rename_chart
+      # Textbook instructs: "Use the place-value chart to help" — implicit visual dependency flagged.
+      has_visual: true
+      visual_handling: cite_only
+      visual_description: "Place-value chart with 18,000 filled in (p. 25)."
+      prompt: "Use the place-value chart: 18 thousands = ___"
+      answer: "18,000"
+      citation_page: 25
+
+    - id: q_g6
+      type: rename_chart
+      has_visual: true
+      visual_handling: cite_only
+      visual_description: "Place-value chart with 570,000 filled in (p. 25)."
+      prompt: "570,000 = 57 ___"
+      answer: "57 ten-thousands"
+      citation_page: 25
+
+  independent:
+    - id: q_i1
+      type: rename
+      has_visual: false
+      prompt: "580 = ___ tens"
+      answer: "58 tens"
+      citation_page: 25
+
+    - id: q_i2
+      type: rename
+      has_visual: false
+      prompt: "740,000 = ___ ten-thousands"
+      answer: "74 ten-thousands"
+      citation_page: 25
+
+    - id: q_i3
+      type: rename
+      has_visual: false
+      prompt: "8 hundreds 4 tens = 84 ___"
+      answer: "84 tens"
+      citation_page: 25
+
+    - id: q_i4
+      type: rename
+      has_visual: false
+      prompt: "29 thousands = ___"
+      answer: "29,000"
+      citation_page: 25
+
+  word_problems:
+    - id: q_w1
+      type: word_problem
+      difficulty: think_smarter
+      has_visual: false
+      prompt: >
+        A toy store is ordering 3,000 remote control cars in sets of 10.
+        How many sets of 10 does the store need to order?
+      answer: "300 sets (3,000 ÷ 10 = 300)."
+      citation_page: 26
+
+    - id: q_w2
+      type: word_problem
+      difficulty: deeper
+      has_visual: false
+      prompt: >
+        Ivan sold 53 boxes on Friday and 27 boxes on Saturday.
+        Each box held 10 oranges. How many oranges did he sell in all?
+      answer: "800 oranges ((53 + 27) × 10 = 80 × 10 = 800)."
+      citation_page: 26
+
+    - id: q_w3
+      type: word_problem
+      difficulty: mathematical_practice
+      has_visual: false
+      prompt: >
+        A store sold 15,000 boxes of buttons. Total buttons sold = 150,000.
+        How many buttons were in each box?
+      answer: "10 buttons per box (150,000 ÷ 15,000 = 10)."
+      citation_page: 26
+
+    - id: q_w4
+      type: true_false_set
+      difficulty: think_smarter
+      has_visual: false
+      prompt: "Select True or False."
+      items:
+        - statement: "9 hundreds 3 tens can be renamed as 39 tens."
+          answer: "False"
+        - statement: "370,000 can be renamed as 37 ten-thousands."
+          answer: "True"
+        - statement: "780 can be renamed as 78 tens."
+          answer: "True"
+        - statement: "42,000 can be renamed as 42 thousands."
+          answer: "True"
+      citation_page: 26
