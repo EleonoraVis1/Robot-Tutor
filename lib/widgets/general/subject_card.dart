@@ -5,8 +5,9 @@ import 'package:go_router/go_router.dart';
 class SubjectCard extends StatelessWidget {
   final String title;
   final IconData icon;
+  final String routeName;
 
-  const SubjectCard({required this.title, required this.icon});
+  const SubjectCard({required this.title, required this.icon, required this.routeName});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class SubjectCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
-          context.push(ScreenModule.routeName);
+          context.push(routeName);
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

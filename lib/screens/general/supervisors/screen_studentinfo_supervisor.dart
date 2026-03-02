@@ -3,6 +3,7 @@ import 'dart:async';
 
 // Flutter external package imports
 import 'package:csc322_starter_app/main.dart';
+import 'package:csc322_starter_app/providers/provider_subjects.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
 import 'package:csc322_starter_app/widgets/general/subject_card.dart';
@@ -83,6 +84,7 @@ class _ScreenStudentinfoSupervisorState
   @override
   Widget build(BuildContext context) {
     final profileProvider = ref.watch(providerUserProfile);
+    final subjectsAsync = ref.watch(subjectsProvider);
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
@@ -109,16 +111,31 @@ class _ScreenStudentinfoSupervisorState
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                children: _kSubjects.map((s) { 
-                    return SubjectCard(
-                      title: s['title'] as String,
-                      icon: s['icon'] as IconData,
-                    );
-                  }).toList(),
+              child: subjectsAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (e, _) => Center(child: Text('Error: $e')),
+                data: (subjects) {
+                  if (subjects.isEmpty) {
+                    return const Center(child: Text('No subjects available'));
+                  }
+
+                  return GridView.builder(
+                    itemCount: subjects.length,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                    ),
+                    itemBuilder: (_, i) {
+                      final subject = subjects[i];
+                      return SubjectCard(
+                        title: subject.title,
+                        icon: subject.icon,
+                        routeName: '/subject/${subject.id}',
+                      );
+                    },
+                  );
+                },
               ),
             ),
           ],

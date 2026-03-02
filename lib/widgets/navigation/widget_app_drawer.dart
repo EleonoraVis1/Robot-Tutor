@@ -83,15 +83,6 @@ class WidgetAppDrawer extends StatelessWidget {
               ),
               if (!isSupervisor)
                 ListTile(
-                  leading: Icon(Icons.book_online_outlined), 
-                  title: Text('Quizzes'), 
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    context.push(ScreenQuizzesStudent.routeName);
-                  }
-                ),
-              if (!isSupervisor)
-                ListTile(
                   leading: Icon(Icons.bolt_outlined), 
                   title: Text('BAY-min Persona'), 
                   onTap: () {

@@ -16,6 +16,7 @@ import 'package:csc322_starter_app/screens/general/students/screen_baymin_studen
 import 'package:csc322_starter_app/screens/general/students/screen_chathistory_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_subject.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistory_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
@@ -127,14 +128,29 @@ class _MyAppState extends State<MyApp> {
             ScreenHomeStudent(),
       ),
       GoRoute(
-        path: ScreenQuizzesStudent.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenQuizzesStudent(),
+        path: ScreenSubject.routeName, 
+        builder: (context, state) {
+          final subjectId = state.pathParameters['subjectId'];
+          debugPrint(state.pathParameters.toString());
+
+          if (subjectId == null) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid subject')),
+            );
+          }
+
+          return ScreenSubject(subjectId: subjectId);
+        },
       ),
       GoRoute(
         path: ScreenModule.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenModule(),
+        builder: (context, state) {
+          return const ScreenModule();
+        },
+      ),
+      GoRoute(
+        path: ScreenQuiz.routeName,
+        builder: (context, state) => const ScreenQuiz(),
       ),
       GoRoute(
         path: ScreenBayminStudent.routeName,

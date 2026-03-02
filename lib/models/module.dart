@@ -1,11 +1,11 @@
 class Module {
   final String id;
   final String title;
-  final int order;
+  final String subjectId;
 
   Module({
     required this.id,
     required this.title,
-    required this.order
+    required this.subjectId,
   });
 }
