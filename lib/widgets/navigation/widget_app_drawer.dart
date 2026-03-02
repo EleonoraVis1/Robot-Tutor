@@ -13,7 +13,6 @@ import 'package:csc322_starter_app/models/user_profile.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_invites.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
-import 'package:csc322_starter_app/screens/general/supervisors/screen_quizzes_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_subject_supervisor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

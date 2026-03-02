@@ -20,7 +20,6 @@ import 'package:csc322_starter_app/screens/general/students/screen_subject.dart'
 import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistory_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
-import 'package:csc322_starter_app/screens/general/supervisors/screen_quizzes_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_studentinfo_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_subject_supervisor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -185,11 +184,6 @@ class _MyAppState extends State<MyApp> {
           final studentUid = state.pathParameters['studentUid']!;
           return ScreenChathistorySupervisor(studentUid: studentUid);
         },
-      ),
-      GoRoute(
-        path: ScreenQuizzesSupervisor.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenQuizzesSupervisor(),
       ),
       GoRoute(
         path: ScreenSubjectSupervisor.routeName,
