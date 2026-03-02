@@ -1,0 +1,84 @@
+# =============================================================================
+# GO Math Grade 4 — Chapter 1, Lesson 1.2
+# concept.yaml — concepts and worked examples only
+# Firestore path: subjects/math/grades/4/lessons/math_g4_ch1_l2
+# Schema version: 1.1
+# EGR302 Reachy Mini (BAY-min) Tutoring Robot — Data Pipeline
+# Role owner: Haneul (module/question design & data handling)
+# =============================================================================
+
+lesson_id: "math_g4_ch1_l2"
+subject: math
+grade: 4
+unit: 1
+chapter: 1
+lesson: 2
+title: "Read and Write Numbers"
+essential_question: "How can you read and write numbers through hundred thousands?"
+standards: ["4.NBT.2"]
+mathematical_practices: ["MP.2", "MP.7"]
+
+citation:
+  textbook: "GO Math Grade 4 California (Houghton Mifflin Harcourt)"
+  chapter: 1
+  lesson: 2
+  pages: [9, 10, 11, 12]
+
+has_visual: false
+
+concepts:
+  - id: c1
+    term: "standard form"
+    definition: >
+      A way to write numbers using the digits 0–9, with each digit
+      having a place value.
+    example: "262,400"
+
+  - id: c2
+    term: "word form"
+    definition: >
+      A way to write a number using words.
+    example: "two hundred sixty-two thousand, four hundred"
+
+  - id: c3
+    term: "expanded form"
+    definition: >
+      A way to write numbers by showing the value of each digit as an addition expression.
+    example: "200,000 + 60,000 + 2,000 + 400"
+
+  - id: c4
+    term: "period"
+    definition: >
+      Each group of three digits separated by a comma in a multi-digit number.
+      Each period has hundreds, tens, and ones.
+    example: "In 262,400 the periods are 'thousands' (262) and 'ones' (400)."
+
+worked_examples:
+  - id: we1
+    title: "Write 262,400 in standard, word, and expanded form"
+    has_visual: false
+    steps:
+      - "Place 262,400 in a place-value chart: 2 hundred-thousands, 6 ten-thousands, 2 thousands, 4 hundreds, 0 tens, 0 ones."
+      - "Standard form: 262,400"
+      - "Word form: two hundred sixty-two thousand, four hundred"
+      - "Expanded form: 200,000 + 60,000 + 2,000 + 400"
+    answer: "See steps above."
+    citation_page: 9
+
+  - id: we2
+    title: "Try This — A: Write standard form for ninety-two thousand, one hundred seventy"
+    has_visual: false
+    steps:
+      - "Expanded: 90,000 + 2,000 + 100 + 70"
+      - "Standard: 92,170"
+    answer: "92,170"
+    citation_page: 9
+
+  - id: we3
+    title: "Try This — B: Write word and expanded form for 200,007"
+    has_visual: false
+    steps:
+      - "Word form: two hundred thousand, seven"
+      - "Expanded form: 200,000 + 7"
+    answer: "Word: two hundred thousand, seven; Expanded: 200,000 + 7"
+    citation_page: 9
