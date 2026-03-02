@@ -1,0 +1,69 @@
+# =============================================================================
+# GO Math Grade 4 — Chapter 1, Lesson 1.3
+# concept.yaml — concepts and worked examples only
+# Firestore path: subjects/math/grades/4/lessons/math_g4_ch1_l3
+# Schema version: 1.1
+# EGR302 Reachy Mini (BAY-min) Tutoring Robot — Data Pipeline
+# Role owner: Haneul (module/question design & data handling)
+# =============================================================================
+
+lesson_id: "math_g4_ch1_l3"
+subject: math
+grade: 4
+unit: 1
+chapter: 1
+lesson: 3
+title: "Compare and Order Numbers"
+essential_question: "How can you compare and order numbers?"
+standards: ["4.NBT.2"]
+mathematical_practices: ["MP.2", "MP.4", "MP.5"]
+
+citation:
+  textbook: "GO Math Grade 4 California (Houghton Mifflin Harcourt)"
+  chapter: 1
+  lesson: 3
+  pages: [13, 14, 15, 16]
+
+has_visual: true
+visual_handling: cite_only
+visual_description: >
+  Number lines used to order/compare numbers (pp. 14, 16).
+  Pictograph of Grand Canyon tent campers (p. 16).
+
+concepts:
+  - id: c1
+    term: "compare numbers"
+    definition: >
+      To determine which of two numbers is greater or lesser by aligning
+      digits by place value and comparing from left to right until the digits differ.
+    example: "651,028 vs 665,188 — hundred-thousands equal (6=6), ten-thousands differ (5 < 6), so 651,028 < 665,188."
+
+  - id: c2
+    term: "order numbers"
+    definition: >
+      To arrange numbers from least to greatest or greatest to least.
+      A number line can help: numbers to the left are closer to 0 (lesser).
+    example: "10,408; 10,416; 10,433 ordered least to greatest."
+
+worked_examples:
+  - id: we1
+    title: "Compare 651,028 and 665,188 using a place-value chart"
+    has_visual: false
+    steps:
+      - "Step 1 — Compare hundred-thousands: 6 = 6 (same, continue)."
+      - "Step 2 — Compare ten-thousands: 5 < 6."
+      - "Since 5 ten-thousands < 6 ten-thousands, 651,028 < 665,188."
+    answer: "651,028 < 665,188; more visitors in July 2009."
+    citation_page: 13
+
+  - id: we2
+    title: "Order 10,408; 10,433; 10,416 from least to greatest using a number line"
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: "Number line from 10,400 to 10,450 with points plotted (p. 14)."
+    steps:
+      - "Locate all three points on the number line."
+      - "Read from left (smallest) to right (largest)."
+      - "Order: 10,408 < 10,416 < 10,433"
+    answer: "10,408; 10,416; 10,433"
+    citation_page: 14

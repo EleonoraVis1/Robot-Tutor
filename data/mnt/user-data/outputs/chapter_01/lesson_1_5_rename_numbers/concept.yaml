@@ -1,0 +1,78 @@
+# =============================================================================
+# GO Math Grade 4 — Chapter 1, Lesson 1.5
+# concept.yaml — concepts and worked examples only
+# Firestore path: subjects/math/grades/4/lessons/math_g4_ch1_l5
+# Schema version: 1.1
+# EGR302 Reachy Mini (BAY-min) Tutoring Robot — Data Pipeline
+# Role owner: Haneul (module/question design & data handling)
+# =============================================================================
+
+lesson_id: "math_g4_ch1_l5"
+subject: math
+grade: 4
+unit: 1
+chapter: 1
+lesson: 5
+title: "Rename Numbers"
+essential_question: "How can you rename a whole number?"
+standards: ["4.NBT.1", "4.NBT.2"]
+mathematical_practices: ["MP.2", "MP.4", "MP.7"]
+
+citation:
+  textbook: "GO Math Grade 4 California (Houghton Mifflin Harcourt)"
+  chapter: 1
+  lesson: 5
+  pages: [23, 24, 25, 26]
+
+has_visual: true
+visual_handling: cite_only
+visual_description: >
+  Hands-on activity: base-ten block quick pictures for 1,200 using
+  large cubes + flats, then flats only (pp. 23–24).
+  Place-value chart showing 500,000 renamed as 50 ten-thousands,
+  500 thousands, 5,000 hundreds, etc. (p. 24).
+
+concepts:
+  - id: c1
+    term: "rename / regroup"
+    definition: >
+      Express the same number using different combinations of place-value units.
+    example: "1,200 = 1 thousand 2 hundreds = 12 hundreds = 120 tens = 1,200 ones."
+
+worked_examples:
+  - id: we1
+    title: "Model 1,200 as hundreds"
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: "Quick pictures of 1 large cube + 2 flats, then 12 flats (pp. 23–24)."
+    steps:
+      - "1,200 = 1 large cube (1,000) + 2 flats (200)."
+      - "Regroup: 1,000 = 10 hundreds, so 1,000 + 200 = 12 hundreds."
+      - "1,200 = 12 hundreds."
+    answer: "12 hundreds"
+    citation_page: 23
+
+  - id: we2
+    title: "Rename 500,000 using a place-value chart"
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: "Place-value chart with 5 in the hundred-thousands column (p. 24)."
+    steps:
+      - "500,000 = 5 hundred-thousands"
+      - "= 50 ten-thousands"
+      - "= 500 thousands"
+      - "= 5,000 hundreds"
+      - "= 50,000 tens"
+      - "= 500,000 ones"
+    answer: "Multiple equivalent names; see steps."
+    citation_page: 24
+
+  - id: we3
+    title: "Write 32 hundreds in standard form"
+    has_visual: false
+    steps:
+      - "32 hundreds means 32 × 100."
+      - "32 × 100 = 3,200."
+      - "Standard form: 3,200."
+    answer: "3,200"
+    citation_page: 24
