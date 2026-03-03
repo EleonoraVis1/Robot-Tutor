@@ -192,6 +192,8 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
       if (!widget.isAuth) {
         Snackbar.show(SnackbarDisplayType.SB_SUCCESS, "Profile Updated", context);
         context.pop();
+      } else {
+        context.go("/");
       }
     }
   }

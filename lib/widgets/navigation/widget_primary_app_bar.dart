@@ -75,6 +75,7 @@ class _PrimaryAppBar extends ConsumerState<WidgetPrimaryAppBar> {
 
     return AppBar(
       title: widget.title,
+      centerTitle: true,
       elevation: 0,
       actions: [
         

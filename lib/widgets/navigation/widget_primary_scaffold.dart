@@ -12,6 +12,7 @@
 
 // Flutter external package imports
 import 'package:csc322_starter_app/models/user_profile.dart';
+import 'package:csc322_starter_app/providers/provider_user_profile.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -122,11 +123,11 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   // Takes in the current tab index and returns the appropriate
   // app bar widget to display.
   ////////////////////////////////////////////////////////////////
-  Widget _getAppBarTitle(int currentTabIndex) {
-    if (currentTabIndex == BottomNavSelection.HOME_SCREEN.index)
-      return Text("Home");
+  Widget _getAppBarTitle(int currentTabIndex, bool isSupervisor) {
+    if (!isSupervisor)
+      return Text("📋 Student Portal");
     else
-      return Text("Alternate");
+      return Text("🛡️ Supervisor Portal");
   }
 
   ////////////////////////////////////////////////////////////////
@@ -158,7 +159,7 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
       appBar: WidgetPrimaryAppBar(
         // Add a plus icon followed by the 3-dots vertical icon on the right
         actionButtons: _getAppBarActions(currentTabIndex),
-        title: _getAppBarTitle(currentTabIndex),
+        title: _getAppBarTitle(currentTabIndex, isSupervisor)
       ),
       drawer: WidgetAppDrawer(),
       body: _getScreenToDisplay(currentTabIndex, isSupervisor),

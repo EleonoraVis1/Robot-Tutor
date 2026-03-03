@@ -89,7 +89,6 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
 
               return Card(
                 elevation: 3,
-                color: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),

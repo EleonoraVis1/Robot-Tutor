@@ -74,14 +74,7 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
   Widget build(BuildContext context) {
     final profileProvider = ref.watch(providerUserProfile);
     return Scaffold(
-      body: _buildSupervisorView(profileProvider),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blue,
-        shape: ShapeBorder.lerp(CircleBorder(), StadiumBorder(), 0.5),
-        onPressed: _openAddStudents,
-        splashColor: Theme.of(context).primaryColor,
-        child: Icon(FontAwesomeIcons.plus, color: Colors.black),
-      ), 
+      body: _buildSupervisorView(profileProvider), 
     );
   }
 
@@ -96,17 +89,30 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: 5),
           Text(
             'Hello, $firstName! 👋',
-            style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 6),
-          const Text(
-            'Here are your students:',
-            style: TextStyle(fontSize: 16),
+          const SizedBox(height: 5),
+          Row(
+            children: [
+              const Text(
+                'Here are your students:',
+                style: TextStyle(fontSize: 16),
+              ),
+              const SizedBox(width: 50),
+              ElevatedButton.icon(
+                onPressed: _openAddStudents, 
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red
+                ),
+                label: const Text("Add Student"),
+                icon: Icon(Icons.add),
+              ),
+            ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 10),
           Expanded(
             child: studentsAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),

@@ -98,15 +98,16 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: 5),
           Text(
             'Hello, $firstName! 👋\nWhat would you like to learn today?',
-            style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 30),
           const Text(
             'Subjects',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 16),
           Expanded(
