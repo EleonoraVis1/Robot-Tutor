@@ -7,25 +7,42 @@ Role owner: Haneul (data pipelines & module/question design)
 
 Strategy: Hybrid
   1. pdfplumber  → extracts raw text per page (deterministic, free)
-  2. Claude API  → structures raw text into concept.yaml + questions.yaml
+  2. AI provider → structures raw text into concept.yaml + questions.yaml
                    using the v1.1 schema as the system prompt
 
-Usage:
-  python parse_chapter.py \\
-      --pdf  path/to/gomath_g4.pdf \\
-      --pages 5-38 \\
-      --chapter 1 \\
-      --grade 4 \\
-      --output ./chapter_01
+Supported providers (--provider flag):
+  gemini   — Google Gemini 1.5 Flash (FREE, recommended)
+  claude   — Anthropic Claude Sonnet  (paid, ~$0.04/lesson)
 
-  # Dry-run (extraction only, no API calls, prints raw text per lesson):
+Usage:
+  # Gemini (free) — recommended
+  python parse_chapter.py \\
+      --pdf     path/to/gomath_g4.pdf \\
+      --pages   5-38 \\
+      --chapter 1 \\
+      --grade   4 \\
+      --output  ./chapter_01 \\
+      --provider gemini
+
+  # Claude (paid)
+  python parse_chapter.py \\
+      --pdf     path/to/gomath_g4.pdf \\
+      --pages   5-38 \\
+      --chapter 1 \\
+      --grade   4 \\
+      --output  ./chapter_01 \\
+      --provider claude
+
+  # Dry-run (extraction only, no API calls):
   python parse_chapter.py --pdf gomath_g4.pdf --pages 5-38 --chapter 1 --grade 4 --dry-run
 
 Requirements:
-  pip install pdfplumber anthropic pyyaml
+  pip install pdfplumber pyyaml google-genai        # Gemini
+  pip install pdfplumber pyyaml anthropic             # Claude
 
-Environment:
-  ANTHROPIC_API_KEY  — must be set before running
+Environment variables:
+  GEMINI_API_KEY     — required when --provider gemini (get free key at aistudio.google.com)
+  ANTHROPIC_API_KEY  — required when --provider claude
 """
 
 import os
@@ -53,6 +70,11 @@ except ImportError:
     anthropic = None  # type: ignore
 
 try:
+    import google.genai as genai
+except ImportError:
+    genai = None  # type: ignore
+
+try:
     import yaml
 except ImportError:
     yaml = None  # type: ignore
@@ -67,10 +89,6 @@ logging.basicConfig(
     level=logging.INFO,
 )
 log = logging.getLogger("parse_chapter")
-
-DEFAULT_OUTPUT_ROOT = Path(
-    r"D:\Users\haneu\Desktop\CBU\CBU_Courses_S6\EGR302\Robot-Tutor\data\mnt\user-data\outputs"
-)
 
 
 # ---------------------------------------------------------------------------
@@ -101,9 +119,17 @@ class ParseResult:
 # ---------------------------------------------------------------------------
 
 # GO Math heading patterns (tested against Chapters 1–3 of Grade 4 CA edition)
+# The title regex skips lines that are just "Name" (student name field),
+# blank, or pure whitespace — these appear above the real lesson title.
 _LESSON_HEADING = re.compile(
-    r"(?:^|\n)\s*Lesson\s+(\d+\.\d+)\s*\n\s*(.+?)(?=\n)",
+    r"Lesson\s+(\d+\.\d+)",
     re.IGNORECASE,
+)
+
+# Matches a real lesson title: non-empty, not just "Name", not all digits/symbols
+_TITLE_LINE = re.compile(
+    r"^(?!\s*Name\s*$)(?!\s*$)\s*([A-Z][\w\s•\'\-\.]{4,})$",
+    re.MULTILINE,
 )
 
 _VISUAL_KEYWORDS = re.compile(
@@ -117,6 +143,31 @@ _DIFFICULTY_KEYWORDS = re.compile(
     r"|Try This|Share and Show|On Your Own|Problem Solving)\b",
     re.IGNORECASE,
 )
+
+
+def deduplicate_text(text: str) -> str:
+    """
+    Fix tripled/doubled characters caused by pdfplumber reading bold or
+    shadowed font layers as separate text streams.
+    e.g. "UUUnnnllloooccckkk" -> "Unlock"
+    Strategy: if every character in a word repeats N times consecutively,
+    keep only every Nth character.
+    """
+    def fix_word(word: str) -> str:
+        if len(word) < 4:
+            return word
+        for n in (3, 2):
+            if len(word) % n == 0:
+                # Check if each char repeats n times in sequence
+                deduped = word[::n]
+                reconstructed = "".join(c * n for c in deduped)
+                if reconstructed == word:
+                    return deduped
+        return word
+
+    # Apply fix word-by-word, preserving whitespace/punctuation splits
+    tokens = re.split(r"(\s+)", text)
+    return "".join(fix_word(t) if re.match(r"^[A-Za-z]+$", t) else t for t in tokens)
 
 
 def extract_pages(pdf_path: str, start_page: int, end_page: int) -> dict[int, str]:
@@ -140,7 +191,7 @@ def extract_pages(pdf_path: str, start_page: int, end_page: int) -> dict[int, st
             page = pdf.pages[pdf_idx]
 
             # extract_text(layout=True) preserves column ordering better than default
-            text = page.extract_text(layout=True) or ""
+            text = deduplicate_text(page.extract_text(layout=True) or "")
 
             # Also extract any tables and append as tab-separated rows so
             # Claude can see the data even if pdfplumber linearises it oddly
@@ -158,21 +209,63 @@ def extract_pages(pdf_path: str, start_page: int, end_page: int) -> dict[int, st
     return result
 
 
-def detect_lesson_boundaries(pages: dict[int, str]) -> list[tuple[str, str, int]]:
+# Lines to skip when searching for a lesson title after the lesson number.
+# These are recurring section labels that appear before the real title.
+_TITLE_SKIP = re.compile(
+    r"^(Name|Unlock the Problem|Investigate|Essential Question|"
+    r"Share and Show|On Your Own|Problem Solving|COMMON CORE|"
+    r"Mathematical Practices?|Lesson Objective)$",
+    re.IGNORECASE,
+)
+
+
+def detect_lesson_boundaries(
+    pages: dict[int, str],
+    title_overrides: dict[str, str] | None = None,
+) -> list[tuple[str, str, int]]:
     """
     Scan page texts for lesson headings.
     Returns list of (lesson_num, title, start_page) sorted by start_page.
     e.g. [("1.1", "Model Place Value Relationships", 5), ...]
+
+    Strategy:
+      - Find "Lesson X.Y" pattern to get lesson number and page
+      - Scan lines AFTER the match on the deduplicated text for the real title
+      - Skip known non-title lines (Name, Unlock the Problem, etc.)
+      - Apply title_overrides dict for any lesson where auto-detect still fails
+        e.g. title_overrides={"2.3": "Multiply with 1-Digit Numbers"}
     """
     found: list[tuple[str, str, int]] = []
+    title_overrides = title_overrides or {}
+
     for page_num, text in sorted(pages.items()):
-        for m in _LESSON_HEADING.finditer(text):
+        # Dedup the text before title scanning so tripled chars don't slip through
+        clean_text = deduplicate_text(text)
+
+        for m in _LESSON_HEADING.finditer(clean_text):
             lesson_num = m.group(1)
-            title = m.group(2).strip()
-            # Deduplicate: same lesson can appear in header on multiple pages
+
+            # Apply manual override immediately if provided
+            if lesson_num in title_overrides:
+                title = title_overrides[lesson_num]
+            else:
+                # Scan lines after the lesson number for the first real title
+                after = clean_text[m.end():]
+                title = "# TODO: title not detected — add to --title-overrides"
+                for line in after.splitlines():
+                    line = line.strip()
+                    if (line
+                            and not _TITLE_SKIP.match(line)
+                            and len(line) > 4
+                            and re.search(r"[A-Za-z]{3,}", line)
+                            and not line.replace(" ", "").isdigit()):
+                        title = line
+                        break
+
+            # Deduplicate: same lesson appears in running header on multiple pages
             if not found or found[-1][0] != lesson_num:
                 found.append((lesson_num, title, page_num))
-                log.info("  Detected Lesson %s — '%s' at page %d", lesson_num, title, page_num)
+                log.info("  Detected Lesson %s -- '%s' at page %d", lesson_num, title, page_num)
     return found
 
 
@@ -418,19 +511,41 @@ def call_claude(chunk: LessonChunk, grade: int, chapter: int, client) -> tuple[s
     return concept_part.strip(), questions_part.strip()
 
 
-# ---------------------------------------------------------------------------
-# Stage 3 — YAML validation
-# ---------------------------------------------------------------------------
+def call_gemini(chunk: LessonChunk, grade: int, chapter: int) -> tuple[str, str]:
+    """
+    Call the Gemini 1.5 Flash API and return (concept_yaml_str, questions_yaml_str).
+    Uses the new google-genai SDK (google.genai).
+    The API key is read from the GEMINI_API_KEY environment variable.
+    Raises ValueError if the response cannot be parsed into two sections.
+    """
+    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
-_REQUIRED_CONCEPT_KEYS = {
-    "lesson_id", "subject", "grade", "unit", "chapter", "lesson",
-    "title", "standards", "citation", "has_visual", "concepts", "worked_examples"
-}
+    response = client.models.generate_content(
+        model="gemini-1.5-flash",
+        contents=_make_user_message(chunk, grade, chapter),
+        config=genai.types.GenerateContentConfig(
+            system_instruction=_SYSTEM_PROMPT,
+            temperature=0.1,
+            max_output_tokens=4096,
+        ),
+    )
 
-_REQUIRED_QUESTIONS_KEYS = {
-    "lesson_id", "subject", "grade", "chapter", "lesson",
-    "title", "standards", "citation", "questions"
-}
+    raw_response = response.text
+
+    # Strip markdown fences if Gemini wraps the output (it sometimes does)
+    raw_response = re.sub(r"^```(?:yaml)?\s*", "", raw_response, flags=re.MULTILINE)
+    raw_response = re.sub(r"\s*```\s*$", "", raw_response, flags=re.MULTILINE)
+
+    if "---CONCEPT---" not in raw_response or "---QUESTIONS---" not in raw_response:
+        raise ValueError(
+            f"Gemini response for lesson {chunk.lesson_num} did not contain "
+            f"expected delimiters. Response preview:\n{raw_response[:500]}"
+        )
+
+    _, after_concept = raw_response.split("---CONCEPT---", 1)
+    concept_part, questions_part = after_concept.split("---QUESTIONS---", 1)
+
+    return concept_part.strip(), questions_part.strip()
 
 
 def validate_yaml(yaml_str: str, required_keys: set[str], label: str) -> list[str]:
@@ -548,23 +663,24 @@ def build_arg_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
+    p.add_argument("--provider", default="gemini", choices=["gemini", "claude"],
+                   help="AI provider to use: 'gemini' (free, default) or 'claude' (paid)")
     p.add_argument("--pdf",     required=True,  help="Path to the GO Math PDF file")
     p.add_argument("--pages",   required=True,  type=parse_page_range,
                    help="Page range to process, e.g. '5-38' (printed page numbers)")
     p.add_argument("--chapter", required=True,  type=int, help="Chapter number, e.g. 1")
     p.add_argument("--grade",   required=True,  type=int, help="Grade level, e.g. 4")
-    p.add_argument(
-        "--output",
-        default=None,
-        help=(
-            "Output directory override. If omitted, files are written to "
-            r"D:\Users\haneu\Desktop\CBU\CBU_Courses_S6\EGR302\Robot-Tutor\data\mnt\user-data\outputs\chapter_XX"
-        ),
-    )
+    p.add_argument("--output", default=r"D:\Users\haneu\Desktop\CBU\CBU_Courses_S6\EGR302\Robot-Tutor\data\mnt\user-data\outputs", help="Output directory (default: Robot-Tutor data outputs folder)")
     p.add_argument("--dry-run", action="store_true",
                    help="Extract text only, skip Claude API calls, print raw text per lesson")
     p.add_argument("--lesson",  default=None,
                    help="Process only this lesson number, e.g. '1.3' (useful for reruns)")
+    p.add_argument("--title-overrides", default=None,
+                   help=(
+                       "Manually specify lesson titles that auto-detect gets wrong. "
+                       "Format: '2.3=Multiply with 1-Digit Numbers,2.6=Multiply Using Expanded Form'. "
+                       "Separate multiple overrides with commas."
+                   ))
     p.add_argument("--verbose", action="store_true", help="Show DEBUG-level logs")
     return p
 
@@ -581,29 +697,36 @@ def run(args: argparse.Namespace) -> int:
     if pdfplumber is None:
         log.error("pdfplumber is not installed. Run: pip install pdfplumber")
         return 1
-    if not args.dry_run and anthropic is None:
-        log.error("anthropic is not installed. Run: pip install anthropic")
-        return 1
+
     if not args.dry_run:
-        api_key = os.environ.get("ANTHROPIC_API_KEY")
-        if not api_key:
-            log.error("ANTHROPIC_API_KEY environment variable is not set.")
-            return 1
+        if args.provider == "gemini":
+            if genai is None:
+                log.error("google-generativeai is not installed. Run: pip install google-generativeai")
+                return 1
+            if not os.environ.get("GEMINI_API_KEY"):
+                log.error("GEMINI_API_KEY environment variable is not set.")
+                log.error("Get a free key at: https://aistudio.google.com")
+                return 1
+        elif args.provider == "claude":
+            if anthropic is None:
+                log.error("anthropic is not installed. Run: pip install anthropic")
+                return 1
+            if not os.environ.get("ANTHROPIC_API_KEY"):
+                log.error("ANTHROPIC_API_KEY environment variable is not set.")
+                return 1
 
     # ── Setup ────────────────────────────────────────────────────────────────
     pdf_path = args.pdf
     start_page, end_page = args.pages
-    output_dir = (
-        Path(args.output)
-        if args.output
-        else DEFAULT_OUTPUT_ROOT / f"chapter_{args.chapter:02d}"
-    )
+    chapter_folder = f"chapter_{args.chapter:02d}"
+    output_dir = Path(args.output) / chapter_folder
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    log.info("PDF:     %s", pdf_path)
-    log.info("Pages:   %d–%d", start_page, end_page)
-    log.info("Chapter: %d  Grade: %d", args.chapter, args.grade)
-    log.info("Output:  %s", output_dir.resolve())
+    log.info("PDF:      %s", pdf_path)
+    log.info("Pages:    %d–%d", start_page, end_page)
+    log.info("Chapter:  %d  Grade: %d", args.chapter, args.grade)
+    log.info("Provider: %s", args.provider)
+    log.info("Output:   %s", output_dir.resolve())
 
     # ── Stage 1: Extract text ────────────────────────────────────────────────
     log.info("Stage 1 — Extracting text from PDF...")
@@ -611,8 +734,19 @@ def run(args: argparse.Namespace) -> int:
     log.info("  Extracted %d pages", len(pages))
 
     log.info("Stage 1 — Detecting lesson boundaries...")
-    boundaries = detect_lesson_boundaries(pages)
+    log.info("Stage 1 — Detecting lesson boundaries...")
+    # Parse --title-overrides if provided
+    # Format: "2.3=Some Title,2.6=Another Title"
+    title_overrides: dict[str, str] = {}
+    if args.title_overrides:
+        for pair in args.title_overrides.split(","):
+            if "=" in pair:
+                k, v = pair.split("=", 1)
+                title_overrides[k.strip()] = v.strip()
+        if title_overrides:
+            log.info("  Title overrides: %s", title_overrides)
 
+    boundaries = detect_lesson_boundaries(pages, title_overrides=title_overrides)
     if not boundaries:
         log.warning(
             "No lesson headings detected. Check that your --pages range covers "
@@ -646,17 +780,28 @@ def run(args: argparse.Namespace) -> int:
                 print(f"... [{len(chunk.raw_text) - 3000} more chars]")
         return 0
 
-    # ── Stage 2: Call Claude API ─────────────────────────────────────────────
-    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    # ── Stage 2: Initialise AI client ───────────────────────────────────────
+    if args.provider == "gemini":
+
+        log.info("Stage 2 — Using Gemini 1.5 Flash")
+    else:
+        claude_client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+        log.info("Stage 2 — Using Claude Sonnet")
+
     results: list[ParseResult] = []
 
     for chunk in chunks:
         log.info("Stage 2 — Processing Lesson %s: %s...", chunk.lesson_num, chunk.title)
 
         try:
-            concept_yaml, questions_yaml = call_claude(
-                chunk, args.grade, args.chapter, client
-            )
+            if args.provider == "gemini":
+                concept_yaml, questions_yaml = call_gemini(
+                    chunk, args.grade, args.chapter
+                )
+            else:
+                concept_yaml, questions_yaml = call_claude(
+                    chunk, args.grade, args.chapter, claude_client
+                )
         except Exception as e:
             log.error("  API call failed for Lesson %s: %s", chunk.lesson_num, e)
             # Write a fallback stub so the pipeline doesn't lose the lesson entirely
