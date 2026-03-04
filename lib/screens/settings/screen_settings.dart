@@ -112,13 +112,13 @@ class _ScreenSettingsState extends ConsumerState<ScreenSettings> {
           children: [
             if (_userType == UserType.STUDENT)
               ElevatedButton(
-                onPressed: _setRole,
-                child: Text('Swap to Supervisor'),
+                onPressed: null, // _setRole,
+                child: Text('Swap to Supervisor (DEMO ONLY)'),
               ),
             if (_userType == UserType.SUPERVISOR)
               ElevatedButton(
-                onPressed: _setRole,
-                child: Text('Swap to Student'),
+                onPressed: null, // _setRole,
+                child: Text('Swap to Student (DEMO ONLY)'),
               ),
             const SizedBox(height: 20),
             Center(

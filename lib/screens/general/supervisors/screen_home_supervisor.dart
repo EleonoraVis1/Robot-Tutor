@@ -105,7 +105,7 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
               ElevatedButton.icon(
                 onPressed: _openAddStudents, 
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red
+                  backgroundColor: Colors.red,
                 ),
                 label: const Text("Add Student"),
                 icon: Icon(Icons.add),
@@ -130,12 +130,13 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
                     return Container(
                       margin: const EdgeInsets.symmetric(vertical: 6),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
+                        border: BoxBorder.all(color: Colors.black, width: 1.25),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.05),
                             blurRadius: 8,
-                            offset: const Offset(0, 2),
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
