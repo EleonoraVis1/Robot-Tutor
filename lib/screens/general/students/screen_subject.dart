@@ -79,6 +79,7 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
         return Scaffold(
           appBar: AppBar(
             title: Text(subject.title),
+            centerTitle: true,
           ),
           body: ListView.separated(
             padding: const EdgeInsets.all(16),
@@ -89,7 +90,6 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
 
               return Card(
                 elevation: 3,
-                color: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),

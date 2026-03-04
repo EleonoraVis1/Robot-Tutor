@@ -376,26 +376,46 @@ class _ScreenAuthState extends ConsumerState<ScreenAuth> {
             child: Container(
               constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ///////////////////////////////////////////////////////////////////////
                   // Logo
                   ///////////////////////////////////////////////////////////////////////
+                  const SizedBox(height: 45),
                   Padding(
-                    padding: const EdgeInsets.all(0),
-                    child: Center(
-                      child: Image.asset("images/logo.png", width: MediaQuery.of(context).size.width * 0.8),
+                    padding: const EdgeInsets.all(4),
+                    child: Column(
+                      children: [
+                        Center(
+                          child: Image.asset(
+                            "images/logo.png", 
+                            width: MediaQuery.of(context).size.width * 0.7
+                          ),
+                        ),
+                        Center(
+                          child: const Text(
+                            "BAY-min Tutor Bot",
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ),
+                        Center(
+                          child: const Text(
+                            "Your robot tutor assistant!",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  // Text(
-                  //   "CSC 322 Starer Project",
-                  //   textAlign: TextAlign.center,
-                  //   style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                  // ),
-                  // SizedBox(height: 10),
                   ///////////////////////////////////////////////////////////////////////
                   /// Email Text Field
                   ///////////////////////////////////////////////////////////////////////
+                  const SizedBox(height: 30),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: TextFormField(
@@ -417,6 +437,7 @@ class _ScreenAuthState extends ConsumerState<ScreenAuth> {
                   ///////////////////////////////////////////////////////////////////////
                   /// Password Text Field
                   ///////////////////////////////////////////////////////////////////////
+                  const SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: TextFormField(
@@ -491,6 +512,7 @@ class _ScreenAuthState extends ConsumerState<ScreenAuth> {
                   ///////////////////////////////////////////////////////////////////////
                   /// Confirm Password Text Field
                   ///////////////////////////////////////////////////////////////////////
+                  const SizedBox(height: 10),
                   if (!_signInMode)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5),

@@ -4,12 +4,14 @@ import 'dart:async';
 // Flutter external package imports
 import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:go_router/go_router.dart';
 
 // App relative file imports
 import '../../../util/message_display/snackbar.dart';
@@ -96,6 +98,10 @@ class _ScreenAddStudentSupervisorState extends ConsumerState<ScreenAddStudentSup
     Navigator.of(context).pop();
   }
 
+  Future<void> _cancelAdd() async {
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProfile = ref.watch(providerUserProfile);
@@ -104,21 +110,21 @@ class _ScreenAddStudentSupervisorState extends ConsumerState<ScreenAddStudentSup
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add a student"),
+        title: const Text("Register New Student"),
         centerTitle: true,
       ),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(16),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 400),
             child: Card(
               elevation: 6,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(16),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -132,7 +138,7 @@ class _ScreenAddStudentSupervisorState extends ConsumerState<ScreenAddStudentSup
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 24),
                         TextFormField(
                           maxLength: 254,
                           decoration: const InputDecoration(
@@ -152,16 +158,29 @@ class _ScreenAddStudentSupervisorState extends ConsumerState<ScreenAddStudentSup
                           },
                           onSaved: (value) => _userEmail = value!,
                         ),
-                        const SizedBox(height: 24),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              _sendRequest(supervisorFullName, supervisorEmail);
-                            },
-                            icon: const Icon(Icons.send),
-                            label: const Text("Send Request"),
-                          ),
+                        const SizedBox(height: 18),
+                        Row(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: ElevatedButton.icon(
+                                onPressed: _cancelAdd, 
+                                label: const Text("Cancel"),
+                                icon: const Icon(Icons.cancel),
+                              ),
+                            ),
+                            Spacer(),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  _sendRequest(supervisorFullName, supervisorEmail);
+                                },
+                                icon: const Icon(Icons.send),
+                                label: const Text("Send Request"),
+                              ),
+                            ),
+                          ],
                         )
                       ],
                     ),

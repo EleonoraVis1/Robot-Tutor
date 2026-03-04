@@ -333,7 +333,7 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                             Padding(
                               padding: const EdgeInsets.all(5.0),
                               child: ProfileAvatar(
-                                radius: 100,
+                                radius: 85,
                                 userImage: pickedImage == null
                                     ? _providerUserProfile.userImage
                                     : Image.file(pickedImage!).image,
@@ -373,7 +373,7 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(Icons.image_outlined, color: Colors.white, size: 20),
-                                SizedBox(width: 5),
+                                SizedBox(width: 4),
                                 Text("Gallery", style: TextStyle(fontSize: 15)),
                               ],
                             ),
@@ -439,6 +439,7 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                   ///////////////////////////////////////////////////////////////////////
                   // First Name Text Field
                   ///////////////////////////////////////////////////////////////////////
+                  const SizedBox(height: 15),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: TextFormField(
@@ -460,6 +461,7 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                   ///////////////////////////////////////////////////////////////////////
                   // Last Name Text Field
                   ///////////////////////////////////////////////////////////////////////
+                  const SizedBox(height: 15),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: TextFormField(
@@ -481,15 +483,19 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                   ///////////////////////////////////////////////////////////////////////
                   /// Continue Button and Cancel Button
                   ///////////////////////////////////////////////////////////////////////
+                  const SizedBox(height: 15),
                   Column(
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 0),
                         child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green
+                          ),
                           onPressed: () {
                             _trySubmit();
                           },
-                          child: widget.isAuth ? const Text("Submit") : const Text("Update"),
+                          child: widget.isAuth ? const Text("Submit Profile") : const Text("Update Profile"),
                         ),
                       ),
                       if (widget.isAuth)

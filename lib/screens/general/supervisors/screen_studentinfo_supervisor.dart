@@ -90,6 +90,7 @@ class _ScreenStudentinfoSupervisorState
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text('Student Info'),
+        centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Chat history',

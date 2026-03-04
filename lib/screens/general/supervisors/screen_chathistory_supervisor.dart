@@ -21,6 +21,7 @@ class ScreenChathistorySupervisor extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chat History'),
+        centerTitle: true,
       ),
       body: messagesAsync.when(
         loading: () =>

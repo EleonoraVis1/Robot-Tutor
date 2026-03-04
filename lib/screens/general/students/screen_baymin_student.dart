@@ -53,6 +53,7 @@ class _ScreenBaymindStudentState extends ConsumerState<ScreenBayminStudent> {
       body: Center(child: Text('BAY-min Persona')),
       appBar: AppBar(
         title: Text("Baymin Persona"),
+        centerTitle: true,
       ),
     );
   }
