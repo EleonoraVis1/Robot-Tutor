@@ -122,7 +122,13 @@ class _ScreenSettingsState extends ConsumerState<ScreenSettings> {
               ),
             const SizedBox(height: 20),
             Center(
-              child: ElevatedButton(onPressed: _trySubmit, child: const Text('Save')),
+              child: ElevatedButton(
+                onPressed: _trySubmit,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green
+                ), 
+                child: const Text('Save')
+              ),
             ),
           ],
         ),
