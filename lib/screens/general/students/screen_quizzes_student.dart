@@ -69,6 +69,7 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Quiz'),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),

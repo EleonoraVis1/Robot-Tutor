@@ -79,6 +79,7 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
         return Scaffold(
           appBar: AppBar(
             title: Text(subject.title),
+            centerTitle: true,
           ),
           body: ListView.separated(
             padding: const EdgeInsets.all(16),

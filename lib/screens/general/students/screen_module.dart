@@ -79,6 +79,7 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
             return Text( 'Module: ${module.title}');
           },
         ),
+        centerTitle: true,
       ),
       
       body: Padding(

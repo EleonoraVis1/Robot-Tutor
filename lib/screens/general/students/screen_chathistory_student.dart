@@ -15,7 +15,10 @@ class ScreenChathistoryStudent extends ConsumerWidget {
     final messagesAsync = ref.watch(chatMessagesProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Tutor Chat')),
+      appBar: AppBar(
+        title: const Text('Tutor Chat'),
+        centerTitle: true,
+      ),
       body: messagesAsync.when(
         loading: () =>
             const Center(child: CircularProgressIndicator()),
