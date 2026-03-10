@@ -100,53 +100,6 @@ class _MyAppState extends State<MyApp> {
   // NONE
 
   // Router
-  /*
-  final GoRouter _router = GoRouter(
-    initialLocation: ScreenLoginValidation.routeName,
-    routes: [
-      
-      
-      GoRoute(
-        path: ScreenBayminStudent.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenBayminStudent(),
-      ),
-      GoRoute(
-        path: ScreenHomeSupervisor.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenHomeSupervisor(),
-      ),
-      GoRoute(
-        path: ScreenAddStudentSupervisor.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenAddStudentSupervisor(),
-      ),
-      GoRoute(
-        path: ScreenChathistoryStudent.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenChathistoryStudent(),
-      ),
-      GoRoute(
-        path: '${ScreenStudentinfoSupervisor.routeName}/:studentUid',
-        builder: (context, state) {
-          final studentUid = state.pathParameters['studentUid']!;
-          return ScreenStudentinfoSupervisor(studentUid: studentUid);
-        },
-      ),
-      /*GoRoute(
-        path: '${ScreenChathistorySupervisor.routeName}/:studentUid',
-        builder: (context, state) {
-          final studentUid = state.pathParameters['studentUid']!;
-          return ScreenChathistorySupervisor(studentUid: studentUid);
-        },
-      ),*/
-      GoRoute(
-        path: ScreenSubjectSupervisor.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenSubjectSupervisor(),
-      ),
-    ],
-  );*/
 
   final GoRouter _router = GoRouter(
     initialLocation: ScreenLoginValidation.routeName,
