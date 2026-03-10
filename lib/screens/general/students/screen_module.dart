@@ -7,6 +7,7 @@ import 'package:csc322_starter_app/models/user_profile.dart';
 import 'package:csc322_starter_app/providers/provider_module_result.dart';
 import 'package:csc322_starter_app/providers/provider_subjects.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_chathistory_student.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,12 @@ class ScreenModule extends ConsumerStatefulWidget {
   static const routeName =
       '/subject/:subjectId/module/:moduleId';
 
-  const ScreenModule({super.key});
+  final String? studentUid;
+  final String subjectId;
+  final String moduleId;
+  
+
+  const ScreenModule({super.key, required this.studentUid, required this.subjectId, required this.moduleId});
 
   @override
   ConsumerState<ScreenModule> createState() => _ScreenModuleState();
@@ -80,6 +86,25 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
           },
         ),
       ),
+      floatingActionButton:  FloatingActionButton(
+        tooltip: 'Chat history',
+        child: const Icon(Icons.chat),
+        onPressed: () {
+
+          if (widget.studentUid == null) {
+            // student
+            context.push(
+              '/subject/$subjectId/module/$moduleId/chat',
+            );
+          } else {
+            // supervisor
+            context.push(
+              '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/$subjectId/module/$moduleId/chat',
+            );
+          }
+
+        },
+      ),
       
       body: Padding(
         padding: const EdgeInsets.all(24),
@@ -105,7 +130,7 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
               const SizedBox(height: 16),
 
               ref.watch(moduleResultProvider((
-                studentUid: 'BEYAvvfuXVZYo4lLPE5KFKLakId2',
+                studentUid: widget.studentUid ?? profileProvider.uid,
                 moduleId: moduleId,)
               )).when(
                 loading: () => const CircularProgressIndicator(),

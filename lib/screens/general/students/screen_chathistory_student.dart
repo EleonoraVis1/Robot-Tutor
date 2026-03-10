@@ -6,13 +6,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class ScreenChathistoryStudent extends ConsumerWidget {
   static const routeName = '/chat_history_student';
 
+  final String moduleId;
+
   const ScreenChathistoryStudent({
     super.key,
+    required this.moduleId
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final messagesAsync = ref.watch(chatMessagesProvider);
+    final messagesAsync = ref.watch(moduleChatProvider(moduleId));
 
     return Scaffold(
       appBar: AppBar(title: const Text('Tutor Chat')),

@@ -111,11 +111,11 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   // Takes in the current tab index and returns the appropriate
   // screen to display.
   ////////////////////////////////////////////////////////////////
-  Widget _getScreenToDisplay(int currentTabIndex, bool isSupervisor) {
+  Widget _getScreenToDisplay(int currentTabIndex, bool isSupervisor, String uid) {
     if (currentTabIndex == BottomNavSelection.HOME_SCREEN.index)
-      return isSupervisor ? ScreenHomeSupervisor() : ScreenHomeStudent();
+      return isSupervisor ? ScreenHomeSupervisor() : ScreenHomeStudent(supervisorView: false, studentUid: uid,);
     else
-      return ScreenHomeStudent();
+      return ScreenHomeStudent(supervisorView: false, studentUid: uid,);
   }
 
   ////////////////////////////////////////////////////////////////
@@ -151,7 +151,7 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
     final currentTabIndex = ref.watch(providerPrimaryBottomNavTabIndex);
     final userProfile = ref.watch(providerUserProfile);
     final isSupervisor = userProfile.userType == UserType.SUPERVISOR;
-
+    final uid = userProfile.uid;
 
     // Return the scaffold
     return Scaffold(
@@ -161,7 +161,7 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
         title: _getAppBarTitle(currentTabIndex),
       ),
       drawer: WidgetAppDrawer(),
-      body: _getScreenToDisplay(currentTabIndex, isSupervisor),
+      body: _getScreenToDisplay(currentTabIndex, isSupervisor, uid),
     );
   }
 }

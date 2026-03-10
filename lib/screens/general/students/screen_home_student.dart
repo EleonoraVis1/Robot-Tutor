@@ -7,6 +7,7 @@ import 'package:csc322_starter_app/providers/provider_subjects.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_chathistory_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:csc322_starter_app/widgets/general/subject_card.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -29,6 +30,15 @@ const List<Map<String, dynamic>> _kSubjects = [
 //////////////////////////////////////////////////////////////////////////
 class ScreenHomeStudent extends ConsumerStatefulWidget {
   static const routeName = '/home_student';
+
+  final bool supervisorView;
+  final String? studentUid;
+
+  const ScreenHomeStudent({
+    super.key,
+    required this.supervisorView,
+    required this.studentUid
+  });
 
   @override
   ConsumerState<ScreenHomeStudent> createState() => _ScreenHomeStudentState();
@@ -74,17 +84,9 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      //appBar: WidgetPrimaryAppBar(title: const Text('Welcome')),
+      
+      appBar: widget.supervisorView ? WidgetPrimaryAppBar(title: const Text('Subjects')) : null,
       body: _buildStudentView(profileProvider),
-      floatingActionButton: FloatingActionButton(
-        tooltip: 'Chat history',
-        child: const Icon(Icons.chat),
-        onPressed: () {
-          context.push(
-            ScreenChathistoryStudent.routeName,
-          );
-        },
-      ),
     );
   }
 
@@ -131,7 +133,7 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
                     return SubjectCard(
                       title: subject.title,
                       icon: subject.icon,
-                      routeName: '/subject/${subject.id}',
+                      routeName: widget.supervisorView ? '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/${subject.id}' : '/subject/${subject.id}',
                     );
                   },
                 );
