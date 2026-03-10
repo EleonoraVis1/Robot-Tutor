@@ -83,13 +83,9 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
     final profileProvider = ref.watch(providerUserProfile);
 
     return Scaffold(
-<<<<<<< HEAD
-      //appBar: WidgetPrimaryAppBar(title: const Text('Welcome')),
-=======
       backgroundColor: Colors.grey[100],
       
       appBar: widget.supervisorView ? WidgetPrimaryAppBar(title: const Text('Subjects')) : null,
->>>>>>> feature/scrum55.connect_conversation_to_modules
       body: _buildStudentView(profileProvider),
     );
   }
