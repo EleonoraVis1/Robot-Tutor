@@ -73,9 +73,9 @@ class _ScreenStudentinfoSupervisorState
   ////////////////////////////////////////////////////////////////
   // Navigation
   ////////////////////////////////////////////////////////////////
-  void _openChatHistory() {
+  /*void _openChatHistory() {
     context.push(ScreenChathistorySupervisor.routeName);
-  }
+  }*/
 
   void _openModuleInfo() {
     context.push(ScreenModule.routeName);
@@ -92,7 +92,7 @@ class _ScreenStudentinfoSupervisorState
         title: const Text('Student Info'),
         centerTitle: true,
       ),
-      floatingActionButton: FloatingActionButton(
+      /*floatingActionButton: FloatingActionButton(
         tooltip: 'Chat history',
         child: const Icon(Icons.chat),
         onPressed: () {
@@ -100,7 +100,7 @@ class _ScreenStudentinfoSupervisorState
             '${ScreenChathistorySupervisor.routeName}/${widget.studentUid}',
           );
         },
-      ),
+      ),*/
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(

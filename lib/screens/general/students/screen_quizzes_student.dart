@@ -19,7 +19,12 @@ class ScreenQuiz extends ConsumerStatefulWidget {
   static const routeName =
       '/subject/:subjectId/module/:moduleId/quiz';
 
-  const ScreenQuiz({super.key});
+  final String? studentUid;
+  final String subjectId;
+  final String moduleId;
+  
+
+  const ScreenQuiz({super.key, required this.studentUid, required this.subjectId, required this.moduleId});
 
   @override
   ConsumerState<ScreenQuiz> createState() => _ScreenQuizState();

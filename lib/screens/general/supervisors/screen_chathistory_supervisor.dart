@@ -4,19 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ScreenChathistorySupervisor extends ConsumerWidget {
-  static const routeName = '/chat_history';
+  //static const routeName = '/chat_history';
 
   final String studentUid;
+  final String moduleId;
 
   const ScreenChathistorySupervisor({
     super.key,
     required this.studentUid,
+    required this.moduleId
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final messagesAsync =
-        ref.watch(chatMessagesProviderForStudent(studentUid));
+    final messagesAsync = ref.watch(
+      moduleChatForStudentProvider(
+        (studentUid: studentUid, moduleId: moduleId),
+      ),
+    );
 
     return Scaffold(
       appBar: AppBar(

@@ -25,7 +25,6 @@ import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent
 import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistory_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_studentinfo_supervisor.dart';
-import 'package:csc322_starter_app/screens/general/supervisors/screen_subject_supervisor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -105,6 +104,7 @@ class _MyAppState extends State<MyApp> {
   // NONE
 
   // Router
+  /*
   final GoRouter _router = GoRouter(
     initialLocation: ScreenLoginValidation.routeName,
     routes: [
@@ -163,6 +163,8 @@ class _MyAppState extends State<MyApp> {
         path: ScreenQuiz.routeName,
         builder: (context, state) => const ScreenQuiz(),
       ),
+      
+      
       GoRoute(
         path: ScreenBayminStudent.routeName,
         builder: (BuildContext context, GoRouterState state) =>
@@ -195,20 +197,164 @@ class _MyAppState extends State<MyApp> {
           return ScreenStudentinfoSupervisor(studentUid: studentUid);
         },
       ),
-      GoRoute(
+      /*GoRoute(
         path: '${ScreenChathistorySupervisor.routeName}/:studentUid',
         builder: (context, state) {
           final studentUid = state.pathParameters['studentUid']!;
           return ScreenChathistorySupervisor(studentUid: studentUid);
         },
-      ),
+      ),*/
       GoRoute(
         path: ScreenSubjectSupervisor.routeName,
         builder: (BuildContext context, GoRouterState state) =>
             ScreenSubjectSupervisor(),
       ),
     ],
+  );*/
+
+  final GoRouter _router = GoRouter(
+    initialLocation: ScreenLoginValidation.routeName,
+    routes: [
+      GoRoute(
+        path: ScreenLoginValidation.routeName,
+        builder: (context, state) => const ScreenLoginValidation(),
+      ),
+      GoRoute(
+        path: ScreenSettings.routeName,
+        builder: (context, state) => ScreenSettings(),
+      ),
+      GoRoute(
+        path: ScreenProfileEdit.routeName,
+        builder: (context, state) => const ScreenProfileEdit(),
+      ),
+      GoRoute(
+        path: WidgetPrimaryScaffold.routeName,
+        builder: (BuildContext context, GoRouterState state) =>
+          const WidgetPrimaryScaffold(),
+      ),
+
+      // Student home flow
+      GoRoute(
+        path: ScreenHomeStudent.routeName,
+        builder: (context, state) => ScreenHomeStudent(supervisorView: false, studentUid: null),
+      ),
+      GoRoute(
+        path: '/subject/:subjectId',
+        builder: (context, state) {
+          final subjectId = state.pathParameters['subjectId']!;
+          return ScreenSubject(subjectId: subjectId, studentUid: null,);
+        },
+        routes: [
+          GoRoute(
+            path: 'module/:moduleId',
+            builder: (context, state) {
+              final subjectId = state.pathParameters['subjectId']!;
+              final moduleId = state.pathParameters['moduleId']!;
+              return ScreenModule(
+                subjectId: subjectId,
+                moduleId: moduleId,
+                studentUid: null, // student will use their own UID
+              );
+            },
+            routes: [
+              GoRoute(
+                path: 'quiz',
+                builder: (context, state) {
+                  final subjectId = state.pathParameters['subjectId']!;
+                  final moduleId = state.pathParameters['moduleId']!;
+                  return ScreenQuiz(
+                    subjectId: subjectId,
+                    moduleId: moduleId,
+                    studentUid: null, // student uses their own UID
+                  );
+                },
+              ),
+              GoRoute(
+                path: 'chat',
+                builder: (context, state) {
+                  final moduleId = state.pathParameters['moduleId']!;
+                  return ScreenChathistoryStudent(moduleId: moduleId);
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+      // Supervisor home
+      GoRoute(
+        path: ScreenHomeSupervisor.routeName,
+        builder: (context, state) => ScreenHomeSupervisor(),
+        routes: [
+          // Supervisor selects a student -> show student's subjects
+          GoRoute(
+            path: 'student/:studentUid',
+            builder: (context, state) {
+              final studentUid = state.pathParameters['studentUid']!;
+              return ScreenHomeStudent(
+                supervisorView: true,
+                studentUid: studentUid,
+              );
+            },
+            routes: [
+              // Subject
+              GoRoute(
+                path: 'subject/:subjectId',
+                builder: (context, state) {
+                  final studentUid = state.pathParameters['studentUid']!;
+                  final subjectId = state.pathParameters['subjectId']!;
+
+                  return ScreenSubject(
+                    subjectId: subjectId,
+                    studentUid: studentUid,
+                  );
+                },
+                routes: [
+                  // Module
+                  GoRoute(
+                    path: 'module/:moduleId',
+                    builder: (context, state) {
+                      final studentUid = state.pathParameters['studentUid']!;
+                      final subjectId = state.pathParameters['subjectId']!;
+                      final moduleId = state.pathParameters['moduleId']!;
+
+                      return ScreenModule(
+                        studentUid: studentUid,
+                        subjectId: subjectId,
+                        moduleId: moduleId,
+                      );
+                    },
+                    routes: [
+                      GoRoute(
+                        path: 'chat',
+                        builder: (context, state) {
+                          final studentUid = state.pathParameters['studentUid']!;
+                          final moduleId = state.pathParameters['moduleId']!;
+
+                          return ScreenChathistorySupervisor(
+                            studentUid: studentUid,
+                            moduleId: moduleId,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+      GoRoute( path: ScreenAddStudentSupervisor.routeName, builder: (context, state) => ScreenAddStudentSupervisor(), ),
+    ],
   );
+
+  //////////////////////////////////////////////////////////////////////////
+  // Primary Flutter method overriden which describes the layout
+  // and bindings for this widget.
+  //////////////////////////////////////////////////////////////////////////
+
+  // ToDO: start something
+  // This widget is the root of your application.
 
   @override
   Widget build(BuildContext context) {

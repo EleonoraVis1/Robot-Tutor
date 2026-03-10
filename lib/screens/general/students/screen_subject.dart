@@ -2,11 +2,16 @@
 import 'dart:async';
 
 // Flutter external package imports
+import 'package:csc322_starter_app/main.dart';
+import 'package:csc322_starter_app/models/user_profile.dart';
 import 'package:csc322_starter_app/providers/provider_subjects.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // App relative file imports
 import '../../../util/message_display/snackbar.dart';
@@ -15,13 +20,15 @@ import '../../../util/message_display/snackbar.dart';
 // StateFUL widget which manages state. Simply initializes the state object.
 //////////////////////////////////////////////////////////////////////////
 class ScreenSubject extends ConsumerStatefulWidget {
-  static const routeName = '/subject/:subjectId';
+  static const routeName = '/student/:studentUid/subject/:subjectId';
 
   final String subjectId;
+  final String? studentUid;
 
   const ScreenSubject({
     super.key,
     required this.subjectId,
+    required this.studentUid
   });
 
   @override
@@ -58,10 +65,42 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
   Future<void> _init() async {}
 
   
+
+  Future<void> startModule(String studentId, String moduleId) async {
+    final moduleRef = FirebaseFirestore.instance
+        .collection('user_profiles')
+        .doc(studentId)
+        .collection('modules')
+        .doc(moduleId);
+
+    final messagesRef = moduleRef.collection('messages');
+
+    // Create or update module progress and metadata
+    await moduleRef.set({
+      'startedAt': FieldValue.serverTimestamp(),
+      'completed': false,
+      'lastAccessed': FieldValue.serverTimestamp(),
+      'messageCount': FieldValue.increment(1), // Optional: track messages
+    }, SetOptions(merge: true));
+
+    // Add first system message if this is the first run
+    final messagesSnapshot = await messagesRef.limit(1).get();
+
+    if (messagesSnapshot.docs.isEmpty) {
+      await messagesRef.add({
+        'from': 'system',
+        'message': 'Module $moduleId started for $studentId',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    }
+  }
   
   @override
   Widget build(BuildContext context) {
     final subjectsAsync = ref.watch(subjectsProvider);
+    final profileProvider = ref.watch(providerUserProfile);
+
+    final isSupervisor = profileProvider.dataLoaded && profileProvider.userType == UserType.SUPERVISOR;
 
     return subjectsAsync.when(
       loading: () => const Scaffold(
@@ -95,10 +134,25 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
                 ),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(20),
-                  onTap: () {
-                    context.push(
-                      '/subject/${widget.subjectId}/module/${module.id}',
+                  onTap: () async {
+                    try {
+                      if (profileProvider.dataLoaded && !isSupervisor) {
+                        await startModule(profileProvider.uid, module.id);
+                        context.push('/subject/${widget.subjectId}/module/${module.id}');
+                      } else if (profileProvider.dataLoaded && isSupervisor) {
+                        context.push(
+                          '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/${widget.subjectId}/module/${module.id}',
+                        );
+                      }
+
+                      
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Failed to start module'),
+                      ),
                     );
+                    }
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(

@@ -66,7 +66,8 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
 
   void _openStudentInfo(String studentId) {
     context.push(
-      '${ScreenStudentinfoSupervisor.routeName}/${studentId}',
+      //'${ScreenStudentinfoSupervisor.routeName}/${studentId}',
+      '${ScreenHomeSupervisor.routeName}/student/${studentId}',
     );
   }
 
