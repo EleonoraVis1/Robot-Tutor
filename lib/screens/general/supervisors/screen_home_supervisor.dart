@@ -66,7 +66,6 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
 
   void _openStudentInfo(String studentId) {
     context.push(
-      //'${ScreenStudentinfoSupervisor.routeName}/${studentId}',
       '${ScreenHomeSupervisor.routeName}/student/${studentId}',
     );
   }
@@ -102,14 +101,14 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
                 'Here are your students:',
                 style: TextStyle(fontSize: 16),
               ),
-              const SizedBox(width: 50),
+              const Spacer(),
               ElevatedButton.icon(
-                onPressed: _openAddStudents, 
+                onPressed: _openAddStudents,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                 ),
+                icon: const Icon(Icons.add),
                 label: const Text("Add Student"),
-                icon: Icon(Icons.add),
               ),
             ],
           ),

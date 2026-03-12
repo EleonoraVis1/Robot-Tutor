@@ -79,7 +79,15 @@ class WidgetAppDrawer extends StatelessWidget {
                   context.push(ScreenProfileEdit.routeName);
                 },
               ),
-              
+              if (!isSupervisor)
+                ListTile(
+                  leading: Icon(Icons.bolt_outlined), 
+                  title: Text('BAY-min Persona'), 
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    context.push(ScreenBayminStudent.routeName);
+                  }
+                ),
               if (!isSupervisor)
                 Divider(),
               if (!isSupervisor)

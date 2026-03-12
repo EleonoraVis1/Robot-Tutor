@@ -237,6 +237,8 @@ class _MyAppState extends State<MyApp> {
           ),
         ],
       ),
+      GoRoute( path: ScreenInvites.routeName, builder: (context, state) => ScreenInvites(), ),
+      GoRoute( path: ScreenBayminStudent.routeName, builder: (context, state) => ScreenBayminStudent(), ),
       GoRoute( path: ScreenAddStudentSupervisor.routeName, builder: (context, state) => ScreenAddStudentSupervisor(), ),
     ],
   );
