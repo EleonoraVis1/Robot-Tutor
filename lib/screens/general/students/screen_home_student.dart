@@ -82,9 +82,7 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
   Widget build(BuildContext context) {
     final profileProvider = ref.watch(providerUserProfile);
 
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      
+    return Scaffold( 
       appBar: widget.supervisorView ? WidgetPrimaryAppBar(title: const Text('Subjects')) : null,
       body: _buildStudentView(profileProvider),
     );

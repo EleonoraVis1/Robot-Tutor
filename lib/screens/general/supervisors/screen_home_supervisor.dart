@@ -99,16 +99,20 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
             children: [
               const Text(
                 'Here are your students:',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 18),
               ),
               const Spacer(),
               ElevatedButton.icon(
                 onPressed: _openAddStudents,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
+                  fixedSize: Size(150, 15)
                 ),
                 icon: const Icon(Icons.add),
-                label: const Text("Add Student"),
+                label: const Text(
+                  "Add Student",
+                  style: TextStyle(fontSize: 14),
+                ),
               ),
             ],
           ),

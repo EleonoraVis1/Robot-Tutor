@@ -490,12 +490,13 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                         padding: const EdgeInsets.symmetric(vertical: 0),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green
+                            backgroundColor: Colors.green,
+                            fixedSize: Size(165, 15)
                           ),
                           onPressed: () {
                             _trySubmit();
                           },
-                          child: widget.isAuth ? const Text("Submit Profile") : const Text("Update Profile"),
+                          child: widget.isAuth ? const Text("Submit Profile", style: TextStyle(fontSize: 18)) : const Text("Update Profile", style: TextStyle(fontSize: 18)),
                         ),
                       ),
                       if (widget.isAuth)

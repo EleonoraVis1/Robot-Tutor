@@ -563,7 +563,7 @@ class _ScreenAuthState extends ConsumerState<ScreenAuth> {
                             onPressed: () {
                               _trySubmit();
                             },
-                            child: const Text("Sign In", style: TextStyle(fontSize: 23)),
+                            child: const Text("Log In", style: TextStyle(fontSize: 23)),
                           ),
                         ),
                         Padding(
@@ -574,7 +574,7 @@ class _ScreenAuthState extends ConsumerState<ScreenAuth> {
                                 _signInMode = false;
                               });
                             },
-                            child: const Text("Create an account"),
+                            child: const Text("Don't have an account? Sign up here!"),
                           ),
                         ),
                       ],
@@ -597,7 +597,7 @@ class _ScreenAuthState extends ConsumerState<ScreenAuth> {
                               _signInMode = true;
                             });
                           },
-                          child: const Text("Use existing account"),
+                          child: const Text("Already have an account? Log in here!"),
                         ),
                       ],
                     ),
