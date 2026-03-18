@@ -40,6 +40,11 @@ questions:
         In 2005 a new record of 68,986 ft was set.
         How many feet higher was the 2005 record?
       answer: "68,986 − 64,997 = 3,989 feet higher."
+      options:
+        - "1,014 feet"
+        - "3,989 feet"
+        - "4,011 feet"
+      correct_answer: "3,989 feet"
       citation_page: 37
 
     - id: q_g2
@@ -49,6 +54,11 @@ questions:
         What if a new record of 70,000 ft was set? How many feet higher
         than the 2005 record of 68,986 ft?
       answer: "70,000 − 68,986 = 1,014 feet higher."
+      options:
+        - "1,140 feet"
+        - "986 feet"
+        - "1,014 feet"
+      correct_answer: "1,014 feet"
       citation_page: 37
 
     - id: q_g3
@@ -58,6 +68,11 @@ questions:
         Ticket sales last year: $109,076. This year: $125,805.
         How much more were ticket sales this year?
       answer: "$125,805 − $109,076 = $16,729 more."
+      options:
+        - "$16,729"
+        - "$16,629"
+        - "$17,729"
+      correct_answer: "$16,729"
       citation_page: 37
 
     - id: q_g4
@@ -67,6 +82,11 @@ questions:
         A musician's album sold 234,499 copies week 1 and 432,112 copies
         week 2. How many more copies sold in week 2?
       answer: "432,112 − 234,499 = 197,613 more copies."
+      options:
+        - "197,513 copies"
+        - "198,613 copies"
+        - "197,613 copies"
+      correct_answer: "197,613 copies"
       citation_page: 37
 
   independent:
@@ -81,6 +101,11 @@ questions:
         Use the Steve Fossett Balloon Flights table.
         How many more miles did he fly in 2002 (20,482) than August 1998 (14,235)?
       answer: "20,482 − 14,235 = 6,247 more miles."
+      options:
+        - "6,347 miles"
+        - "6,247 miles"
+        - "5,247 miles"
+      correct_answer: "6,247 miles"
       citation_page: 38
 
     - id: q_i2
@@ -95,6 +120,11 @@ questions:
       answer: >
         Combined 1998: 5,803 + 14,235 = 20,038.
         20,038 < 20,482, so the combined 1998 distance is less.
+      options:
+        - "more"
+        - "equal"
+        - "less"
+      correct_answer: "less"
       citation_page: 38
 
     - id: q_i3
@@ -107,6 +137,11 @@ questions:
       answer: >
         Ground crew: 665 + 1,550 = 2,215.
         Total: 665 + 2,215 = 2,880.
+      options:
+        - "2,215"
+        - "2,780"
+        - "2,880"
+      correct_answer: "2,880"
       citation_page: 38
 
     - id: q_i4
@@ -120,4 +155,9 @@ questions:
       answer: >
         Year 2 miles: 14,378 − 422 = 13,956.
         Odometer at end of year 2: 16 + 14,378 + 13,956 = 28,350 miles.
+      options:
+        - "28,250 miles"
+        - "28,350 miles"
+        - "28,772 miles"
+      correct_answer: "28,350 miles"
       citation_page: 38
