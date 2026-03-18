@@ -34,6 +34,7 @@ class UserProfile {
   String _firstName = "";
   String _lastName = "";
   String _email = "";
+  String _activeModuleID = "";
   PermissionLevel _permissionLevel = PermissionLevel.PRODUCTION;
   int _accountCreationTime = 0;
   DateTime _dateLastPasswordChange = DateTime.now().add(const Duration(days: -365));
@@ -49,6 +50,7 @@ class UserProfile {
     this._firstName,
     this._lastName,
     this._email,
+    this._activeModuleID,
     this._permissionLevel,
     this._accountCreationTime,
     this._dateLastPasswordChange,
@@ -62,6 +64,7 @@ class UserProfile {
     _lastName = "";
     _firstName = "";
     _email = "";
+    _activeModuleID = "";
     _permissionLevel = PermissionLevel.PRODUCTION;
     _accountCreationTime = 0;
     _accountCreationStep = AccountCreationStep.ACC_STEP_ONBOARDING_PROFILE_CONTACT_INFO;
@@ -75,6 +78,7 @@ class UserProfile {
     firstName = jsonObject["first_name"] ?? "";
     lastName = jsonObject["last_name"] ?? "";
     email = jsonObject["email"] ?? "";
+    _activeModuleID = jsonObject["active_module_id"] ?? "";
     uid = firebaseUid;
     userType = _getUserTypeFromString(
       jsonObject["user_type"] ?? _getStringFromUserType(UserType.STUDENT),
@@ -99,6 +103,7 @@ class UserProfile {
   set firstName(String value) => _firstName = value;
   set lastName(String value) => _lastName = value;
   set email(String value) => _email = value;
+  set activeModuleID(String value) => _activeModuleID = value;
 
   set permissionLevel(PermissionLevel value) => _permissionLevel = value;
   set accountCreationTime(int value) => _accountCreationTime = value;
@@ -113,6 +118,7 @@ class UserProfile {
   String get firstName => _firstName;
   String get lastName => _lastName;
   String get email => _email;
+  String get activeModuleID => _activeModuleID;
 
   PermissionLevel get permissionLevel => _permissionLevel;
   int get accountCreationTime => _accountCreationTime;
@@ -195,6 +201,7 @@ class UserProfile {
     jsonObject["first_name"] = firstName;
     jsonObject["last_name"] = lastName;
     jsonObject["email"] = email;
+    jsonObject["active_module_id"] = activeModuleID;
     jsonObject["user_type"] = _getStringFromUserType(userType);
     jsonObject["email_lowercase"] = email.toLowerCase(); // Added for bf_manage_share_request GCF
     jsonObject["permission_level"] = _getStringFromPermissionLevel(permissionLevel);

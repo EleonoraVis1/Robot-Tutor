@@ -45,16 +45,7 @@ final moduleChatProvider = StreamProvider.family<List<ChatMessage>, String>((ref
     },
   );
 });
-/*
-final moduleChatForStudentProvider =
-    StreamProvider.family<List<ChatMessage>, ({String studentUid, String moduleId})>((ref, params) {
 
-  final query = _moduleMessagesQuery(params.studentUid, params.moduleId);
-
-  return query.snapshots().map(
-    (snap) => _mapMessages(snap, params.studentUid, params.moduleId),
-  );
-});*/
 final moduleChatForStudentProvider =
     StreamProvider.family<List<ChatMessage>, ({String studentUid, String moduleId})>((ref, params) {
 

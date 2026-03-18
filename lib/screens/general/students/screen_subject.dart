@@ -64,14 +64,13 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
   ////////////////////////////////////////////////////////////////
   Future<void> _init() async {}
 
-  
-
   Future<void> startModule(String studentId, String moduleId) async {
     final moduleRef = FirebaseFirestore.instance
         .collection('user_profiles')
         .doc(studentId)
         .collection('modules')
         .doc(moduleId);
+   
 
     final messagesRef = moduleRef.collection('messages');
 
@@ -94,9 +93,20 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
       });
     }
   }
+
+  Future<void> exitModule(String studentId) async {
+    final activeModuleRef = FirebaseFirestore.instance
+        .collection('user_profiles')
+        .doc(studentId);
+
+    await activeModuleRef.set({
+      'active_module_id' : ''
+    }, SetOptions(merge: true));
+  }
   
   @override
   Widget build(BuildContext context) {
+    
     final subjectsAsync = ref.watch(subjectsProvider);
     final profileProvider = ref.watch(providerUserProfile);
 
@@ -138,7 +148,12 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
                     try {
                       if (profileProvider.dataLoaded && !isSupervisor) {
                         await startModule(profileProvider.uid, module.id);
-                        context.push('/subject/${widget.subjectId}/module/${module.id}');
+                        // 👇 WAIT for module screen to close
+                        await context.push('/subject/${widget.subjectId}/module/${module.id}');
+
+                        // 👇 runs when user comes BACK
+                        await exitModule(profileProvider.uid);
+
                       } else if (profileProvider.dataLoaded && isSupervisor) {
                         context.push(
                           '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/${widget.subjectId}/module/${module.id}',

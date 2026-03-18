@@ -2,6 +2,7 @@
 import 'dart:async';
 
 // Flutter external package imports
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/models/user_profile.dart';
 import 'package:csc322_starter_app/providers/provider_module_result.dart';
@@ -26,7 +27,6 @@ class ScreenModule extends ConsumerStatefulWidget {
   final String? studentUid;
   final String subjectId;
   final String moduleId;
-  
 
   const ScreenModule({super.key, required this.studentUid, required this.subjectId, required this.moduleId});
 
@@ -56,12 +56,38 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final profileProvider = ref.read(providerUserProfile);
+
+      if (profileProvider.dataLoaded &&
+          profileProvider.userType != UserType.SUPERVISOR) {
+        startModule(profileProvider.uid, widget.moduleId);
+      }
+    });
+  }
+  
+
+  
+  Future<void> startModule(String studentId, String moduleId) async {
+    final ref = FirebaseFirestore.instance
+        .collection('user_profiles')
+        .doc(studentId);
+
+    final doc = await ref.get();
+
+    if (doc.data()?['active_module_id'] != moduleId) {
+      await ref.set({
+        'active_module_id': moduleId
+      }, SetOptions(merge: true));
+    }
   }
 
   ////////////////////////////////////////////////////////////////
   // Initializes state variables and resources
   ////////////////////////////////////////////////////////////////
   Future<void> _init() async {}
+
   @override
   Widget build(BuildContext context) {
     final params = GoRouterState.of(context).pathParameters;
@@ -72,6 +98,10 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
     final profileProvider = ref.watch(providerUserProfile);
 
     final isSupervisor = profileProvider.dataLoaded && profileProvider.userType == UserType.SUPERVISOR;
+
+/*    if (!isSupervisor) {
+      startModule(profileProvider.uid, moduleId);
+    }*/
 
     return Scaffold(
       appBar: AppBar(
