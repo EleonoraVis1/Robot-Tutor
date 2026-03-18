@@ -37,6 +37,11 @@ questions:
       visual_description: "Quick-picture drawing space for base-ten blocks (p. 25)."
       prompt: "Rename 150 as tens."
       answer: "15 tens"
+      options:
+        - "15 tens"
+        - "150 tens"
+        - "5 tens"
+      correct_answer: "15 tens"
       citation_page: 25
 
     - id: q_g2
@@ -46,6 +51,11 @@ questions:
       visual_description: "Quick-picture drawing space for base-ten blocks (p. 25)."
       prompt: "Rename 1,400 as hundreds."
       answer: "14 hundreds"
+      options:
+        - "14 hundreds"
+        - "140 hundreds"
+        - "4 hundreds"
+      correct_answer: "14 hundreds"
       citation_page: 25
 
     - id: q_g3
@@ -53,6 +63,11 @@ questions:
       has_visual: false
       prompt: "Rename 2 thousands 3 hundreds as hundreds."
       answer: "23 hundreds"
+      options:
+        - "23 hundreds"
+        - "203 hundreds"
+        - "230 hundreds"
+      correct_answer: "23 hundreds"
       citation_page: 25
 
     - id: q_g4
@@ -60,6 +75,11 @@ questions:
       has_visual: false
       prompt: "Rename 13 hundreds as thousands and hundreds."
       answer: "1 thousand 3 hundreds"
+      options:
+        - "1 thousand 3 hundreds"
+        - "13 thousands"
+        - "3 thousand 1 hundred"
+      correct_answer: "1 thousand 3 hundreds"
       citation_page: 25
 
     - id: q_g5
@@ -70,6 +90,11 @@ questions:
       visual_description: "Place-value chart with 18,000 filled in (p. 25)."
       prompt: "Use the place-value chart: 18 thousands = ___"
       answer: "18,000"
+      options:
+        - "1,800"
+        - "18,000"
+        - "180,000"
+      correct_answer: "18,000"
       citation_page: 25
 
     - id: q_g6
@@ -79,6 +104,11 @@ questions:
       visual_description: "Place-value chart with 570,000 filled in (p. 25)."
       prompt: "570,000 = 57 ___"
       answer: "57 ten-thousands"
+      options:
+        - "57 ten-thousands"
+        - "57 thousands"
+        - "570 ten-thousands"
+      correct_answer: "57 ten-thousands"
       citation_page: 25
 
   independent:
@@ -87,6 +117,11 @@ questions:
       has_visual: false
       prompt: "580 = ___ tens"
       answer: "58 tens"
+      options:
+        - "58 tens"
+        - "580 tens"
+        - "5 tens"
+      correct_answer: "58 tens"
       citation_page: 25
 
     - id: q_i2
@@ -94,6 +129,11 @@ questions:
       has_visual: false
       prompt: "740,000 = ___ ten-thousands"
       answer: "74 ten-thousands"
+      options:
+        - "74 ten-thousands"
+        - "740 ten-thousands"
+        - "74 thousands"
+      correct_answer: "74 ten-thousands"
       citation_page: 25
 
     - id: q_i3
@@ -101,6 +141,11 @@ questions:
       has_visual: false
       prompt: "8 hundreds 4 tens = 84 ___"
       answer: "84 tens"
+      options:
+        - "84 tens"
+        - "840 tens"
+        - "8 tens"
+      correct_answer: "84 tens"
       citation_page: 25
 
     - id: q_i4
@@ -108,6 +153,11 @@ questions:
       has_visual: false
       prompt: "29 thousands = ___"
       answer: "29,000"
+      options:
+        - "2,900"
+        - "29,000"
+        - "290,000"
+      correct_answer: "29,000"
       citation_page: 25
 
   word_problems:
@@ -119,6 +169,11 @@ questions:
         A toy store is ordering 3,000 remote control cars in sets of 10.
         How many sets of 10 does the store need to order?
       answer: "300 sets (3,000 ÷ 10 = 300)."
+      options:
+        - "300 sets"
+        - "30 sets"
+        - "3,000 sets"
+      correct_answer: "300 sets"
       citation_page: 26
 
     - id: q_w2
@@ -129,6 +184,11 @@ questions:
         Ivan sold 53 boxes on Friday and 27 boxes on Saturday.
         Each box held 10 oranges. How many oranges did he sell in all?
       answer: "800 oranges ((53 + 27) × 10 = 80 × 10 = 800)."
+      options:
+        - "800 oranges"
+        - "80 oranges"
+        - "530 oranges"
+      correct_answer: "800 oranges"
       citation_page: 26
 
     - id: q_w3
@@ -139,6 +199,11 @@ questions:
         A store sold 15,000 boxes of buttons. Total buttons sold = 150,000.
         How many buttons were in each box?
       answer: "10 buttons per box (150,000 ÷ 15,000 = 10)."
+      options:
+        - "1 button"
+        - "10 buttons"
+        - "100 buttons"
+      correct_answer: "10 buttons"
       citation_page: 26
 
     - id: q_w4
@@ -149,10 +214,26 @@ questions:
       items:
         - statement: "9 hundreds 3 tens can be renamed as 39 tens."
           answer: "False"
+          options:
+            - "True"
+            - "False"
+          correct_answer: "False"
         - statement: "370,000 can be renamed as 37 ten-thousands."
           answer: "True"
+          options:
+            - "True"
+            - "False"
+          correct_answer: "True"
         - statement: "780 can be renamed as 78 tens."
           answer: "True"
+          options:
+            - "True"
+            - "False"
+          correct_answer: "True"
         - statement: "42,000 can be renamed as 42 thousands."
           answer: "True"
+          options:
+            - "True"
+            - "False"
+          correct_answer: "True"
       citation_page: 26

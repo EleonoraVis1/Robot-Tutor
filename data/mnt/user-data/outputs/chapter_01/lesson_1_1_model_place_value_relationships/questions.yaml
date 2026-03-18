@@ -1,16 +1,16 @@
 # =============================================================================
-# GO Math Grade 4 — Chapter 1, Lesson 1.1
-# questions.yaml — guided, independent, and word_problems only
+# GO Math Grade 4 ??Chapter 1, Lesson 1.1
+# questions.yaml ??guided, independent, and word_problems only
 # Firestore path: subjects/math/grades/4/lessons/math_g4_ch1_l1
 # Schema version: 1.1
-# EGR302 Reachy Mini (BAY-min) Tutoring Robot — Data Pipeline
+# EGR302 Reachy Mini (BAY-min) Tutoring Robot ??Data Pipeline
 # Role owner: Haneul (module/question design & data handling)
 # =============================================================================
 
 # PENDING DECISION: Josh/Kip to confirm whether questions should be
 # a subcollection (lessons/{lesson_id}/questions/{question_id}) in Firestore
 # or remain as an array inside the lesson document.
-# This affects ingestion script design — resolve before seeding.
+# This affects ingestion script design ??resolve before seeding.
 
 lesson_id: "math_g4_ch1_l1"
 subject: math
@@ -37,21 +37,36 @@ questions:
       prompt: >
         Complete the table: How many small cubes make a long?
         How many longs make a flat? How many flats make a large cube?
-      answer: "10 cubes → long (10); 10 longs → flat (100); 10 flats → large cube (1,000)."
+      answer: "10 cubes ??long (10); 10 longs ??flat (100); 10 flats ??large cube (1,000)."
+      options:
+        - "10, 10, 10"
+        - "10, 100, 1,000"
+        - "1, 10, 100"
+      correct_answer: "10, 10, 10"
       citation_page: 7
 
     - id: q_g2
       type: find_value
       has_visual: false
-      prompt: "Find the value of the underlined digit: 7̲03,890"
+      prompt: "Find the value of the underlined digit: [7]03,890"
       answer: "700,000"
+      options:
+        - "70,000"
+        - "700,000"
+        - "7,000"
+      correct_answer: "700,000"
       citation_page: 7
 
     - id: q_g3
       type: find_value
       has_visual: false
-      prompt: "Find the value of the underlined digit: 63,5̲40"
+      prompt: "Find the value of the underlined digit: 63,[5]40"
       answer: "500"
+      options:
+        - "50"
+        - "500"
+        - "5,000"
+      correct_answer: "500"
       citation_page: 7
 
     - id: q_g4
@@ -59,53 +74,88 @@ questions:
       has_visual: false
       prompt: "Compare: 2,000 and 200. The value of 2 in ___ is ___ times the value of 2 in ___."
       answer: "The value of 2 in 2,000 is 10 times the value of 2 in 200."
+      options:
+        - "2,000 is 10 times 200"
+        - "200 is 10 times 2,000"
+        - "2,000 is 100 times 200"
+      correct_answer: "2,000 is 10 times 200"
       citation_page: 7
 
   independent:
     - id: q_i1
       type: find_value
       has_visual: false
-      prompt: "Find the value of the underlined digit: 2̲30,001"
+      prompt: "Find the value of the underlined digit: [2]30,001"
       answer: "200,000"
+      options:
+        - "20,000"
+        - "200,000"
+        - "2,000"
+      correct_answer: "200,000"
       citation_page: 7
 
     - id: q_i2
       type: find_value
       has_visual: false
-      prompt: "Find the value of the underlined digit: 80̲3,040"
+      prompt: "Find the value of the underlined digit: 80[3],040"
       answer: "0"
+      options:
+        - "0"
+        - "30"
+        - "3,000"
+      correct_answer: "0"
       citation_page: 7
 
     - id: q_i3
       type: find_value
       has_visual: false
-      prompt: "Find the value of the underlined digit: 46,8̲42"
+      prompt: "Find the value of the underlined digit: 46,[8]42"
       answer: "800"
+      options:
+        - "80"
+        - "800"
+        - "8,000"
+      correct_answer: "800"
       citation_page: 7
 
     - id: q_i4
       type: find_value
       has_visual: false
-      prompt: "Find the value of the underlined digit: 9̲80,650"
+      prompt: "Find the value of the underlined digit: [9]80,650"
       answer: "900,000"
+      options:
+        - "90,000"
+        - "900,000"
+        - "9,000"
+      correct_answer: "900,000"
       citation_page: 7
 
     - id: q_i5
       type: compare_values
       has_visual: false
       prompt: >
-        Compare: 6̲7,908 and 7̲6,908.
+        Compare: 6[7],908 and [7]6,908.
         The value of 7 in ___ is ___ times the value of 7 in ___.
       answer: "The value of 7 in 76,908 is 10 times the value of 7 in 67,908."
+      options:
+        - "76,908 is 10 times 67,908"
+        - "67,908 is 10 times 76,908"
+        - "76,908 is 100 times 67,908"
+      correct_answer: "76,908 is 10 times 67,908"
       citation_page: 7
 
     - id: q_i6
       type: compare_values
       has_visual: false
       prompt: >
-        Compare: 546,3̲00 and 3̲,456.
+        Compare: 546,[3]00 and [3],456.
         The value of 3 in ___ is ___ times the value of 3 in ___.
       answer: "The value of 3 in 546,300 is 100 times the value of 3 in 3,456."
+      options:
+        - "546,300 is 10 times 3,456"
+        - "546,300 is 100 times 3,456"
+        - "3,456 is 100 times 546,300"
+      correct_answer: "546,300 is 100 times 3,456"
       citation_page: 7
 
   word_problems:
@@ -119,6 +169,11 @@ questions:
         of Memphis? How many times as much is the value of that place
         than the value of the place to its right?
       answer: "70,000; the ten-thousands place is 10 times the thousands place."
+      options:
+        - "70,000; 10 times"
+        - "7,000; 10 times"
+        - "70,000; 100 times"
+      correct_answer: "70,000; 10 times"
       citation_page: 8
 
     - id: q_w2
@@ -127,7 +182,12 @@ questions:
       has_visual: false
       prompt: >
         How many models of 100 do you need to model 3,200? Explain.
-      answer: "32 models of 100 (32 × 100 = 3,200)."
+      answer: "32 models of 100 (32 횞 100 = 3,200)."
+      options:
+        - "32 models"
+        - "23 models"
+        - "320 models"
+      correct_answer: "32 models"
       citation_page: 8
 
     - id: q_w3
@@ -138,12 +198,32 @@ questions:
       items:
         - statement: "The value of 7 in 375,081 is 7,000."
           answer: "True"
+          options:
+            - "True"
+            - "False"
+          correct_answer: "True"
         - statement: "The value of 6 in 269,480 is 600,000."
           answer: "False"
+          options:
+            - "True"
+            - "False"
+          correct_answer: "False"
         - statement: "The value of 5 in 427,593 is 500."
           answer: "True"
+          options:
+            - "True"
+            - "False"
+          correct_answer: "True"
         - statement: "The value of 1 in 375,081 is 10."
           answer: "True"
+          options:
+            - "True"
+            - "False"
+          correct_answer: "True"
         - statement: "The value of 4 in 943,268 is 40,000."
           answer: "True"
+          options:
+            - "True"
+            - "False"
+          correct_answer: "True"
       citation_page: 8
