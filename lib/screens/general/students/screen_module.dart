@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/models/user_profile.dart';
+import 'package:csc322_starter_app/providers/provider_current_module.dart';
 import 'package:csc322_starter_app/providers/provider_module_result.dart';
 import 'package:csc322_starter_app/providers/provider_subjects.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_chathistory_student.dart';
@@ -58,6 +59,10 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(currentModuleProvider.notifier).state = widget.moduleId;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final profileProvider = ref.read(providerUserProfile);
 
       if (profileProvider.dataLoaded &&
@@ -66,8 +71,14 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
       }
     });
   }
-  
 
+  @override
+  void dispose() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(currentModuleProvider.notifier).state = null;
+    });
+    super.dispose();
+  }
   
   Future<void> startModule(String studentId, String moduleId) async {
     final ref = FirebaseFirestore.instance
