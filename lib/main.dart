@@ -87,74 +87,9 @@ Future<void> main() async {
   runApp(
     UncontrolledProviderScope(
       container: providerContainer,
-      child: AppLifecycleHandler( 
-        child: MyApp(),
-      ),
+      child:  MyApp(),
     ),
   );
-}
-
-class AppLifecycleHandler extends ConsumerStatefulWidget {
-  final Widget child;
-
-  const AppLifecycleHandler({super.key, required this.child});
-
-  @override
-  ConsumerState<AppLifecycleHandler> createState() =>
-      _AppLifecycleHandlerState();
-}
-
-class _AppLifecycleHandlerState
-    extends ConsumerState<AppLifecycleHandler>
-    with WidgetsBindingObserver {
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    final profile = ref.read(providerUserProfile);
-    final currentModuleId = ref.read(currentModuleProvider);
-
-    final isSupervisor = profile.dataLoaded &&
-        profile.userType == UserType.SUPERVISOR;
-
-    if (!profile.dataLoaded || isSupervisor) return;
-
-    if (state == AppLifecycleState.paused) {
-      FirebaseFirestore.instance
-          .collection('user_profiles')
-          .doc(profile.uid)
-          .set({
-        'active_module_id': ''
-      }, SetOptions(merge: true));
-    }
-
-    if (state == AppLifecycleState.resumed) {
-      if (currentModuleId != null) {
-        FirebaseFirestore.instance
-            .collection('user_profiles')
-            .doc(profile.uid)
-            .set({
-          'active_module_id': currentModuleId
-        }, SetOptions(merge: true));
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.child;
-  }
 }
 
 //////////////////////////////////////////////////////////////////////////

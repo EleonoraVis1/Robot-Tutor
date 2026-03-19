@@ -10,6 +10,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Flutter external package imports
 import 'package:csc322_starter_app/models/user_profile.dart';
+import 'package:csc322_starter_app/providers/provider_firestore.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_invites.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
@@ -112,7 +113,10 @@ class WidgetAppDrawer extends StatelessWidget {
               ListTile(
                 leading: Icon(Icons.exit_to_app),
                 title: Text('Logout'),
-                onTap: () {
+                onTap: () async {
+                  if (!isSupervisor) {
+                    await ref.read(providerFirestoreService).clearActiveUser();
+                  }
                   _providerAuth.clearAuthedUserDetailsAndSignout();
                 },
               ),

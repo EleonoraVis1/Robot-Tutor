@@ -150,10 +150,7 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
                       if (profileProvider.dataLoaded && !isSupervisor) {
                         await startModule(profileProvider.uid, module.id);
                         await context.push('/subject/${widget.subjectId}/module/${module.id}');
-
-                        // 👇 runs when user comes BACK
                         await exitModule(profileProvider.uid);
-                        ref.read(currentModuleProvider.notifier).state = null;
 
                       } else if (profileProvider.dataLoaded && isSupervisor) {
                         context.push(

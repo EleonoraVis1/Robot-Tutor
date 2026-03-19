@@ -12,6 +12,7 @@
 
 // Flutter external package imports
 import 'package:csc322_starter_app/models/user_profile.dart';
+import 'package:csc322_starter_app/providers/provider_firestore.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -68,6 +69,13 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   ////////////////////////////////////////////////////////////////////////
   _init() async {
     // Get providers
+    final firestore = ref.read(providerFirestoreService);
+    final userProfile = ref.read(providerUserProfile);
+    final isSupervisor = userProfile.userType == UserType.SUPERVISOR;
+
+    if (userProfile.uid.isNotEmpty && !isSupervisor) {
+      await firestore.setActiveUser(userProfile.uid);
+    }
   }
 
   ////////////////////////////////////////////////////////////////
