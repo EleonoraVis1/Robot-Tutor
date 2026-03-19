@@ -149,7 +149,6 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
                     try {
                       if (profileProvider.dataLoaded && !isSupervisor) {
                         await startModule(profileProvider.uid, module.id);
-                        // 👇 WAIT for module screen to close
                         await context.push('/subject/${widget.subjectId}/module/${module.id}');
 
                         // 👇 runs when user comes BACK
@@ -162,7 +161,6 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
                         );
                       }
 
-                      
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
