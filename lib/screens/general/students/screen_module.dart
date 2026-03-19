@@ -110,10 +110,6 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
 
     final isSupervisor = profileProvider.dataLoaded && profileProvider.userType == UserType.SUPERVISOR;
 
-/*    if (!isSupervisor) {
-      startModule(profileProvider.uid, moduleId);
-    }*/
-
     return Scaffold(
       appBar: AppBar(
         title: modulesAsync.when(
@@ -134,12 +130,10 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
         onPressed: () {
 
           if (widget.studentUid == null) {
-            // student
             context.push(
               '/subject/$subjectId/module/$moduleId/chat',
             );
           } else {
-            // supervisor
             context.push(
               '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/$subjectId/module/$moduleId/chat',
             );
@@ -154,7 +148,6 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (!isSupervisor) ...[
-              // Student view: Start Quiz
               ElevatedButton.icon(
                 icon: const Icon(Icons.quiz),
                 label: const Text('Start Quiz'),
