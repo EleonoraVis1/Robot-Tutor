@@ -105,9 +105,7 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
     final subjectId = params['subjectId']!;
     final moduleId = params['moduleId']!;
     final modulesAsync = ref.watch(modulesProvider);    
-
     final profileProvider = ref.watch(providerUserProfile);
-
     final isSupervisor = profileProvider.dataLoaded && profileProvider.userType == UserType.SUPERVISOR;
 
     return Scaffold(

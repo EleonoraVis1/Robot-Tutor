@@ -150,6 +150,7 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
                       if (profileProvider.dataLoaded && !isSupervisor) {
                         await startModule(profileProvider.uid, module.id);
                         await context.push('/subject/${widget.subjectId}/module/${module.id}');
+
                         await exitModule(profileProvider.uid);
 
                       } else if (profileProvider.dataLoaded && isSupervisor) {
