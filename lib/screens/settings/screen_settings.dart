@@ -6,14 +6,11 @@ import 'package:csc322_starter_app/models/user_profile.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter/widgets.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
 
 // App relative file imports
 import '../../providers/provider_user_profile.dart';
-import '../../util/message_display/popup_dialogue.dart';
 import '../../util/message_display/snackbar.dart';
-import '../../util/logging/app_logger.dart';
 import '../../main.dart';
 
 //////////////////////////////////////////////////////////////////
@@ -88,14 +85,13 @@ class _ScreenSettingsState extends ConsumerState<ScreenSettings> {
     context.pop();
   }
 
-  void _setRole() {
-    // I have this added for class demos, do not remove unless changing the settings page and need to remove it - Landon
-    if (_userType == UserType.STUDENT) {
-      _userType = UserType.SUPERVISOR;
-    } else {
-      _userType = UserType.STUDENT;
-    }
-  }
+  // void _setRole() {
+  //   if (_userType == UserType.STUDENT) {
+  //     _userType = UserType.SUPERVISOR;
+  //   } else {
+  //     _userType = UserType.STUDENT;
+  //   }
+  // }
 
   //////////////////////////////////////////////////////////////////////////
   // Primary Flutter method overriden which describes the layout

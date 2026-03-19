@@ -25,7 +25,6 @@ import '../../providers/provider_user_profile.dart';
 import '../../providers/provider_auth.dart';
 import '../../models/user_profile.dart';
 import 'screen_unverified_email.dart';
-import 'screen_profile_setup.dart';
 import 'screen_splash.dart';
 import 'screen_auth.dart';
 import '../../main.dart';

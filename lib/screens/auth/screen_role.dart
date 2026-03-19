@@ -4,16 +4,10 @@ import 'dart:async';
 // Flutter external package imports
 import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/models/user_profile.dart';
-import 'package:csc322_starter_app/screens/auth/screen_auth.dart';
-import 'package:csc322_starter_app/screens/auth/screen_login_validation.dart';
 import 'package:csc322_starter_app/screens/auth/screen_profile_setup.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-// App relative file imports
-import '../../../util/message_display/snackbar.dart';
 import '../../providers/provider_user_profile.dart';
 
 //////////////////////////////////////////////////////////////////////////

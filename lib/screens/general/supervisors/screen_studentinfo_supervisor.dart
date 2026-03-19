@@ -2,25 +2,17 @@
 import 'dart:async';
 
 // Flutter external package imports
-import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/providers/provider_subjects.dart';
-import 'package:csc322_starter_app/providers/provider_user_profile.dart';
-import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
 import 'package:csc322_starter_app/widgets/general/subject_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-// App imports
-import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistory_supervisor.dart';
-import '../../../util/message_display/snackbar.dart';
-
-const List<Map<String, dynamic>> _kSubjects = [
-  {'title': 'Math', 'icon': Icons.calculate},
-  {'title': 'Korean', 'icon': Icons.language},
-  {'title': 'Physics', 'icon': Icons.science},
-  {'title': 'English', 'icon': Icons.menu_book},
-];
+// const List<Map<String, dynamic>> _kSubjects = [
+//   {'title': 'Math', 'icon': Icons.calculate},
+//   {'title': 'Korean', 'icon': Icons.language},
+//   {'title': 'Physics', 'icon': Icons.science},
+//   {'title': 'English', 'icon': Icons.menu_book},
+// ];
 
 //////////////////////////////////////////////////////////////////////////
 // Stateful widget
@@ -68,22 +60,9 @@ class _ScreenStudentinfoSupervisorState
     // Load data here if needed
   }
 
-  
-
-  ////////////////////////////////////////////////////////////////
-  // Navigation
-  ////////////////////////////////////////////////////////////////
-  /*void _openChatHistory() {
-    context.push(ScreenChathistorySupervisor.routeName);
-  }*/
-
-  void _openModuleInfo() {
-    context.push(ScreenModule.routeName);
-  }
 
   @override
   Widget build(BuildContext context) {
-    final profileProvider = ref.watch(providerUserProfile);
     final subjectsAsync = ref.watch(subjectsProvider);
 
     return Scaffold(

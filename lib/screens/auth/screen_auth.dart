@@ -12,7 +12,6 @@
 // Flutter external package imports
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 // import 'package:auto_route/auto_route.dart';
 // import 'package:provider/provider.dart';

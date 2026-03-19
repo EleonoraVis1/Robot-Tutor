@@ -4,18 +4,12 @@ import 'dart:async';
 // Flutter external package imports
 import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/models/user_profile.dart';
-import 'package:csc322_starter_app/providers/provider_current_module.dart';
 import 'package:csc322_starter_app/providers/provider_subjects.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-// App relative file imports
-import '../../../util/message_display/snackbar.dart';
 
 //////////////////////////////////////////////////////////////////////////
 // StateFUL widget which manages state. Simply initializes the state object.

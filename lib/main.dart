@@ -12,12 +12,6 @@
 // Dart imports
 
 // Flutter external package imports
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:csc322_starter_app/models/user_profile.dart';
-import 'package:csc322_starter_app/providers/provider_current_module.dart';
-import 'package:csc322_starter_app/screens/auth/screen_auth.dart';
-import 'package:csc322_starter_app/screens/auth/screen_profile_setup.dart';
-import 'package:csc322_starter_app/screens/auth/screen_role.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_chathistory_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_invites.dart';
@@ -27,7 +21,6 @@ import 'package:csc322_starter_app/screens/general/students/screen_subject.dart'
 import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistory_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
-import 'package:csc322_starter_app/screens/general/supervisors/screen_studentinfo_supervisor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/legacy.dart';
