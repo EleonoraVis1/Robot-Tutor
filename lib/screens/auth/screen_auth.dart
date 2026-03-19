@@ -380,31 +380,31 @@ class _ScreenAuthState extends ConsumerState<ScreenAuth> {
                   ///////////////////////////////////////////////////////////////////////
                   // Logo
                   ///////////////////////////////////////////////////////////////////////
-                  const SizedBox(height: 45),
+                  const SizedBox(height: 25),
                   Padding(
-                    padding: const EdgeInsets.all(4),
+                    padding: const EdgeInsets.all(2),
                     child: Column(
                       children: [
                         Center(
                           child: Image.asset(
                             "images/logo.png", 
-                            width: MediaQuery.of(context).size.width * 0.7
+                            width: MediaQuery.of(context).size.width * 0.65
                           ),
                         ),
                         Center(
                           child: const Text(
                             "BAY-min Tutor Bot",
                             style: TextStyle(
-                              fontSize: 30,
+                              fontSize: 32,
                               fontWeight: FontWeight.bold
                             ),
                           ),
                         ),
                         Center(
                           child: const Text(
-                            "Your robot tutor assistant!",
+                            "Your robot tutor!",
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 18,
                               fontWeight: FontWeight.w800
                             ),
                           ),
@@ -415,7 +415,7 @@ class _ScreenAuthState extends ConsumerState<ScreenAuth> {
                   ///////////////////////////////////////////////////////////////////////
                   /// Email Text Field
                   ///////////////////////////////////////////////////////////////////////
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: TextFormField(
@@ -431,7 +431,10 @@ class _ScreenAuthState extends ConsumerState<ScreenAuth> {
                       },
                       onSaved: (value) {},
                       keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(labelText: 'Email'),
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        prefixIcon: Icon(Icons.email_outlined)
+                      ),
                     ),
                   ),
                   ///////////////////////////////////////////////////////////////////////
@@ -463,6 +466,7 @@ class _ScreenAuthState extends ConsumerState<ScreenAuth> {
                       },
                       decoration: InputDecoration(
                         labelText: 'Password',
+                        prefixIcon: Icon(Icons.key_outlined),
                         suffixIcon: IconButton(
                           splashColor: Colors.transparent,
                           highlightColor: Colors.transparent,
@@ -532,6 +536,7 @@ class _ScreenAuthState extends ConsumerState<ScreenAuth> {
                         },
                         decoration: InputDecoration(
                           labelText: 'Confirm Password',
+                          prefixIcon: Icon(Icons.key_outlined),
                           suffixIcon: IconButton(
                             splashColor: Colors.transparent,
                             highlightColor: Colors.transparent,
@@ -563,7 +568,7 @@ class _ScreenAuthState extends ConsumerState<ScreenAuth> {
                             onPressed: () {
                               _trySubmit();
                             },
-                            child: const Text("Log In", style: TextStyle(fontSize: 23)),
+                            child: const Text("Login", style: TextStyle(fontSize: 23)),
                           ),
                         ),
                         Padding(
@@ -597,7 +602,7 @@ class _ScreenAuthState extends ConsumerState<ScreenAuth> {
                               _signInMode = true;
                             });
                           },
-                          child: const Text("Already have an account? Log in here!"),
+                          child: const Text("Already have an account? Login here!"),
                         ),
                       ],
                     ),

@@ -26,7 +26,7 @@ class CustomColors {
   static const Color cloudGrey = Color(0xFFF1F0EB);
 
   static const Color primaryBackgroundLightMode = Color.fromARGB(255, 247, 247, 247);
-  static const Color primaryBackgroundDarkMode = Color.fromARGB(255, 39, 39, 39);
+  static const Color primaryBackgroundDarkMode = Color.fromARGB(255, 54, 54, 54);
   static const Color primaryNavBarLightMode = Color.fromARGB(255, 181, 181, 181);
   static const Color primaryNavBarDarkMode = Color.fromARGB(255, 68, 68, 68);
 }
