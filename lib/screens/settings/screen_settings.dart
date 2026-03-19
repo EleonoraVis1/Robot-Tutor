@@ -113,21 +113,43 @@ class _ScreenSettingsState extends ConsumerState<ScreenSettings> {
             if (_userType == UserType.STUDENT)
               ElevatedButton(
                 onPressed: null, // _setRole,
-                child: Text('Swap to Supervisor (DEMO ONLY)'),
+                child: Text(
+                  'Swap to Supervisor (DEMO ONLY)',
+                  style: TextStyle(
+                    fontSize: 14
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  fixedSize: Size(275, 15)
+                ),
               ),
             if (_userType == UserType.SUPERVISOR)
               ElevatedButton(
                 onPressed: null, // _setRole,
-                child: Text('Swap to Student (DEMO ONLY)'),
+                child: Text(
+                  'Swap to Student (DEMO ONLY)',
+                  style: TextStyle(
+                    fontSize: 14
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  fixedSize: Size(275, 15)
+                ),
               ),
             const SizedBox(height: 20),
             Center(
               child: ElevatedButton(
                 onPressed: _trySubmit,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green
+                  backgroundColor: Colors.green,
+                  fixedSize: Size(80, 15)
                 ), 
-                child: const Text('Save')
+                child: const Text(
+                  'Save',
+                  style: TextStyle(
+                    fontSize: 14
+                  ),
+                )
               ),
             ),
           ],

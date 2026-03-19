@@ -167,6 +167,11 @@ class _ScreenAddStudentSupervisorState extends ConsumerState<ScreenAddStudentSup
                                 onPressed: _cancelAdd, 
                                 label: const Text("Cancel"),
                                 icon: const Icon(Icons.cancel),
+                                style: ElevatedButton.styleFrom(
+                                  fixedSize: Size(130, 15),
+                                  textStyle: TextStyle(fontSize: 18),
+                                  iconSize: 18,
+                                ),
                               ),
                             ),
                             Spacer(),
@@ -178,6 +183,11 @@ class _ScreenAddStudentSupervisorState extends ConsumerState<ScreenAddStudentSup
                                 },
                                 icon: const Icon(Icons.send),
                                 label: const Text("Send Request"),
+                                style: ElevatedButton.styleFrom(
+                                  fixedSize: Size(180, 15),
+                                  textStyle: TextStyle(fontSize: 18),
+                                  iconSize: 18,
+                                ),
                               ),
                             ),
                           ],

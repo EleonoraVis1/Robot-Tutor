@@ -57,7 +57,8 @@ class _ScreenBaymindStudentState extends ConsumerState<ScreenBayminStudent> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Choose Your Robot"),
+        title: const Text("Choose Your Robot Persona"),
+        centerTitle: true,
       ),
       body: personaAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),

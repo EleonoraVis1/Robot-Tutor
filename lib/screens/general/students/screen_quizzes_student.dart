@@ -83,7 +83,6 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
           children: [
             Text(
               'Question ${_currentIndex + 1} of ${questions.length}',
-              style: const TextStyle(color: Colors.black54),
             ),
             const SizedBox(height: 16),
             Text(
