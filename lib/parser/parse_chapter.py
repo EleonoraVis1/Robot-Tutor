@@ -37,7 +37,7 @@ Usage:
   python parse_chapter.py --pdf gomath_g4.pdf --pages 5-38 --chapter 1 --grade 4 --dry-run
 
 Requirements:
-  pip install pdfplumber pyyaml google-genai        # Gemini
+  pip install pdfplumber pyyaml requests            # Gemini (REST)
   pip install pdfplumber pyyaml anthropic             # Claude
 
 Environment variables:
@@ -70,14 +70,14 @@ except ImportError:
     anthropic = None  # type: ignore
 
 try:
-    import google.genai as genai
-except ImportError:
-    genai = None  # type: ignore
-
-try:
     import yaml
 except ImportError:
     yaml = None  # type: ignore
+
+try:
+    from lib.parser._gemini_rest_patch import gemini_text_call
+except ModuleNotFoundError:
+    from _gemini_rest_patch import gemini_text_call
 
 
 # ---------------------------------------------------------------------------
@@ -131,6 +131,144 @@ _TITLE_LINE = re.compile(
     r"^(?!\s*Name\s*$)(?!\s*$)\s*([A-Z][\w\s•\'\-\.]{4,})$",
     re.MULTILINE,
 )
+
+
+# ---------------------------------------------------------------------------
+# GO Math Grade 4 CA — known lesson titles lookup table
+# Key: (chapter, "lesson_num")  e.g. (2, "2.3")
+# Used by detect_lesson_boundaries() as primary title source before regex.
+# Covers all 13 chapters. Add/correct entries as needed.
+# ---------------------------------------------------------------------------
+GO_MATH_G4_TITLES: dict[tuple[int, str], str] = {
+    # Chapter 1 — Place Value, Addition, and Subtraction to One Million
+    (1, "1.1"): "Model Place Value Relationships",
+    (1, "1.2"): "Read and Write Numbers",
+    (1, "1.3"): "Compare and Order Numbers",
+    (1, "1.4"): "Round Numbers",
+    (1, "1.5"): "Rename Numbers",
+    (1, "1.6"): "Add Whole Numbers",
+    (1, "1.7"): "Subtract Whole Numbers",
+    (1, "1.8"): "Problem Solving: Comparison Problems with Addition and Subtraction",
+
+    # Chapter 2 — Multiply by 1-Digit Numbers
+    (2, "2.1"):  "Multiplication Comparisons",
+    (2, "2.2"):  "Comparison Problems",
+    (2, "2.3"):  "Multiply Tens, Hundreds, and Thousands",
+    (2, "2.4"):  "Estimate Products",
+    (2, "2.5"):  "Multiply Using the Distributive Property",
+    (2, "2.6"):  "Multiply Using Expanded Form",
+    (2, "2.7"):  "Multiply Using Partial Products",
+    (2, "2.8"):  "Multiply Using Mental Math",
+    (2, "2.9"):  "Problem Solving: Multistep Multiplication Problems",
+    (2, "2.10"): "Multiply 2-Digit Numbers with Regrouping",
+    (2, "2.11"): "Multiply 3-Digit and 4-Digit Numbers with Regrouping",
+    (2, "2.12"): "Algebra: Solve Multistep Problems Using Equations",
+
+    # Chapter 3 — Multiply 2-Digit Numbers
+    (3, "3.1"): "Multiply Tens",
+    (3, "3.2"): "Estimate Products",
+    (3, "3.3"): "Area Models and Partial Products",
+    (3, "3.4"): "Multiply Using Partial Products",
+    (3, "3.5"): "Multiply with Regrouping",
+    (3, "3.6"): "Choose a Multiplication Method",
+    (3, "3.7"): "Problem Solving: Multiply 2-Digit Numbers",
+
+    # Chapter 4 — Divide by 1-Digit Numbers
+    (4, "4.1"): "Estimate Quotients Using Multiples",
+    (4, "4.2"): "Remainders",
+    (4, "4.3"): "Interpret the Remainder",
+    (4, "4.4"): "Divide Tens, Hundreds, and Thousands",
+    (4, "4.5"): "Estimate Quotients Using Compatible Numbers",
+    (4, "4.6"): "Division and the Distributive Property",
+    (4, "4.7"): "Divide Using Repeated Subtraction",
+    (4, "4.8"): "Divide Using Partial Quotients",
+    (4, "4.9"): "Model Division with Regrouping",
+    (4, "4.10"): "Place the First Digit",
+    (4, "4.11"): "Divide by 1-Digit Numbers",
+    (4, "4.12"): "Problem Solving: Multistep Division Problems",
+
+    # Chapter 5 — Factors, Multiples, and Patterns
+    (5, "5.1"): "Model Factors",
+    (5, "5.2"): "Factors and Divisibility",
+    (5, "5.3"): "Problem Solving: Common Factors",
+    (5, "5.4"): "Factors and Multiples",
+    (5, "5.5"): "Prime and Composite Numbers",
+    (5, "5.6"): "Algebra: Number Patterns",
+
+    # Chapter 6 — Fraction Equivalence and Comparison
+    (6, "6.1"): "Investigate: Equivalent Fractions",
+    (6, "6.2"): "Generate Equivalent Fractions",
+    (6, "6.3"): "Simplest Form",
+    (6, "6.4"): "Common Denominators",
+    (6, "6.5"): "Problem Solving: Find Equivalent Fractions",
+    (6, "6.6"): "Compare Fractions Using Benchmarks",
+    (6, "6.7"): "Compare Fractions",
+    (6, "6.8"): "Compare and Order Fractions",
+
+    # Chapter 7 — Add and Subtract Fractions
+    (7, "7.1"): "Add and Subtract Parts of a Whole",
+    (7, "7.2"): "Write Fractions as Sums",
+    (7, "7.3"): "Add Fractions Using Models",
+    (7, "7.4"): "Subtract Fractions Using Models",
+    (7, "7.5"): "Add and Subtract Fractions",
+    (7, "7.6"): "Rename Fractions and Mixed Numbers",
+    (7, "7.7"): "Add and Subtract Mixed Numbers",
+    (7, "7.8"): "Subtraction with Renaming",
+    (7, "7.9"): "Algebra: Fractions and Properties of Addition",
+    (7, "7.10"): "Problem Solving: Multistep Fraction Problems",
+
+    # Chapter 8 — Multiply Fractions by Whole Numbers
+    (8, "8.1"): "Multiples of Unit Fractions",
+    (8, "8.2"): "Multiples of Fractions",
+    (8, "8.3"): "Multiply a Fraction by a Whole Number Using Models",
+    (8, "8.4"): "Multiply a Fraction or Mixed Number by a Whole Number",
+    (8, "8.5"): "Problem Solving: Comparison Problems with Fractions",
+
+    # Chapter 9 — Relate Fractions and Decimals
+    (9, "9.1"): "Relate Tenths and Decimals",
+    (9, "9.2"): "Relate Hundredths and Decimals",
+    (9, "9.3"): "Equivalent Fractions and Decimals",
+    (9, "9.4"): "Relate Fractions, Decimals, and Money",
+    (9, "9.5"): "Problem Solving: Money",
+    (9, "9.6"): "Add Fractional Parts of 10 and 100",
+    (9, "9.7"): "Compare Decimals",
+
+    # Chapter 10 — Two-Dimensional Figures
+    (10, "10.1"): "Lines, Rays, and Angles",
+    (10, "10.2"): "Classify Triangles by Angles",
+    (10, "10.3"): "Parallel Lines and Perpendicular Lines",
+    (10, "10.4"): "Classify Quadrilaterals",
+    (10, "10.5"): "Line Symmetry",
+    (10, "10.6"): "Find and Draw Lines of Symmetry",
+    (10, "10.7"): "Problem Solving: Shape Patterns",
+
+    # Chapter 11 — Angles
+    (11, "11.1"): "Angles and Fractional Parts of a Circle",
+    (11, "11.2"): "Degrees",
+    (11, "11.3"): "Measure and Draw Angles",
+    (11, "11.4"): "Investigate: Join and Separate Angles",
+    (11, "11.5"): "Problem Solving: Unknown Angle Measures",
+
+    # Chapter 12 — Relative Sizes of Measurement Units
+    (12, "12.1"): "Measurement Benchmarks",
+    (12, "12.2"): "Customary Units of Length",
+    (12, "12.3"): "Customary Units of Weight",
+    (12, "12.4"): "Customary Units of Liquid Volume",
+    (12, "12.5"): "Line Plots",
+    (12, "12.6"): "Metric Units of Length",
+    (12, "12.7"): "Metric Units of Mass and Liquid Volume",
+    (12, "12.8"): "Units of Time",
+    (12, "12.9"): "Problem Solving: Elapsed Time",
+    (12, "12.10"): "Mixed Measures",
+    (12, "12.11"): "Algebra: Patterns in Measurement Units",
+
+    # Chapter 13 — Perimeter and Area
+    (13, "13.1"): "Perimeter",
+    (13, "13.2"): "Area",
+    (13, "13.3"): "Area of Combined Rectangles",
+    (13, "13.4"): "Find Unknown Measures",
+    (13, "13.5"): "Problem Solving: Find the Area",
+}
 
 _VISUAL_KEYWORDS = re.compile(
     r"\b(number line|diagram|bar model|tape diagram|place.value chart"
@@ -221,6 +359,7 @@ _TITLE_SKIP = re.compile(
 
 def detect_lesson_boundaries(
     pages: dict[int, str],
+    chapter: int = 0,
     title_overrides: dict[str, str] | None = None,
 ) -> list[tuple[str, str, int]]:
     """
@@ -245,11 +384,14 @@ def detect_lesson_boundaries(
         for m in _LESSON_HEADING.finditer(clean_text):
             lesson_num = m.group(1)
 
-            # Apply manual override immediately if provided
+            # Priority 1: manual --title-overrides from CLI
             if lesson_num in title_overrides:
                 title = title_overrides[lesson_num]
+            # Priority 2: known title lookup table (GO Math G4 CA)
+            elif (chapter, lesson_num) in GO_MATH_G4_TITLES:
+                title = GO_MATH_G4_TITLES[(chapter, lesson_num)]
             else:
-                # Scan lines after the lesson number for the first real title
+                # Priority 3: regex scan of page text (fallback)
                 after = clean_text[m.end():]
                 title = "# TODO: title not detected — add to --title-overrides"
                 for line in after.splitlines():
@@ -331,7 +473,7 @@ Do not include any other text, explanation, or markdown fences.
 
 ### concept.yaml
 ```yaml
-lesson_id: "math_g{grade}_ch{chapter}_l{lesson_flat}"   # e.g. math_g4_ch1_l1
+lesson_id: "2.1"   # short form only, e.g. "2.1" not "math_g4_ch2_l2.1"
 subject: math
 grade: <int>
 unit: <int>                  # same as chapter for GO Math
@@ -404,12 +546,19 @@ questions:
       visual_description: "<string>"  # only when has_visual: true
       prompt: >
         <question text>
-      answer: "<answer>"
+      answer: "<full answer with working>"
+      options:                        # ALWAYS required — exactly 3 strings
+        - "<wrong answer 1>"
+        - "<correct answer>"          # position is shuffled — do not always put correct first
+        - "<wrong answer 2>"
+      correct_answer: "<string>"      # MUST match one option exactly (same string, same punctuation)
       citation_page: <int>
       difficulty: <difficulty_tag>    # only when explicitly marked
       items:                          # only for true_false_set / multiple_select
         - statement: "<text>"
           answer: "<True|False>"
+          options: ["True", "False"]
+          correct_answer: "<True|False>"
 
   independent:
     - id: q_i1
@@ -448,6 +597,7 @@ GO Math sections map to YAML questions blocks as follows:
 If you cannot confidently extract a field, write:
   field_name: "# TODO: could not extract — review page <n>"
 Never fabricate content. It is better to leave a TODO than to invent text.
+Use short lesson_id format: chapter.lesson number only (e.g. '2.1', '2.4'). Do not prefix with subject or grade.
 
 ## IDs
 - Concepts:        c1, c2, c3 ...
@@ -455,6 +605,26 @@ Never fabricate content. It is better to leave a TODO than to invent text.
 - Guided:          q_g1, q_g2 ...
 - Independent:     q_i1, q_i2 ...
 - Word problems:   q_w1, q_w2 ...
+
+## OPTIONS AND CORRECT_ANSWER RULES
+Every question MUST include both `options` (list of exactly 3 strings) and `correct_answer` (string).
+
+Rules for generating options:
+1. ALWAYS exactly 3 options — no more, no less
+2. One option is the correct answer; the other two are plausible distractors
+3. correct_answer MUST match one option exactly — same string, same punctuation, same units
+4. Shuffle position — do not always put the correct answer first or last
+5. Distractors must be plausible for a Grade 4 student — use:
+   - Common calculation errors (off-by-one, wrong operation, transposed digits)
+   - Nearby numbers that could result from a partial step
+   - For subtraction problems: result of adding instead of subtracting, or vice versa
+6. For numerical answers: correct_answer is the final number only (short form), not the full working
+   - answer field keeps the full working: "68,986 - 64,997 = 3,989 feet higher."
+   - correct_answer is just: "3,989 feet"
+7. For comparison questions (more/less/equal, true/false): options are the comparison words only
+8. For dollar amounts: preserve the $ sign in both options and correct_answer
+9. For true_false_set: add options and correct_answer to each item in the items list
+10. Never use the same string twice in options
 """
 
 
@@ -511,41 +681,122 @@ def call_claude(chunk: LessonChunk, grade: int, chapter: int, client) -> tuple[s
     return concept_part.strip(), questions_part.strip()
 
 
-def call_gemini(chunk: LessonChunk, grade: int, chapter: int) -> tuple[str, str]:
+def call_gemini(
+    chunk: LessonChunk,
+    grade: int,
+    chapter: int,
+    model: str,
+) -> tuple[str, str]:
     """
     Call the Gemini 1.5 Flash API and return (concept_yaml_str, questions_yaml_str).
-    Uses the new google-genai SDK (google.genai).
+    Uses the Gemini REST API via requests.
     The API key is read from the GEMINI_API_KEY environment variable.
     Raises ValueError if the response cannot be parsed into two sections.
     """
-    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-
-    response = client.models.generate_content(
-        model="gemini-1.5-flash",
-        contents=_make_user_message(chunk, grade, chapter),
-        config=genai.types.GenerateContentConfig(
-            system_instruction=_SYSTEM_PROMPT,
-            temperature=0.1,
-            max_output_tokens=4096,
-        ),
+    raw_response = gemini_text_call(
+        _make_user_message(chunk, grade, chapter),
+        system=_SYSTEM_PROMPT,
+        model=model,
+        temperature=0.1,
+        max_tokens=16000,
     )
 
-    raw_response = response.text
+    log.debug(
+        "Gemini raw_response preview for lesson %s: %r",
+        chunk.lesson_num,
+        raw_response[:200],
+    )
+
+    # Prepend system prompt as first user turn — works across all API versions
+    
 
     # Strip markdown fences if Gemini wraps the output (it sometimes does)
     raw_response = re.sub(r"^```(?:yaml)?\s*", "", raw_response, flags=re.MULTILINE)
     raw_response = re.sub(r"\s*```\s*$", "", raw_response, flags=re.MULTILINE)
 
-    if "---CONCEPT---" not in raw_response or "---QUESTIONS---" not in raw_response:
+    has_concept = "---CONCEPT---" in raw_response
+    has_questions = "---QUESTIONS---" in raw_response
+
+    if has_concept and has_questions:
+        _, after_concept = raw_response.split("---CONCEPT---", 1)
+        concept_part, questions_part = after_concept.split("---QUESTIONS---", 1)
+        return concept_part.strip(), questions_part.strip()
+
+    if has_concept and not has_questions:
+        _, concept_part = raw_response.split("---CONCEPT---", 1)
+
+        questions_only_prompt = f"""Extract ONLY the questions.yaml for the following GO Math lesson.
+
+Grade: {grade}
+Chapter: {chapter}
+Lesson: {chunk.lesson_num}
+Detected title: {chunk.title}
+Pages in this lesson: {chunk.pages}
+Contains tables: {chunk.has_tables}
+
+Raw extracted text (page markers included):
+===BEGIN TEXT===
+{chunk.raw_text}
+===END TEXT===
+
+Return EXACTLY one section in this format:
+---QUESTIONS---
+<questions.yaml>
+
+Do not return ---CONCEPT---.
+"""
+
+        questions_response = gemini_text_call(
+            questions_only_prompt,
+            system=_SYSTEM_PROMPT,
+            model=model,
+            temperature=0.1,
+            max_tokens=16000,
+        )
+
+        log.debug(
+            "Gemini questions-only raw_response preview for lesson %s: %r",
+            chunk.lesson_num,
+            questions_response[:200],
+        )
+
+        questions_response = re.sub(r"^```(?:yaml)?\s*", "", questions_response, flags=re.MULTILINE)
+        questions_response = re.sub(r"\s*```\s*$", "", questions_response, flags=re.MULTILINE)
+
+        if "---QUESTIONS---" not in questions_response:
+            raise ValueError(
+                f"Gemini questions-only response for lesson {chunk.lesson_num} did not contain "
+                f"expected delimiter. Response preview:\n{questions_response[:500]}"
+            )
+
+        _, questions_part = questions_response.split("---QUESTIONS---", 1)
+        return concept_part.strip(), questions_part.strip()
+
+    if not has_concept and not has_questions:
         raise ValueError(
             f"Gemini response for lesson {chunk.lesson_num} did not contain "
             f"expected delimiters. Response preview:\n{raw_response[:500]}"
         )
 
-    _, after_concept = raw_response.split("---CONCEPT---", 1)
-    concept_part, questions_part = after_concept.split("---QUESTIONS---", 1)
+    raise ValueError(
+        f"Gemini response for lesson {chunk.lesson_num} contained incomplete delimiters. "
+        f"Response preview:\n{raw_response[:500]}"
+    )
 
-    return concept_part.strip(), questions_part.strip()
+
+# ---------------------------------------------------------------------------
+# Stage 3 — YAML validation
+# ---------------------------------------------------------------------------
+
+_REQUIRED_CONCEPT_KEYS = {
+    "lesson_id", "subject", "grade", "unit", "chapter", "lesson",
+    "title", "standards", "citation", "has_visual", "concepts", "worked_examples"
+}
+
+_REQUIRED_QUESTIONS_KEYS = {
+    "lesson_id", "subject", "grade", "chapter", "lesson",
+    "title", "standards", "citation", "questions"
+}
 
 
 def validate_yaml(yaml_str: str, required_keys: set[str], label: str) -> list[str]:
@@ -665,6 +916,8 @@ def build_arg_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--provider", default="gemini", choices=["gemini", "claude"],
                    help="AI provider to use: 'gemini' (free, default) or 'claude' (paid)")
+    p.add_argument("--model", default="gemini-2.5-flash",
+                   help="Gemini model name to use at runtime (default: gemini-2.5-flash)")
     p.add_argument("--pdf",     required=True,  help="Path to the GO Math PDF file")
     p.add_argument("--pages",   required=True,  type=parse_page_range,
                    help="Page range to process, e.g. '5-38' (printed page numbers)")
@@ -700,9 +953,6 @@ def run(args: argparse.Namespace) -> int:
 
     if not args.dry_run:
         if args.provider == "gemini":
-            if genai is None:
-                log.error("google-generativeai is not installed. Run: pip install google-generativeai")
-                return 1
             if not os.environ.get("GEMINI_API_KEY"):
                 log.error("GEMINI_API_KEY environment variable is not set.")
                 log.error("Get a free key at: https://aistudio.google.com")
@@ -746,7 +996,7 @@ def run(args: argparse.Namespace) -> int:
         if title_overrides:
             log.info("  Title overrides: %s", title_overrides)
 
-    boundaries = detect_lesson_boundaries(pages, title_overrides=title_overrides)
+    boundaries = detect_lesson_boundaries(pages, chapter=args.chapter, title_overrides=title_overrides)
     if not boundaries:
         log.warning(
             "No lesson headings detected. Check that your --pages range covers "
@@ -783,7 +1033,7 @@ def run(args: argparse.Namespace) -> int:
     # ── Stage 2: Initialise AI client ───────────────────────────────────────
     if args.provider == "gemini":
 
-        log.info("Stage 2 — Using Gemini 1.5 Flash")
+        log.info("Stage 2 — Using Gemini model %s", args.model)
     else:
         claude_client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
         log.info("Stage 2 — Using Claude Sonnet")
@@ -795,9 +1045,9 @@ def run(args: argparse.Namespace) -> int:
 
         try:
             if args.provider == "gemini":
-                concept_yaml, questions_yaml = call_gemini(
-                    chunk, args.grade, args.chapter
-                )
+                    concept_yaml, questions_yaml = call_gemini(
+                        chunk, args.grade, args.chapter, args.model
+                    )
             else:
                 concept_yaml, questions_yaml = call_claude(
                     chunk, args.grade, args.chapter, claude_client
