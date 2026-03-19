@@ -53,6 +53,7 @@ class _ScreenSubjectSupervisorState extends ConsumerState<ScreenSubjectSuperviso
       body: Center(child: Text('Subjects')),
       appBar: AppBar(
         title: Text("Subjects"),
+        centerTitle: true,
       ),
     );
   }

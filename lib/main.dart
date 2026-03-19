@@ -12,17 +12,22 @@
 // Dart imports
 
 // Flutter external package imports
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:csc322_starter_app/models/user_profile.dart';
+import 'package:csc322_starter_app/providers/provider_current_module.dart';
+import 'package:csc322_starter_app/screens/auth/screen_auth.dart';
+import 'package:csc322_starter_app/screens/auth/screen_profile_setup.dart';
+import 'package:csc322_starter_app/screens/auth/screen_role.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_chathistory_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_invites.dart';
-import 'package:csc322_starter_app/screens/general/students/screen_module_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_subject.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistory_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
-import 'package:csc322_starter_app/screens/general/supervisors/screen_module_supervisor.dart';
-import 'package:csc322_starter_app/screens/general/supervisors/screen_quizzes_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_studentinfo_supervisor.dart';
-import 'package:csc322_starter_app/screens/general/supervisors/screen_subject_supervisor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -80,7 +85,10 @@ Future<void> main() async {
 
   // Run the app
   runApp(
-    UncontrolledProviderScope(container: providerContainer, child: MyApp()),
+    UncontrolledProviderScope(
+      container: providerContainer,
+      child:  MyApp(),
+    ),
   );
 }
 
@@ -102,6 +110,7 @@ class _MyAppState extends State<MyApp> {
   // NONE
 
   // Router
+
   final GoRouter _router = GoRouter(
     initialLocation: ScreenLoginValidation.routeName,
     routes: [
@@ -120,68 +129,123 @@ class _MyAppState extends State<MyApp> {
       GoRoute(
         path: WidgetPrimaryScaffold.routeName,
         builder: (BuildContext context, GoRouterState state) =>
-            const WidgetPrimaryScaffold(),
+          const WidgetPrimaryScaffold(),
       ),
+
+      // Student home flow
       GoRoute(
         path: ScreenHomeStudent.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenHomeStudent(),
+        builder: (context, state) => ScreenHomeStudent(supervisorView: false, studentUid: null),
       ),
       GoRoute(
-        path: ScreenQuizzesStudent.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenQuizzesStudent(),
+        path: '/subject/:subjectId',
+        builder: (context, state) {
+          final subjectId = state.pathParameters['subjectId']!;
+          return ScreenSubject(subjectId: subjectId, studentUid: null,);
+        },
+        routes: [
+          GoRoute(
+            path: 'module/:moduleId',
+            builder: (context, state) {
+              final subjectId = state.pathParameters['subjectId']!;
+              final moduleId = state.pathParameters['moduleId']!;
+              return ScreenModule(
+                subjectId: subjectId,
+                moduleId: moduleId,
+                studentUid: null, // student will use their own UID
+              );
+            },
+            routes: [
+              GoRoute(
+                path: 'quiz',
+                builder: (context, state) {
+                  final subjectId = state.pathParameters['subjectId']!;
+                  final moduleId = state.pathParameters['moduleId']!;
+                  return ScreenQuiz(
+                    subjectId: subjectId,
+                    moduleId: moduleId,
+                    studentUid: null, // student uses their own UID
+                  );
+                },
+              ),
+              GoRoute(
+                path: 'chat',
+                builder: (context, state) {
+                  final moduleId = state.pathParameters['moduleId']!;
+                  return ScreenChathistoryStudent(moduleId: moduleId);
+                },
+              ),
+            ],
+          ),
+        ],
       ),
-      GoRoute(
-        path: ScreenModuleStudent.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenModuleStudent(),
-      ),
-      GoRoute(
-        path: ScreenBayminStudent.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenBayminStudent(),
-      ),
-      GoRoute(
-        path: ScreenInvites.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenInvites(),
-      ),
+      // Supervisor home
       GoRoute(
         path: ScreenHomeSupervisor.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenHomeSupervisor(),
+        builder: (context, state) => ScreenHomeSupervisor(),
+        routes: [
+          // Supervisor selects a student -> show student's subjects
+          GoRoute(
+            path: 'student/:studentUid',
+            builder: (context, state) {
+              final studentUid = state.pathParameters['studentUid']!;
+              return ScreenHomeStudent(
+                supervisorView: true,
+                studentUid: studentUid,
+              );
+            },
+            routes: [
+              // Subject
+              GoRoute(
+                path: 'subject/:subjectId',
+                builder: (context, state) {
+                  final studentUid = state.pathParameters['studentUid']!;
+                  final subjectId = state.pathParameters['subjectId']!;
+
+                  return ScreenSubject(
+                    subjectId: subjectId,
+                    studentUid: studentUid,
+                  );
+                },
+                routes: [
+                  // Module
+                  GoRoute(
+                    path: 'module/:moduleId',
+                    builder: (context, state) {
+                      final studentUid = state.pathParameters['studentUid']!;
+                      final subjectId = state.pathParameters['subjectId']!;
+                      final moduleId = state.pathParameters['moduleId']!;
+
+                      return ScreenModule(
+                        studentUid: studentUid,
+                        subjectId: subjectId,
+                        moduleId: moduleId,
+                      );
+                    },
+                    routes: [
+                      GoRoute(
+                        path: 'chat',
+                        builder: (context, state) {
+                          final studentUid = state.pathParameters['studentUid']!;
+                          final moduleId = state.pathParameters['moduleId']!;
+
+                          return ScreenChathistorySupervisor(
+                            studentUid: studentUid,
+                            moduleId: moduleId,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
       ),
-      GoRoute(
-        path: ScreenAddStudentSupervisor.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenAddStudentSupervisor(),
-      ),
-      GoRoute(
-        path: ScreenStudentinfoSupervisor.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenStudentinfoSupervisor(),
-      ),
-      GoRoute(
-        path: ScreenChathistorySupervisor.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenChathistorySupervisor(),
-      ),
-      GoRoute(
-        path: ScreenModuleSupervisor.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenModuleSupervisor(),
-      ),
-      GoRoute(
-        path: ScreenQuizzesSupervisor.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenQuizzesSupervisor(),
-      ),
-      GoRoute(
-        path: ScreenSubjectSupervisor.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenSubjectSupervisor(),
-      ),
+      GoRoute( path: ScreenInvites.routeName, builder: (context, state) => ScreenInvites(), ),
+      GoRoute( path: ScreenBayminStudent.routeName, builder: (context, state) => ScreenBayminStudent(), ),
+      GoRoute( path: ScreenAddStudentSupervisor.routeName, builder: (context, state) => ScreenAddStudentSupervisor(), ),
     ],
   );
 
@@ -200,7 +264,7 @@ class _MyAppState extends State<MyApp> {
       title: 'BAY-min tutor',
       theme: lightTheme,
       darkTheme: darkTheme,
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
     );
   }

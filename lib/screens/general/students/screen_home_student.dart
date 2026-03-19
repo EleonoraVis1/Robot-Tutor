@@ -3,8 +3,11 @@ import 'dart:async';
 
 // Flutter external package imports
 import 'package:csc322_starter_app/main.dart';
+import 'package:csc322_starter_app/providers/provider_subjects.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
-import 'package:csc322_starter_app/screens/general/students/screen_module_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_chathistory_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:csc322_starter_app/widgets/general/subject_card.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -27,6 +30,15 @@ const List<Map<String, dynamic>> _kSubjects = [
 //////////////////////////////////////////////////////////////////////////
 class ScreenHomeStudent extends ConsumerStatefulWidget {
   static const routeName = '/home_student';
+
+  final bool supervisorView;
+  final String? studentUid;
+
+  const ScreenHomeStudent({
+    super.key,
+    required this.supervisorView,
+    required this.studentUid
+  });
 
   @override
   ConsumerState<ScreenHomeStudent> createState() => _ScreenHomeStudentState();
@@ -70,10 +82,9 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
   Widget build(BuildContext context) {
     final profileProvider = ref.watch(providerUserProfile);
 
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      //appBar: WidgetPrimaryAppBar(title: const Text('Welcome')),
-      body: _buildStudentView(profileProvider)
+    return Scaffold( 
+      appBar: widget.supervisorView ? WidgetPrimaryAppBar(title: const Text('Subjects')) : null,
+      body: _buildStudentView(profileProvider),
     );
   }
 
@@ -81,34 +92,51 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
     final String firstName = profileProvider.dataLoaded
         ? profileProvider.firstName
         : 'there';
+    final subjectsAsync = ref.watch(subjectsProvider);
 
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: 5),
           Text(
             'Hello, $firstName! 👋\nWhat would you like to learn today?',
-            style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 30),
           const Text(
             'Subjects',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 16),
           Expanded(
-            child: GridView.count(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              children: _kSubjects.map((s) { 
-                  return SubjectCard(
-                    title: s['title'] as String,
-                    icon: s['icon'] as IconData,
-                  );
-                }).toList(),
+            child: subjectsAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(child: Text('Error: $e')),
+              data: (subjects) {
+                if (subjects.isEmpty) {
+                  return const Center(child: Text('No subjects available'));
+                }
+
+                return GridView.builder(
+                  itemCount: subjects.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                  ),
+                  itemBuilder: (_, i) {
+                    final subject = subjects[i];
+                    return SubjectCard(
+                      title: subject.title,
+                      icon: subject.icon,
+                      routeName: widget.supervisorView ? '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/${subject.id}' : '/subject/${subject.id}',
+                    );
+                  },
+                );
+              },
             ),
           ),
         ],

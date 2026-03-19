@@ -137,6 +137,7 @@ class _ScreenInvitesState extends ConsumerState<ScreenInvites> {
               final invite = invites[index];
 
               return ListTile(
+                minVerticalPadding: 12,
                 leading: InviteAvatar(invite: invite),
                 title: Text("${invite.supervisorFullName} wants to be your supervisor"),
                 subtitle: Text(invite.supervisorEmail),

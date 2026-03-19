@@ -12,6 +12,8 @@
 
 // Flutter external package imports
 import 'package:csc322_starter_app/models/user_profile.dart';
+import 'package:csc322_starter_app/providers/provider_firestore.dart';
+import 'package:csc322_starter_app/providers/provider_user_profile.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -67,6 +69,13 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   ////////////////////////////////////////////////////////////////////////
   _init() async {
     // Get providers
+    final firestore = ref.read(providerFirestoreService);
+    final userProfile = ref.read(providerUserProfile);
+    final isSupervisor = userProfile.userType == UserType.SUPERVISOR;
+
+    if (userProfile.uid.isNotEmpty && !isSupervisor) {
+      await firestore.setActiveUser(userProfile.uid);
+    }
   }
 
   ////////////////////////////////////////////////////////////////
@@ -111,22 +120,22 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   // Takes in the current tab index and returns the appropriate
   // screen to display.
   ////////////////////////////////////////////////////////////////
-  Widget _getScreenToDisplay(int currentTabIndex, bool isSupervisor) {
+  Widget _getScreenToDisplay(int currentTabIndex, bool isSupervisor, String uid) {
     if (currentTabIndex == BottomNavSelection.HOME_SCREEN.index)
-      return isSupervisor ? ScreenHomeSupervisor() : ScreenHomeStudent();
+      return isSupervisor ? ScreenHomeSupervisor() : ScreenHomeStudent(supervisorView: false, studentUid: uid,);
     else
-      return ScreenHomeStudent();
+      return ScreenHomeStudent(supervisorView: false, studentUid: uid,);
   }
 
   ////////////////////////////////////////////////////////////////
   // Takes in the current tab index and returns the appropriate
   // app bar widget to display.
   ////////////////////////////////////////////////////////////////
-  Widget _getAppBarTitle(int currentTabIndex) {
-    if (currentTabIndex == BottomNavSelection.HOME_SCREEN.index)
-      return Text("Home");
+  Widget _getAppBarTitle(int currentTabIndex, bool isSupervisor) {
+    if (!isSupervisor)
+      return Text("📋 Student Portal");
     else
-      return Text("Alternate");
+      return Text("🛡️ Supervisor Portal");
   }
 
   ////////////////////////////////////////////////////////////////
@@ -151,17 +160,17 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
     final currentTabIndex = ref.watch(providerPrimaryBottomNavTabIndex);
     final userProfile = ref.watch(providerUserProfile);
     final isSupervisor = userProfile.userType == UserType.SUPERVISOR;
-
+    final uid = userProfile.uid;
 
     // Return the scaffold
     return Scaffold(
       appBar: WidgetPrimaryAppBar(
         // Add a plus icon followed by the 3-dots vertical icon on the right
         actionButtons: _getAppBarActions(currentTabIndex),
-        title: _getAppBarTitle(currentTabIndex),
+        title: _getAppBarTitle(currentTabIndex, isSupervisor)
       ),
       drawer: WidgetAppDrawer(),
-      body: _getScreenToDisplay(currentTabIndex, isSupervisor),
+      body: _getScreenToDisplay(currentTabIndex, isSupervisor, uid),
     );
   }
 }

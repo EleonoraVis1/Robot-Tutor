@@ -10,11 +10,10 @@
 //////////////////////////////////////////////////////////////////////////
 // Flutter external package imports
 import 'package:csc322_starter_app/models/user_profile.dart';
+import 'package:csc322_starter_app/providers/provider_firestore.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_invites.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
-import 'package:csc322_starter_app/screens/general/supervisors/screen_quizzes_supervisor.dart';
-import 'package:csc322_starter_app/screens/general/supervisors/screen_subject_supervisor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
@@ -81,23 +80,6 @@ class WidgetAppDrawer extends StatelessWidget {
                   context.push(ScreenProfileEdit.routeName);
                 },
               ),
-              if (isSupervisor)
-                ListTile(
-                  leading: Icon(Icons.list_alt_outlined), 
-                  title: Text('Subjects'), 
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    context.push(ScreenSubjectSupervisor.routeName);
-                  }
-                ),
-              ListTile(
-                leading: Icon(Icons.book_online_outlined), 
-                title: Text('Quizzes'), 
-                onTap: () {
-                  Navigator.of(context).pop();
-                  context.push(isSupervisor ? ScreenQuizzesSupervisor.routeName : ScreenQuizzesStudent.routeName);
-                }
-              ),
               if (!isSupervisor)
                 ListTile(
                   leading: Icon(Icons.bolt_outlined), 
@@ -131,7 +113,10 @@ class WidgetAppDrawer extends StatelessWidget {
               ListTile(
                 leading: Icon(Icons.exit_to_app),
                 title: Text('Logout'),
-                onTap: () {
+                onTap: () async {
+                  if (!isSupervisor) {
+                    await ref.read(providerFirestoreService).clearActiveUser();
+                  }
                   _providerAuth.clearAuthedUserDetailsAndSignout();
                 },
               ),

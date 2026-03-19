@@ -24,8 +24,8 @@ import '../util/logging/app_logger.dart';
 import 'provider_user_profile.dart';
 
 // Constants
-const bool ENFORCE_EMAIL_VERIFICATION = true;
-const int SIGNIN_TIMEOUT_SECS = 15;
+const bool ENFORCE_EMAIL_VERIFICATION = false;
+const int SIGNIN_TIMEOUT_SECS = 30;
 
 // Enum for authentication state
 enum AuthState { UNKNOWN, AUTHENTICATED, UN_AUTHENTICATED }

@@ -6,7 +6,6 @@ import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/providers/provider_students.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent_supervisor.dart';
-import 'package:csc322_starter_app/screens/general/supervisors/screen_module_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_studentinfo_supervisor.dart';
 import 'package:csc322_starter_app/widgets/general/student_avatar.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
@@ -65,23 +64,17 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
     context.push(ScreenAddStudentSupervisor.routeName);
   }
 
-  void _openStudentInfo() {
-    context.push(ScreenStudentinfoSupervisor.routeName);
+  void _openStudentInfo(String studentId) {
+    context.push(
+      '${ScreenHomeSupervisor.routeName}/student/${studentId}',
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final profileProvider = ref.watch(providerUserProfile);
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      body: _buildSupervisorView(profileProvider),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blue,
-        shape: ShapeBorder.lerp(CircleBorder(), StadiumBorder(), 0.5),
-        onPressed: _openAddStudents,
-        splashColor: Theme.of(context).primaryColor,
-        child: Icon(FontAwesomeIcons.plus, color: Colors.black),
-      ), 
+      body: _buildSupervisorView(profileProvider), 
     );
   }
 
@@ -96,17 +89,34 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: 5),
           Text(
             'Hello, $firstName! 👋',
-            style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 6),
-          const Text(
-            'Here are your students:',
-            style: TextStyle(fontSize: 16, color: Colors.black54),
+          const SizedBox(height: 5),
+          Row(
+            children: [
+              const Text(
+                'Here are your students:',
+                style: TextStyle(fontSize: 18),
+              ),
+              const Spacer(),
+              ElevatedButton.icon(
+                onPressed: _openAddStudents,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  fixedSize: Size(150, 15)
+                ),
+                icon: const Icon(Icons.add),
+                label: const Text(
+                  "Add Student",
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 10),
           Expanded(
             child: studentsAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
@@ -124,13 +134,13 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
                     return Container(
                       margin: const EdgeInsets.symmetric(vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
+                        border: BoxBorder.all(color: Colors.black, width: 1.25),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.05),
                             blurRadius: 8,
-                            offset: const Offset(0, 2),
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
@@ -145,9 +155,11 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
                         trailing: const Icon(
                           Icons.arrow_forward_ios,
                           size: 16,
-                          color: Colors.black54,
+                          color: Colors.grey,
                         ),
-                        onTap: _openStudentInfo,
+                        onTap: () {
+                          _openStudentInfo(student.id);
+                        },
                       ),
                     );
                   },
