@@ -473,7 +473,7 @@ Do not include any other text, explanation, or markdown fences.
 
 ### concept.yaml
 ```yaml
-lesson_id: "2.1"   # short form only, e.g. "2.1" not "math_g4_ch2_l2.1"
+lesson_id: "math_g{grade}_ch{chapter}_l{lesson_index}"   # e.g. math_g4_ch2_l1
 subject: math
 grade: <int>
 unit: <int>                  # same as chapter for GO Math
@@ -597,7 +597,9 @@ GO Math sections map to YAML questions blocks as follows:
 If you cannot confidently extract a field, write:
   field_name: "# TODO: could not extract — review page <n>"
 Never fabricate content. It is better to leave a TODO than to invent text.
-Use short lesson_id format: chapter.lesson number only (e.g. '2.1', '2.4'). Do not prefix with subject or grade.
+Use canonical lesson_id format: subject + grade + chapter + lesson index.
+Example: math_g4_ch2_l1 for Chapter 2, Lesson 2.1.
+Do not use short forms like '2.1' or malformed forms like 'math_g4_ch2_l2.1'.
 
 ## IDs
 - Concepts:        c1, c2, c3 ...
@@ -828,6 +830,76 @@ def validate_yaml(yaml_str: str, required_keys: set[str], label: str) -> list[st
     return warnings
 
 
+def canonical_lesson_index(lesson_num: str) -> int:
+    """
+    Convert a lesson number like '2.1' to its lesson index within the chapter: 1.
+    """
+    try:
+        return int(str(lesson_num).split(".")[-1])
+    except (TypeError, ValueError, IndexError):
+        return 0
+
+
+def canonical_lesson_id(subject: str, grade: int, chapter: int, lesson_num: str) -> str:
+    subject_slug = re.sub(r"[^a-z0-9]+", "_", str(subject).lower()).strip("_") or "subject"
+    lesson_index = canonical_lesson_index(lesson_num)
+    return f"{subject_slug}_g{grade}_ch{chapter}_l{lesson_index}"
+
+
+def normalize_generated_yaml(
+    yaml_str: str,
+    *,
+    chunk: LessonChunk,
+    grade: int,
+    chapter: int,
+    is_questions: bool,
+) -> str:
+    """
+    Post-process model output into a consistent schema shape for critical IDs/metadata.
+    If parsing fails, return the original string unchanged so validation can surface it.
+    """
+    if yaml is None:
+        return yaml_str
+
+    try:
+        doc = yaml.safe_load(yaml_str)
+    except yaml.YAMLError:
+        return yaml_str
+
+    if not isinstance(doc, dict):
+        return yaml_str
+
+    subject = str(doc.get("subject", "math")).strip() or "math"
+    lesson_index = canonical_lesson_index(chunk.lesson_num)
+
+    doc["lesson_id"] = canonical_lesson_id(subject, grade, chapter, chunk.lesson_num)
+    doc["subject"] = subject
+    doc["grade"] = grade
+    doc["unit"] = int(doc.get("unit", chapter) or chapter)
+    doc["chapter"] = chapter
+    doc["lesson"] = int(doc.get("lesson", lesson_index) or lesson_index)
+    doc["title"] = str(doc.get("title", chunk.title)).strip() or chunk.title
+
+    citation = doc.get("citation")
+    if not isinstance(citation, dict):
+        citation = {}
+    citation.setdefault("textbook", f"GO Math Grade {grade} California (Houghton Mifflin Harcourt)")
+    citation["chapter"] = chapter
+    citation["lesson"] = lesson_index
+    doc["citation"] = citation
+
+    if is_questions:
+        questions = doc.get("questions")
+        if not isinstance(questions, dict):
+            questions = {}
+        questions.setdefault("guided", [])
+        questions.setdefault("independent", [])
+        questions.setdefault("word_problems", [])
+        doc["questions"] = questions
+
+    return yaml.safe_dump(doc, sort_keys=False, allow_unicode=True)
+
+
 # ---------------------------------------------------------------------------
 # Stage 4 — File output
 # ---------------------------------------------------------------------------
@@ -1056,17 +1128,32 @@ def run(args: argparse.Namespace) -> int:
             log.error("  API call failed for Lesson %s: %s", chunk.lesson_num, e)
             # Write a fallback stub so the pipeline doesn't lose the lesson entirely
             concept_yaml = (
-                f"# AUTO-GENERATED STUB — API call failed\n"
+                f"# AUTO-GENERATED STUB -- API call failed\n"
                 f"# Lesson {chunk.lesson_num}: {chunk.title}\n"
                 f"# Error: {e}\n"
                 f"lesson_id: '# TODO'\n"
             )
             questions_yaml = (
-                f"# AUTO-GENERATED STUB — API call failed\n"
+                f"# AUTO-GENERATED STUB -- API call failed\n"
                 f"# Lesson {chunk.lesson_num}: {chunk.title}\n"
                 f"# Error: {e}\n"
                 f"lesson_id: '# TODO'\n"
             )
+
+        concept_yaml = normalize_generated_yaml(
+            concept_yaml,
+            chunk=chunk,
+            grade=args.grade,
+            chapter=args.chapter,
+            is_questions=False,
+        )
+        questions_yaml = normalize_generated_yaml(
+            questions_yaml,
+            chunk=chunk,
+            grade=args.grade,
+            chapter=args.chapter,
+            is_questions=True,
+        )
 
         # ── Stage 3: Validate ────────────────────────────────────────────────
         folder_name = lesson_folder_name(chunk.lesson_num, chunk.title)

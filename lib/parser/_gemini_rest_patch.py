@@ -4,7 +4,7 @@ _gemini_rest_patch.py
 Drop-in replacement for the Gemini SDK call in parse_chapter.py.
 
 Your Chapter 2 failure is almost certainly this SDK call pattern:
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.5-flash")
     response = model.generate_content([system_prompt, user_prompt])
 
 This fails because:
@@ -21,7 +21,7 @@ Replace this pattern wherever it appears:
     # OLD (failing):
     import google.generativeai as genai
     genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.5-flash")
     response = model.generate_content([system_prompt, text_prompt])
     result_text = response.text
 
@@ -67,7 +67,7 @@ def gemini_text_call(
         prompt:      User prompt text.
         system:      Optional system instruction (prepended in user turn if provided,
                      since system_instruction is only in v1beta for some models).
-        model:       Gemini model name (default: gemini-1.5-flash).
+        model:       Gemini model name (default: gemini-2.5-flash).
         api_key:     API key (default: GEMINI_API_KEY env var).
         temperature: Generation temperature (default 0.2 for structured YAML output).
         max_tokens:  Max output tokens (default 4096).
@@ -147,7 +147,7 @@ def gemini_text_call(
                 raise RuntimeError(
                     f"Gemini API error {err.get('code')}: {err.get('message')}\n"
                     f"Hint: check model name '{model}'. "
-                    f"Valid names: gemini-1.5-flash, gemini-1.5-pro, gemini-2.0-flash-exp"
+                    f"Valid names include: gemini-2.5-flash, gemini-2.5-pro"
                 )
 
             candidates = data.get("candidates", [])

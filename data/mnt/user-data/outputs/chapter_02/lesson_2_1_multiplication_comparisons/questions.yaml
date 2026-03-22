@@ -1,4 +1,197 @@
-# AUTO-GENERATED STUB — API call failed
-# Lesson 2.1: Multiplication Comparisons
-# Error: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CYgbmy7LWoCpDup8tasg5'}
-lesson_id: '# TODO'
+lesson_id: math_g4_ch2_l1
+subject: math
+grade: 4
+unit: 2
+chapter: 2
+lesson: 1
+title: Multiplication Comparisons
+standards:
+- 4.OA.1
+citation:
+  textbook: GO Math Grade 4 California (Houghton Mifflin Harcourt)
+  chapter: 2
+  lesson: 1
+  pages:
+  - 59
+  - 60
+  - 61
+  - 62
+questions:
+  guided:
+  - id: q_g1
+    type: word_problem
+    has_visual: false
+    prompt: There are 8 students in the art club. There are 3 times as many students
+      in chorus. How many students are in chorus?
+    answer: 'To find the number of students in chorus, multiply the number of art
+      club students by 3. Equation: n = 3 × 8. So, n = 24. There are 24 students in
+      chorus.'
+    options:
+    - 21 students
+    - 24 students
+    - 11 students
+    correct_answer: 24 students
+    citation_page: 60
+  - id: q_g2
+    type: fill_in
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: A model representing 6 groups of 2, totaling 12.
+    prompt: Draw a model and write an equation. 6 times as many as 2 is 12.
+    answer: The model should show 6 groups with 2 items in each group, totaling 12.
+      The equation is 6 × 2 = 12.
+    options:
+    - 6 + 2 = 8
+    - 6 × 2 = 12
+    - 12 ÷ 6 = 2
+    correct_answer: 6 × 2 = 12
+    citation_page: 61
+  - id: q_g3
+    type: fill_in
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: A model representing 4 groups of 5, totaling 20.
+    prompt: Draw a model and write an equation. 20 is 4 times as many as 5.
+    answer: The model should show 4 groups with 5 items in each group, totaling 20.
+      The equation is 20 = 4 × 5.
+    options:
+    - 20 = 4 + 5
+    - 20 = 4 × 5
+    - 20 ÷ 4 = 5
+    correct_answer: 20 = 4 × 5
+    citation_page: 61
+  - id: q_g4
+    type: short_answer
+    has_visual: false
+    prompt: Write a comparison sentence. 18 = 9 × 2
+    answer: 18 is 9 times as many as 2.
+    options:
+    - 18 is 9 more than 2.
+    - 18 is 9 times as many as 2.
+    - 18 is 2 times as many as 9.
+    correct_answer: 18 is 9 times as many as 2.
+    citation_page: 61
+  - id: q_g5
+    type: short_answer
+    has_visual: false
+    prompt: Write a comparison sentence. 8 × 4 = 32
+    answer: 8 times as many as 4 is 32.
+    options:
+    - 8 plus 4 is 32.
+    - 8 times as many as 4 is 32.
+    - 32 is 8 more than 4.
+    correct_answer: 8 times as many as 4 is 32.
+    citation_page: 61
+  independent:
+  - id: q_i1
+    type: short_answer
+    has_visual: false
+    prompt: Write a comparison sentence. 5 × 7 = 35
+    answer: 5 times as many as 7 is 35.
+    options:
+    - 35 is 5 more than 7.
+    - 5 times as many as 7 is 35.
+    - 35 is 7 times as many as 5.
+    correct_answer: 5 times as many as 7 is 35.
+    citation_page: 61
+  - id: q_i2
+    type: short_answer
+    has_visual: false
+    prompt: Write a comparison sentence. 54 = 6 × 9
+    answer: 54 is 6 times as many as 9.
+    options:
+    - 54 is 6 more than 9.
+    - 54 is 6 times as many as 9.
+    - 54 is 9 times as many as 6.
+    correct_answer: 54 is 6 times as many as 9.
+    citation_page: 61
+  - id: q_i3
+    type: fill_in
+    has_visual: false
+    prompt: Write an equation. 3 times as many as 7 is 21.
+    answer: 3 × 7 = 21
+    options:
+    - 3 + 7 = 10
+    - 3 × 7 = 21
+    - 21 ÷ 3 = 7
+    correct_answer: 3 × 7 = 21
+    citation_page: 61
+  - id: q_i4
+    type: fill_in
+    has_visual: false
+    prompt: Write an equation. 40 is 5 times as many as 8.
+    answer: 40 = 5 × 8
+    options:
+    - 40 = 5 + 8
+    - 40 = 5 × 8
+    - 40 ÷ 5 = 8
+    correct_answer: 40 = 5 × 8
+    citation_page: 61
+  - id: q_i5
+    type: word_problem
+    has_visual: false
+    prompt: Nando has 4 goldfish. Jill has 3 goldfish. Cooper has 2 times as many
+      goldfish as Nando and Jill combined. Write an equation that compares the number
+      of goldfish Cooper has with the number of goldfish that Nando and Jill have.
+    answer: 'First, find the total goldfish Nando and Jill have: 4 + 3 = 7. Cooper
+      has 2 times as many as this combined total. So, the equation is C = 2 × (4 +
+      3).'
+    options:
+    - C = 2 + (4 + 3)
+    - C = 2 × (4 + 3)
+    - C = 2 × 4 + 3
+    correct_answer: C = 2 × (4 + 3)
+    citation_page: 61
+    difficulty: deeper
+  - id: q_i6
+    type: short_answer
+    has_visual: false
+    prompt: Write a comparison sentence about pet food that could be represented using
+      the equation 12 = 4 × 3.
+    answer: 12 bags of pet food is 4 times as many as 3 bags of pet food.
+    options:
+    - 12 bags is 4 more than 3 bags.
+    - 12 bags is 4 times as many as 3 bags.
+    - 12 bags is 3 times as many as 4 bags.
+    correct_answer: 12 bags is 4 times as many as 3 bags.
+    citation_page: 61
+    difficulty: mathematical_practice
+  word_problems:
+  - id: q_w1
+    type: word_problem
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: A model showing 72 baseball cards divided into 8 equal groups,
+      with each group representing Han's cards.
+    prompt: Luca has 72 baseball cards. This is 8 times as many cards as Han has.
+      How many baseball cards does Han have? a. What do you need to find? b. How can
+      you use a model to find the number of cards Han has? c. Draw the model. d. Write
+      an equation and solve.
+    answer: 'a. You need to find the number of baseball cards Han has. b. You can
+      use a model by drawing 8 equal groups that total 72 cards. Each group will represent
+      the number of cards Han has. c. The model should show 8 equal groups, with a
+      total of 72. d. Equation: 72 = 8 × n. To solve, divide 72 by 8. n = 9. So, Han
+      has 9 baseball cards.'
+    options:
+    - 8 cards
+    - 9 cards
+    - 64 cards
+    correct_answer: 9 cards
+    citation_page: 62
+    difficulty: think_smarter
+  - id: q_w2
+    type: short_answer
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: Models showing 24 as 6 groups of 4 and 4 groups of 6.
+    prompt: 'Write a statement from the box to show what the model describes. (Box
+      contains: ''24 is _ times as many as _.'' and ''24 is _ times as many as _.'')'
+    answer: 'The model shows 24 as 6 groups of 4, or 4 groups of 6. So, a statement
+      could be: 24 is 6 times as many as 4.'
+    options:
+    - 24 is 6 more than 4.
+    - 24 is 6 times as many as 4.
+    - 24 is 24 times as many as 1.
+    correct_answer: 24 is 6 times as many as 4.
+    citation_page: 62
+    difficulty: think_smarter

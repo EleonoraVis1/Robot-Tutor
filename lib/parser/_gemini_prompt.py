@@ -38,7 +38,7 @@ OUTPUT FORMAT — strict YAML, no markdown fences, no extra commentary.
 Follow this schema exactly:
 
 concept.yaml:
-  lesson_id: <string>          # e.g. "1.3"
+  lesson_id: <string>          # e.g. "math_g4_ch1_l3"
   title: <string>
   standard_tags: [<list>]      # e.g. ["4.OA.1", "4.NBT.5"]
   instructional_content:
@@ -53,7 +53,7 @@ concept.yaml:
     pages: <string>            # e.g. "pp. 45-48"
 
 questions.yaml:
-  lesson_id: <string>
+  lesson_id: <string>          # e.g. "math_g4_ch1_l3"
   title: <string>
   guided:
     - id: <string>             # e.g. "q_1_3_g1"
@@ -89,7 +89,7 @@ Rules:
   set cite_only: true and leave instructional_content fields as empty strings.
 - standard_tags should be California Common Core math standards (e.g. 4.OA.1).
 - Do NOT invent content; only extract what is on the page.
-- lesson_id format: "<chapter>.<lesson>" (e.g. "2.4").
+- lesson_id format should be the canonical machine id supplied by the caller.
 
 Lesson metadata:
   chapter: {chapter}
@@ -180,7 +180,7 @@ def call_gemini(
 
     Args:
         prompt:      Text prompt.
-        model:       Gemini model name (default: gemini-1.5-flash).
+        model:       Gemini model name (default: gemini-2.5-flash).
         image_b64:   Base64-encoded image bytes (for Vision calls).
         image_mime:  MIME type of image (default: image/png).
         api_key:     Gemini API key. Falls back to GEMINI_API_KEY env var.

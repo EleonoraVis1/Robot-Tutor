@@ -5,7 +5,7 @@ BAY-min user upload parser — Sprint 5-6 pipeline.
 
 Handles PDFs, scanned documents, and worksheet photos uploaded by teachers
 or students. Uses pdf2image to render pages as PNG images, then sends them
-to Gemini Vision (gemini-1.5-flash) for YAML extraction.
+to Gemini Vision (gemini-2.5-flash) for YAML extraction.
 
 Why image-based:
   - Eliminates pdfplumber's tripled-char artifacts from overlapping bold fonts
@@ -310,7 +310,7 @@ def process_upload(
     concept_only: bool = False,
     save_pages: bool = False,
     api_key: Optional[str] = None,
-    model: str = "gemini-1.5-flash",
+    model: str = "gemini-2.5-flash",
     max_pages: Optional[int] = None,
 ) -> tuple[dict, dict]:
     """
@@ -644,8 +644,8 @@ Examples (Windows PowerShell):
                         help="Limit pages processed (useful for testing)")
     parser.add_argument("--api-key", type=str, default=None,
                         help="Gemini API key (default: $env:GEMINI_API_KEY)")
-    parser.add_argument("--model", type=str, default="gemini-1.5-flash",
-                        help="Gemini model name (default: gemini-1.5-flash)")
+    parser.add_argument("--model", type=str, default="gemini-2.5-flash",
+                        help="Gemini model name (default: gemini-2.5-flash)")
     parser.add_argument("--verbose", "-v", action="store_true",
                         help="Enable debug logging")
 
