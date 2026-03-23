@@ -59,35 +59,42 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
   ////////////////////////////////////////////////////////////////
   Future<void> _init() async {}
 
-  Future<void> startModule(String studentId, String moduleId) async {
-    final moduleRef = FirebaseFirestore.instance
-        .collection('user_profiles')
-        .doc(studentId)
-        .collection('modules')
-        .doc(moduleId);
-   
+  Future<void> startModule(String studentId, String moduleId, String studentName) async {
+  final moduleRef = FirebaseFirestore.instance
+      .collection('user_profiles')
+      .doc(studentId)
+      .collection('modules')
+      .doc(moduleId);
 
-    final messagesRef = moduleRef.collection('messages');
+  final messagesRef = moduleRef.collection('messages');
 
-    // Create or update module progress and metadata
-    await moduleRef.set({
-      'startedAt': FieldValue.serverTimestamp(),
-      'completed': false,
-      'lastAccessed': FieldValue.serverTimestamp(),
-      'messageCount': FieldValue.increment(1), // Optional: track messages
-    }, SetOptions(merge: true));
+  final moduleSnapshot = await moduleRef.get();
+  final isFirstStart = !moduleSnapshot.exists;
+  
 
-    // Add first system message if this is the first run
-    final messagesSnapshot = await messagesRef.limit(1).get();
+  Map<String, dynamic> data = {
+    'lastAccessed': FieldValue.serverTimestamp(),
+    'completed': false,
+    'messageCount': FieldValue.increment(1),
+  };
 
-    if (messagesSnapshot.docs.isEmpty) {
-      await messagesRef.add({
-        'from': 'system',
-        'message': 'Module $moduleId started for $studentId',
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-    }
+  if (isFirstStart) {
+    data['startedAt'] = FieldValue.serverTimestamp();
+    data['quiz_status'] = 'unaccessible';
   }
+
+  await moduleRef.set(data, SetOptions(merge: true));
+
+  final messagesSnapshot = await messagesRef.limit(1).get();
+
+  if (messagesSnapshot.docs.isEmpty) {
+    await messagesRef.add({
+      'from': 'system',
+      'message': 'Module \'$moduleId\' started for $studentName',
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+}
 
   Future<void> exitModule(String studentId) async {
     final activeModuleRef = FirebaseFirestore.instance
@@ -142,8 +149,9 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
                   onTap: () async {
                     try {
                       if (profileProvider.dataLoaded && !isSupervisor) {
-                        await startModule(profileProvider.uid, module.id);
+                        await startModule(profileProvider.uid, module.id, profileProvider.wholeName);
                         await context.push('/subject/${widget.subjectId}/module/${module.id}');
+
                         await exitModule(profileProvider.uid);
 
                       } else if (profileProvider.dataLoaded && isSupervisor) {

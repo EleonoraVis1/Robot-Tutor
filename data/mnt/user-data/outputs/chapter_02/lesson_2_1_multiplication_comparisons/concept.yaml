@@ -1,0 +1,74 @@
+lesson_id: math_g4_ch2_l1
+subject: math
+grade: 4
+unit: 2
+chapter: 2
+lesson: 1
+title: Multiplication Comparisons
+essential_question: How can you model multiplication comparisons?
+standards:
+- 4.OA.1
+mathematical_practices:
+- MP.1
+- MP.4
+- MP.7
+citation:
+  textbook: GO Math Grade 4 California (Houghton Mifflin Harcourt)
+  chapter: 2
+  lesson: 1
+  pages:
+  - 59
+  - 60
+  - 61
+  - 62
+has_visual: true
+visual_handling: cite_only
+visual_description: 'Models showing 15 as 3 groups of 5 and 5 groups of 3. A model
+  for a word problem comparing Carly''s and Jack''s pennies. A model for a word problem
+  comparing Miguel''s and Sara''s rabbits. Models for 24 as 6 groups of 4 and 4 groups
+  of 6.
+
+  '
+concepts:
+- id: c1
+  term: Multiplication Comparisons
+  definition: 'Multiplication can be used to compare amounts. A statement like "15
+    is 3 times as many as 5" is a multiplication comparison, which can be represented
+    by the equation 15 = 3 × 5. The Commutative Property states that factors can be
+    multiplied in any order to get the same product, so 15 = 5 × 3 also means "15
+    is 5 times as many as 3."
+
+    '
+  example: 15 is 3 times as many as 5. 15 is 5 times as many as 3.
+worked_examples:
+- id: we1
+  title: Carly has 9 pennies. Jack has 4 times as many pennies as Carly. How many
+    pennies does Jack have?
+  has_visual: true
+  visual_handling: cite_only
+  visual_description: A model showing Carly's 9 pennies and Jack's pennies as 4 groups
+    of 9.
+  steps:
+  - 'Identify what needs to be compared: Carly''s pennies and Jack''s pennies.'
+  - Draw a model to represent Carly's 9 pennies and Jack having 4 times as many.
+  - 'Write an equation using ''n'' for the unknown number of Jack''s pennies: n =
+    4 × 9.'
+  - 'Solve the equation: n = 36.'
+  answer: Jack has 36 pennies.
+  citation_page: 59
+- id: we2
+  title: Miguel has 3 times as many rabbits as Sara. Miguel has 6 rabbits. How many
+    rabbits does Sara have?
+  has_visual: true
+  visual_handling: cite_only
+  visual_description: A model showing Miguel's 6 rabbits as 3 equal groups, with each
+    group representing Sara's rabbits (n).
+  steps:
+  - 'Identify the knowns: Miguel has 6 rabbits, which is 3 times as many as Sara.
+    Identify the unknown: the number of rabbits Sara has.'
+  - 'Draw a model: Represent Miguel''s 6 rabbits as 3 equal groups. Use ''n'' for
+    Sara''s rabbits, so each group is ''n''.'
+  - 'Write an equation: 6 = 3 × n.'
+  - 'Solve the equation: Think: 3 times what number equals 6? n = 2.'
+  answer: Sara has 2 rabbits.
+  citation_page: 60
