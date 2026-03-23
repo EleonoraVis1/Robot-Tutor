@@ -2,6 +2,8 @@
 import 'dart:async';
 
 // Flutter external package imports
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/providers/provider_quiz.dart';
 import 'package:csc322_starter_app/services/quiz_result_service.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -62,95 +64,107 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
   int _currentIndex = 0;
   int _score = 0;
   int? _selected;
+ 
   @override
   Widget build(BuildContext context) {
     final params = GoRouterState.of(context).pathParameters;
-
     final subjectId = params['subjectId']!;
     final moduleId = params['moduleId']!;
-    final questions = ref.watch(quizProvider(moduleId));
-    final question = questions[_currentIndex];
+    final profileProvider = ref.watch(providerUserProfile); 
+    final uid = profileProvider.uid;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Quiz'),
-        centerTitle: true,
+    // Watch the quiz provider (AsyncValue)
+    final questionsAsync = ref.watch(quizProvider(moduleId));
+
+    return questionsAsync.when(
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Question ${_currentIndex + 1} of ${questions.length}',
-            ),
-            const SizedBox(height: 16),
-            Text(
-              question.question,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 24),
+      error: (err, stack) => Scaffold(
+        body: Center(child: Text('Error loading questions: $err')),
+      ),
+      data: (questions) {
+        // Get the current question safely
+        final question = questions[_currentIndex];
 
-            ...List.generate(question.options.length, (i) {
-              return Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+        return Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 30),
+                Text('Question ${_currentIndex + 1} of ${questions.length}'),
+                const SizedBox(height: 16),
+                Text(
+                  question.question,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                child: RadioListTile<int>(
-                  value: i,
-                  groupValue: _selected,
-                  title: Text(question.options[i]),
-                  onChanged: (v) {
-                    setState(() => _selected = v);
-                  },
-                ),
-              );
-            }),
+                const SizedBox(height: 24),
 
-            Expanded(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 40),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _selected == null
-                          ? null
-                          : () {
-                              if (_selected == question.correctIndex) {
-                                _score++;
-                              }
-                              if (_currentIndex < questions.length - 1) {
-                                setState(() {
-                                  _currentIndex++;
-                                  _selected = null;
-                                });
-                              } else {
-                                _saveAndShowResult(
-                                  context,
-                                  subjectId,
-                                  moduleId,
-                                  questions.length,
-                                );
-                              }
-                            },
-                      child: Text(
-                        _currentIndex < questions.length - 1
-                            ? 'Next'
-                            : 'Finish',
+                ...List.generate(question.options.length, (i) {
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: RadioListTile<int>(
+                      value: i,
+                      groupValue: _selected,
+                      title: Text(question.options[i]),
+                      onChanged: (v) {
+                        setState(() => _selected = v);
+                      },
+                    ),
+                  );
+                }),
+
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 40),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _selected == null
+                              ? null
+                              : () {
+                                  if (_selected == question.correctIndex) {
+                                    _score++;
+                                  }
+                                  if (_currentIndex < questions.length - 1) {
+                                    setState(() {
+                                      _currentIndex++;
+                                      _selected = null;
+                                    });
+                                  } else {
+                                    _saveAndShowResult(
+                                      context,
+                                      subjectId,
+                                      moduleId,
+                                      questions.length,
+                                      uid,
+                                    );
+                                  }
+                                },
+                          child: Text(
+                            _currentIndex < questions.length - 1
+                                ? 'Next'
+                                : 'Finish',
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -159,6 +173,7 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
     String subjectId,
     String moduleId,
     int total,
+    String uid,
   ) async {
     await QuizResultService.saveResult(
       subjectId: subjectId,
@@ -166,12 +181,18 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
       score: _score,
       totalQuestions: total,
     );
+    final moduleRef = FirebaseFirestore.instance
+          .collection('user_profiles')
+          .doc(uid)
+          .collection('modules')
+          .doc(moduleId);
 
+      await moduleRef.set({'quiz_status': 'completed'}, SetOptions(merge: true));
     _showResult(context, total);
   }
 
   void _showResult(BuildContext context, int total) {
-    showDialog(
+        showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('Quiz Complete 🎉'),

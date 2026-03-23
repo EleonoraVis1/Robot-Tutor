@@ -5,8 +5,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/models/user_profile.dart';
-import 'package:csc322_starter_app/providers/provider_current_module.dart';
 import 'package:csc322_starter_app/providers/provider_module_result.dart';
+import 'package:csc322_starter_app/providers/provider_quiz.dart';
 import 'package:csc322_starter_app/providers/provider_subjects.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_chathistory_student.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
@@ -41,6 +41,7 @@ class ScreenModule extends ConsumerStatefulWidget {
 class _ScreenModuleState extends ConsumerState<ScreenModule> {
   // The "instance variables" managed in this state
   bool _isInit = true;
+  bool _hasNavigatedToQuiz = false;
 
   ////////////////////////////////////////////////////////////////
   // Runs the following code once upon initialization
@@ -58,9 +59,6 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(currentModuleProvider.notifier).state = widget.moduleId;
-    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final profileProvider = ref.read(providerUserProfile);
@@ -70,14 +68,6 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
         startModule(profileProvider.uid, widget.moduleId);
       }
     });
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(currentModuleProvider.notifier).state = null;
-    });
-    super.dispose();
   }
   
   Future<void> startModule(String studentId, String moduleId) async {
@@ -108,6 +98,39 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
     final profileProvider = ref.watch(providerUserProfile);
     final isSupervisor = profileProvider.dataLoaded && profileProvider.userType == UserType.SUPERVISOR;
 
+     final isReady = profileProvider.dataLoaded &&
+      profileProvider.userType != UserType.SUPERVISOR;
+
+  if (isReady) {
+    ref.listen(
+      quizStartProvider((
+        studentId: profileProvider.uid,
+        moduleId: widget.moduleId,
+      )),
+      (previous, next) {
+        if (next.value == true && !_hasNavigatedToQuiz) {
+          final statusAsync = ref.read(quizStatusProvider((
+              studentId: profileProvider.uid,
+              moduleId: widget.moduleId,
+            )));
+            
+            statusAsync.whenData((status) {
+              if (status.toLowerCase() != 'completed') {
+                _hasNavigatedToQuiz = true;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    context.push(
+                      '/subject/${widget.subjectId}/module/${widget.moduleId}/quiz',
+                    );
+                  }
+                });
+              }
+            });
+        }
+      },
+    );
+  }
+
     return Scaffold(
       appBar: AppBar(
         title: modulesAsync.when(
@@ -136,7 +159,6 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
               '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/$subjectId/module/$moduleId/chat',
             );
           }
-
         },
       ),
       
@@ -146,13 +168,24 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (!isSupervisor) ...[
-              ElevatedButton.icon(
-                icon: const Icon(Icons.quiz),
-                label: const Text('Start Quiz'),
-                onPressed: () {
-                  context.push(
-                    '/subject/$subjectId/module/$moduleId/quiz',
-                  );
+              ref.watch(quizStatusProvider((
+                studentId: widget.studentUid ?? profileProvider.uid,
+                moduleId: moduleId,
+              ))).when(
+                loading: () => const SizedBox(), 
+                error: (_, __) => const SizedBox(),
+                data: (status) {
+                  if (status.toLowerCase() == 'completed') {
+                    return ElevatedButton.icon(
+                      icon: const Icon(Icons.quiz),
+                      label: const Text('Retake Quiz'),
+                      onPressed: () {
+                        context.push('/subject/$subjectId/module/$moduleId/quiz');
+                      },
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
                 },
               ),
             ] else ...[
