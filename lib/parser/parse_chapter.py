@@ -846,6 +846,98 @@ def canonical_lesson_id(subject: str, grade: int, chapter: int, lesson_num: str)
     return f"{subject_slug}_g{grade}_ch{chapter}_l{lesson_index}"
 
 
+_TEXT_REPLACEMENTS = {
+    "횞": "×",
+    "첨": "÷",
+    "牽": "[",
+    "??": "−",
+}
+
+
+def normalize_text_value(value):
+    if isinstance(value, str):
+        normalized = value
+        for src, dst in _TEXT_REPLACEMENTS.items():
+            normalized = normalized.replace(src, dst)
+        return normalized
+    if isinstance(value, list):
+        return [normalize_text_value(v) for v in value]
+    if isinstance(value, dict):
+        return {k: normalize_text_value(v) for k, v in value.items()}
+    return value
+
+
+def normalize_question_item(question: dict) -> dict:
+    normalized = normalize_text_value(question)
+    question_type = normalized.get("type", "")
+
+    ordered = {}
+    for key in (
+        "id",
+        "type",
+        "difficulty",
+        "has_visual",
+        "visual_handling",
+        "visual_description",
+        "prompt",
+        "answer",
+        "items",
+        "options",
+        "correct_answer",
+        "citation_page",
+    ):
+        if key not in normalized:
+            continue
+        if key in {"visual_handling", "visual_description"} and not normalized.get("has_visual"):
+            continue
+        if key == "items" and question_type != "true_false_set":
+            continue
+        if key in {"options", "correct_answer"} and question_type == "true_false_set":
+            continue
+        ordered[key] = normalized[key]
+
+    for key, value in normalized.items():
+        if key not in ordered:
+            ordered[key] = value
+    return ordered
+
+
+def normalize_questions_doc(doc: dict) -> dict:
+    questions = doc.get("questions")
+    if not isinstance(questions, dict):
+        questions = {}
+
+    normalized_questions = {}
+    for section in ("guided", "independent", "word_problems"):
+        section_items = questions.get(section, [])
+        if not isinstance(section_items, list):
+            section_items = []
+        normalized_questions[section] = [
+            normalize_question_item(q) for q in section_items if isinstance(q, dict)
+        ]
+
+    normalized_doc = {}
+    for key in (
+        "lesson_id",
+        "subject",
+        "grade",
+        "unit",
+        "chapter",
+        "lesson",
+        "title",
+        "standards",
+        "citation",
+    ):
+        if key in doc:
+            normalized_doc[key] = normalize_text_value(doc[key])
+    normalized_doc["questions"] = normalized_questions
+
+    for key, value in doc.items():
+        if key not in normalized_doc and key != "questions":
+            normalized_doc[key] = normalize_text_value(value)
+    return normalized_doc
+
+
 def normalize_generated_yaml(
     yaml_str: str,
     *,
@@ -869,6 +961,8 @@ def normalize_generated_yaml(
     if not isinstance(doc, dict):
         return yaml_str
 
+    doc = normalize_text_value(doc)
+
     subject = str(doc.get("subject", "math")).strip() or "math"
     lesson_index = canonical_lesson_index(chunk.lesson_num)
 
@@ -889,13 +983,7 @@ def normalize_generated_yaml(
     doc["citation"] = citation
 
     if is_questions:
-        questions = doc.get("questions")
-        if not isinstance(questions, dict):
-            questions = {}
-        questions.setdefault("guided", [])
-        questions.setdefault("independent", [])
-        questions.setdefault("word_problems", [])
-        doc["questions"] = questions
+        doc = normalize_questions_doc(doc)
 
     return yaml.safe_dump(doc, sort_keys=False, allow_unicode=True)
 
