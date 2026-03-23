@@ -33,7 +33,7 @@ class ScreenChathistoryStudent extends ConsumerWidget {
               .map(
                 (msg) => ChatBubble(
                   message: msg.message,
-                  isStudent: msg.from == 'student',
+                  from: msg.from,
                 ),
               )
               .toList(),

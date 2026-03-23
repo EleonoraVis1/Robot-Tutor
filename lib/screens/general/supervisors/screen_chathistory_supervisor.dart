@@ -48,7 +48,7 @@ class ScreenChathistorySupervisor extends ConsumerWidget {
 
               return ChatBubble(
                 message: msg.message,
-                isStudent: msg.from == 'student',
+                from: msg.from,
               );
             },
           );

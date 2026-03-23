@@ -14,7 +14,6 @@
 // Flutter external package imports
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csc322_starter_app/models/user_profile.dart';
-import 'package:csc322_starter_app/providers/provider_current_module.dart';
 import 'package:csc322_starter_app/screens/auth/screen_auth.dart';
 import 'package:csc322_starter_app/screens/auth/screen_profile_setup.dart';
 import 'package:csc322_starter_app/screens/auth/screen_role.dart';
