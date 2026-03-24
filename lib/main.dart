@@ -116,8 +116,8 @@ class _MyAppState extends State<MyApp> {
         builder: (context, state) => ScreenSettings(),
       ),
       GoRoute(
-        path: ScreenProfileEdit.routeName,
-        builder: (context, state) => const ScreenProfileEdit(),
+        path: ScreenProfileSettings.routeName,
+        builder: (context, state) => const ScreenProfileSettings(),
       ),
       GoRoute(
         path: WidgetPrimaryScaffold.routeName,
