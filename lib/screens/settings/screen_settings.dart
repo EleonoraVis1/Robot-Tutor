@@ -100,7 +100,6 @@ class _ScreenSettingsState extends ConsumerState<ScreenSettings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: WidgetPrimaryAppBar(title: const Text('Settings')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

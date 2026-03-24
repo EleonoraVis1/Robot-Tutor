@@ -12,6 +12,7 @@
 // Dart imports
 
 // Flutter external package imports
+import 'package:csc322_starter_app/screens/auth/screen_profile_setup.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_chathistory_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_invites.dart';
@@ -31,7 +32,7 @@ import 'package:flutter/material.dart';
 import 'screens/general/students/screen_home_student.dart';
 import 'widgets/navigation/widget_primary_scaffold.dart';
 import 'screens/auth/screen_login_validation.dart';
-import 'screens/settings/screen_profile_edit.dart';
+import 'screens/settings/screen_profile.dart';
 import 'providers/provider_user_profile.dart';
 import 'screens/settings/screen_settings.dart';
 import 'providers/provider_auth.dart';
@@ -116,8 +117,12 @@ class _MyAppState extends State<MyApp> {
         builder: (context, state) => ScreenSettings(),
       ),
       GoRoute(
-        path: ScreenProfileSettings.routeName,
-        builder: (context, state) => const ScreenProfileSettings(),
+        path: ScreenProfile.routeName,
+        builder: (context, state) => const ScreenProfile(),
+      ),
+      GoRoute(
+        path: ScreenProfileSetup.routeName,
+        builder: (context, state) => const ScreenProfileSetup(isAuth: false),
       ),
       GoRoute(
         path: WidgetPrimaryScaffold.routeName,

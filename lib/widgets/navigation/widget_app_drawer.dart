@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 
 // App relative file imports
 import '../../widgets/navigation/widget_primary_scaffold.dart';
-import '../../screens/settings/screen_profile_edit.dart';
+import '../../screens/settings/screen_profile.dart';
 import '../../providers/provider_user_profile.dart';
 import '../../screens/settings/screen_settings.dart';
 import '../general/widget_profile_avatar.dart';
@@ -77,7 +77,7 @@ class WidgetAppDrawer extends StatelessWidget {
                 title: Text('Profile'),
                 onTap: () {
                   Navigator.of(context).pop();
-                  context.push(ScreenProfileSettings.routeName);
+                  context.push(ScreenProfile.routeName);
                 },
               ),
               if (!isSupervisor)
@@ -101,15 +101,15 @@ class WidgetAppDrawer extends StatelessWidget {
                   }
                 ),
               Divider(),
-              ListTile(
-                leading: Icon(Icons.settings),
-                title: Text('Settings'),
-                onTap: () {
-                  // Close the drawer
-                  Navigator.of(context).pop();
-                  context.push(ScreenSettings.routeName, extra: false);
-                },
-              ),
+              // ListTile(
+              //   leading: Icon(Icons.settings),
+              //   title: Text('Settings'),
+              //   onTap: () {
+              //     // Close the drawer
+              //     Navigator.of(context).pop();
+              //     context.push(ScreenSettings.routeName, extra: false);
+              //   },
+              // ),
               ListTile(
                 leading: Icon(Icons.exit_to_app),
                 title: Text('Logout'),
