@@ -83,8 +83,41 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
       error: (err, stack) => Scaffold(
         body: Center(child: Text('Error loading questions: $err')),
       ),
+      
       data: (questions) {
         // Get the current question safely
+
+        if (questions.isEmpty) {
+          return Scaffold(
+            body: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'No quiz questions available.',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await _saveAndShowResult(
+                                      context,
+                                      subjectId,
+                                      moduleId,
+                                      questions.length,
+                                      uid,
+                                    );
+                      },
+                      child: const Text('Done'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
         final question = questions[_currentIndex];
 
         return Scaffold(

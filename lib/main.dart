@@ -107,7 +107,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   // The "instance variables" managed in this state
   // NONE
-
   // Router
 
   final GoRouter _router = GoRouter(
