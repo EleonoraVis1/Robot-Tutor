@@ -1,5 +1,58 @@
-/* 
-This is unused as of now as this will be updated later on for Kim and wanting to upload
-files into the app. Possible reach is the end of Sprint 4 going into Sprint 5.
-- Landon
-*/
+// Flutter imports
+import 'dart:async';
+
+// Flutter external package importer
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/material.dart';
+
+//////////////////////////////////////////////////////////////////////////
+// StateFUL widget which manages state. Simply initializes the state object.
+//////////////////////////////////////////////////////////////////////////
+class ScreenUploadfile extends ConsumerStatefulWidget {
+  static const routeName = '/uploadfile';
+
+  @override
+  ConsumerState<ScreenUploadfile> createState() => _ScreenUploadFileState();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// The actual STATE which is managed by the above widget.
+//////////////////////////////////////////////////////////////////////////
+class _ScreenUploadFileState extends ConsumerState<ScreenUploadfile> {
+  // The "instance variables" managed in this state
+  bool _isInit = true;
+
+  ////////////////////////////////////////////////////////////////
+  // Runs the following code once upon initialization
+  ////////////////////////////////////////////////////////////////
+  @override
+  void didChangeDependencies() {
+    // If first time running this code, update provider settings
+    if (_isInit) {
+      _init();
+      _isInit = false;
+      super.didChangeDependencies();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  ////////////////////////////////////////////////////////////////
+  // Initializes state variables and resources
+  ////////////////////////////////////////////////////////////////
+  Future<void> _init() async {}
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("File Uploading"),
+        centerTitle: true,
+      ),
+      body: Text("Basic File Upload Message"),
+    );
+  }
+}

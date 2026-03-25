@@ -19,6 +19,7 @@ import 'package:csc322_starter_app/screens/general/students/screen_invites.dart'
 import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_subject.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_uploadfile.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistory_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
@@ -243,6 +244,7 @@ class _MyAppState extends State<MyApp> {
       GoRoute( path: ScreenInvites.routeName, builder: (context, state) => ScreenInvites(), ),
       GoRoute( path: ScreenBayminStudent.routeName, builder: (context, state) => ScreenBayminStudent(), ),
       GoRoute( path: ScreenAddStudentSupervisor.routeName, builder: (context, state) => ScreenAddStudentSupervisor(), ),
+      GoRoute( path: ScreenUploadfile.routeName, builder: (context, state) => ScreenUploadfile(), )
     ],
   );
 
