@@ -1,16 +1,16 @@
 # =============================================================================
-# GO Math Grade 4 ??Chapter 1, Lesson 1.1
-# questions.yaml ??guided, independent, and word_problems only
+# GO Math Grade 4 - Chapter 1, Lesson 1.1
+# questions.yaml - guided, independent, and word_problems only
 # Firestore path: subjects/math/grades/4/lessons/math_g4_ch1_l1
 # Schema version: 1.1
-# EGR302 Reachy Mini (BAY-min) Tutoring Robot ??Data Pipeline
+# EGR302 Reachy Mini (BAY-min) Tutoring Robot - Data Pipeline
 # Role owner: Haneul (module/question design & data handling)
 # =============================================================================
 
 # PENDING DECISION: Josh/Kip to confirm whether questions should be
 # a subcollection (lessons/{lesson_id}/questions/{question_id}) in Firestore
 # or remain as an array inside the lesson document.
-# This affects ingestion script design ??resolve before seeding.
+# This affects ingestion script design - resolve before seeding.
 
 lesson_id: "math_g4_ch1_l1"
 subject: math
@@ -37,7 +37,7 @@ questions:
       prompt: >
         Complete the table: How many small cubes make a long?
         How many longs make a flat? How many flats make a large cube?
-      answer: "10 cubes ??long (10); 10 longs ??flat (100); 10 flats ??large cube (1,000)."
+      answer: "10 cubes = 1 long (10); 10 longs = 1 flat (100); 10 flats = 1 large cube (1,000)."
       options:
         - "10, 10, 10"
         - "10, 100, 1,000"
@@ -182,7 +182,7 @@ questions:
       has_visual: false
       prompt: >
         How many models of 100 do you need to model 3,200? Explain.
-      answer: "32 models of 100 (32 횞 100 = 3,200)."
+      answer: "32 models of 100 (32 x 100 = 3,200)."
       options:
         - "32 models"
         - "23 models"

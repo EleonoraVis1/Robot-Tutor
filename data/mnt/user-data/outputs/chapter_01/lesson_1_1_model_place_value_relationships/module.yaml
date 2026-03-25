@@ -1,0 +1,284 @@
+module_id: math_grade4_ch1_les1_model_place_value_relationships
+lesson_id: math_g4_ch1_l1
+subject: math
+subject_id: math
+grade: 4
+grade_level: 4
+unit: 1
+chapter: 1
+lesson: 1
+title: Model Place Value Relationships
+description: How can you describe the value of a digit?
+essential_question: How can you describe the value of a digit?
+citation:
+  textbook: GO Math Grade 4 California (Houghton Mifflin Harcourt)
+  chapter: 1
+  lesson: 1
+  pages:
+  - 5
+  - 6
+  - 7
+  - 8
+standards: &id001
+- 4.NBT.1
+standard_tags: *id001
+mathematical_practices:
+- MP.4
+- MP.6
+- MP.7
+has_visual: true
+visual_handling: cite_only
+visual_description: 'Base-ten block diagrams showing cube (1), long (10), flat (100), large cube (1,000), and a question-mark
+  placeholder for 10,000. Place-value table comparing 2,304 and 16,135 with flat/long block models for the digit 3 in each
+  number.
+
+  '
+concepts: &id002
+- id: c1
+  term: place value
+  definition: 'The value of a digit based on its position in a number. Each place is 10 times the value of the place to its
+    right.
+
+    '
+  example: In 894,613 the digit 9 is in the ten-thousands place, so its value is 90,000.
+- id: c2
+  term: base-ten relationship
+  definition: '10 ones = 1 ten; 10 tens = 1 hundred; 10 hundreds = 1 thousand; 10 thousands = 1 ten thousand; and so on.
+
+    '
+  example: 10 flats (hundreds) make 1 large cube (1,000).
+- id: c3
+  term: place-value chart
+  definition: 'A table that organises digits into columns labelled by place (Millions | Hundreds / Tens / Ones | Thousands
+    | Ones period).
+
+    '
+  example: 894,613 → 8 hundred-thousands, 9 ten-thousands, 4 thousands, 6 hundreds, 1 ten, 3 ones.
+worked_examples: &id003
+- id: we1
+  title: Find the value of the digit 9 in 894,613
+  has_visual: true
+  visual_handling: cite_only
+  visual_description: Place-value chart with 894,613 filled in (p. 6).
+  steps:
+  - Write 894,613 in a place-value chart.
+  - Locate the digit 9 — it is in the ten-thousands column.
+  - The value of 9 in the ten-thousands place = 9 × 10,000 = 90,000.
+  answer: 90,000
+  citation_page: 6
+- id: we2
+  title: Compare the values of the underlined digit 3 in 2,304 and 16,135
+  has_visual: true
+  visual_handling: cite_only
+  visual_description: Two place-value charts and base-ten block models for 3 hundreds vs. 3 tens (p. 6).
+  steps:
+  - In 2,304 the digit 3 is in the hundreds place → value = 300.
+  - In 16,135 the digit 3 is in the tens place → value = 30.
+  - 300 ÷ 30 = 10, so the value of 3 in 2,304 is 10 times the value of 3 in 16,135.
+  answer: 10 times greater
+  citation_page: 6
+instructional_content:
+  text: ''
+  concepts: *id002
+  example_walkthrough: *id003
+quiz_questions:
+  guided:
+  - id: q_g1
+    type: fill_in
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: Base-ten block table (cube/long/flat/cube up to 10,000) on p. 7.
+    prompt: 'Complete the table: How many small cubes make a long? How many longs make a flat? How many flats make a large
+      cube?
+
+      '
+    answer: 10 cubes = 1 long (10); 10 longs = 1 flat (100); 10 flats = 1 large cube (1,000).
+    options:
+    - 10, 10, 10
+    - 10, 100, 1,000
+    - 1, 10, 100
+    correct_answer: 10, 10, 10
+    citation_page: 7
+  - id: q_g2
+    type: find_value
+    has_visual: false
+    prompt: 'Find the value of the underlined digit: [7]03,890'
+    answer: 700,000
+    options:
+    - 70,000
+    - 700,000
+    - 7,000
+    correct_answer: 700,000
+    citation_page: 7
+  - id: q_g3
+    type: find_value
+    has_visual: false
+    prompt: 'Find the value of the underlined digit: 63,[5]40'
+    answer: '500'
+    options:
+    - '50'
+    - '500'
+    - 5,000
+    correct_answer: '500'
+    citation_page: 7
+  - id: q_g4
+    type: compare_values
+    has_visual: false
+    prompt: 'Compare: 2,000 and 200. The value of 2 in ___ is ___ times the value of 2 in ___.'
+    answer: The value of 2 in 2,000 is 10 times the value of 2 in 200.
+    options:
+    - 2,000 is 10 times 200
+    - 200 is 10 times 2,000
+    - 2,000 is 100 times 200
+    correct_answer: 2,000 is 10 times 200
+    citation_page: 7
+  independent:
+  - id: q_i1
+    type: find_value
+    has_visual: false
+    prompt: 'Find the value of the underlined digit: [2]30,001'
+    answer: 200,000
+    options:
+    - 20,000
+    - 200,000
+    - 2,000
+    correct_answer: 200,000
+    citation_page: 7
+  - id: q_i2
+    type: find_value
+    has_visual: false
+    prompt: 'Find the value of the underlined digit: 80[3],040'
+    answer: '0'
+    options:
+    - '0'
+    - '30'
+    - 3,000
+    correct_answer: '0'
+    citation_page: 7
+  - id: q_i3
+    type: find_value
+    has_visual: false
+    prompt: 'Find the value of the underlined digit: 46,[8]42'
+    answer: '800'
+    options:
+    - '80'
+    - '800'
+    - 8,000
+    correct_answer: '800'
+    citation_page: 7
+  - id: q_i4
+    type: find_value
+    has_visual: false
+    prompt: 'Find the value of the underlined digit: [9]80,650'
+    answer: 900,000
+    options:
+    - 90,000
+    - 900,000
+    - 9,000
+    correct_answer: 900,000
+    citation_page: 7
+  - id: q_i5
+    type: compare_values
+    has_visual: false
+    prompt: 'Compare: 6[7],908 and [7]6,908. The value of 7 in ___ is ___ times the value of 7 in ___.
+
+      '
+    answer: The value of 7 in 76,908 is 10 times the value of 7 in 67,908.
+    options:
+    - 76,908 is 10 times 67,908
+    - 67,908 is 10 times 76,908
+    - 76,908 is 100 times 67,908
+    correct_answer: 76,908 is 10 times 67,908
+    citation_page: 7
+  - id: q_i6
+    type: compare_values
+    has_visual: false
+    prompt: 'Compare: 546,[3]00 and [3],456. The value of 3 in ___ is ___ times the value of 3 in ___.
+
+      '
+    answer: The value of 3 in 546,300 is 100 times the value of 3 in 3,456.
+    options:
+    - 546,300 is 10 times 3,456
+    - 546,300 is 100 times 3,456
+    - 3,456 is 100 times 546,300
+    correct_answer: 546,300 is 100 times 3,456
+    citation_page: 7
+  word_problems:
+  - id: q_w1
+    type: word_problem
+    difficulty: deeper
+    has_visual: false
+    prompt: 'Use the City Populations table (Cleveland 431,369; Denver 610,345; Memphis 676,640). What is the value of the
+      digit 7 in the population of Memphis? How many times as much is the value of that place than the value of the place
+      to its right?
+
+      '
+    answer: 70,000; the ten-thousands place is 10 times the thousands place.
+    options:
+    - 70,000; 10 times
+    - 7,000; 10 times
+    - 70,000; 100 times
+    correct_answer: 70,000; 10 times
+    citation_page: 8
+  - id: q_w2
+    type: word_problem
+    difficulty: think_smarter
+    has_visual: false
+    prompt: 'How many models of 100 do you need to model 3,200? Explain.
+
+      '
+    answer: 32 models of 100 (32 x 100 = 3,200).
+    options:
+    - 32 models
+    - 23 models
+    - 320 models
+    correct_answer: 32 models
+    citation_page: 8
+  - id: q_w3
+    type: true_false_set
+    difficulty: think_smarter
+    has_visual: false
+    prompt: Select True or False for each statement.
+    items:
+    - statement: The value of 7 in 375,081 is 7,000.
+      answer: 'True'
+      options:
+      - 'True'
+      - 'False'
+      correct_answer: 'True'
+    - statement: The value of 6 in 269,480 is 600,000.
+      answer: 'False'
+      options:
+      - 'True'
+      - 'False'
+      correct_answer: 'False'
+    - statement: The value of 5 in 427,593 is 500.
+      answer: 'True'
+      options:
+      - 'True'
+      - 'False'
+      correct_answer: 'True'
+    - statement: The value of 1 in 375,081 is 10.
+      answer: 'True'
+      options:
+      - 'True'
+      - 'False'
+      correct_answer: 'True'
+    - statement: The value of 4 in 943,268 is 40,000.
+      answer: 'True'
+      options:
+      - 'True'
+      - 'False'
+      correct_answer: 'True'
+    citation_page: 8
+prerequisites: []
+session_mode: teach_then_quiz
+source: parse_chapter.py
+_meta:
+  schema_version: '1.1'
+  merged_at: '2026-03-25T02:14:03.331157+00:00'
+  lesson_id: math_g4_ch1_l1
+  source_script: merge_lesson_yaml.py
+  source_files:
+    concept: concept.yaml
+    questions: questions.yaml

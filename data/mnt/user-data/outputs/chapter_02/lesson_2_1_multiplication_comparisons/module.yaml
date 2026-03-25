@@ -1,0 +1,304 @@
+module_id: math_grade4_ch2_les1_multiplication_comparisons
+lesson_id: math_g4_ch2_l1
+subject: math
+subject_id: math
+grade: 4
+grade_level: 4
+unit: 2
+chapter: 2
+lesson: 1
+title: Multiplication Comparisons
+description: How can you model multiplication comparisons?
+essential_question: How can you model multiplication comparisons?
+citation:
+  textbook: GO Math Grade 4 California (Houghton Mifflin Harcourt)
+  chapter: 2
+  lesson: 1
+  pages:
+  - 59
+  - 60
+  - 61
+  - 62
+standards: &id001
+- 4.OA.1
+standard_tags: *id001
+mathematical_practices:
+- MP.1
+- MP.4
+- MP.7
+has_visual: true
+visual_handling: cite_only
+visual_description: 'Bar models or arrays showing multiplication comparisons, such as 15 as 3 groups of 5, or 24 as 6 groups
+  of 4. Also includes models for word problems comparing quantities.
+
+  '
+concepts: &id002
+- id: c1
+  term: Multiplication Comparisons
+  definition: 'You can use multiplication to compare amounts. For example, 15 = 3 × 5 can be thought of as 15 is 3 times as
+    many as 5, or 15 is 5 times as many as 3.
+
+    '
+  example: 15 is 3 times as many as 5. 15 is 5 times as many as 3.
+worked_examples: &id003
+- id: we1
+  title: 'Unlock the Problem: Carly and Jack''s Pennies'
+  has_visual: true
+  visual_handling: cite_only
+  visual_description: A bar model showing Carly's 9 pennies and Jack's pennies as 4 groups of Carly's pennies.
+  steps:
+  - Carly has 9 pennies. Jack has 4 times as many pennies as Carly. How many pennies does Jack have?
+  - Draw a model and write an equation to solve.
+  - 'Use the model to write an equation and solve: n = 4 × 9'
+  - n = 36
+  - 'Think: n is how many pennies Jack has.'
+  answer: Jack has 36 pennies.
+  citation_page: 59
+- id: we2
+  title: 'Example: Miguel and Sara''s Rabbits'
+  has_visual: true
+  visual_handling: cite_only
+  visual_description: A bar model showing Miguel's 6 rabbits as 3 times Sara's unknown number of rabbits (n).
+  steps:
+  - Miguel has 3 times as many rabbits as Sara. Miguel has 6 rabbits. How many rabbits does Sara have?
+  - Draw a model and write an equation to solve.
+  - 'Think: You don’t know how many rabbits Sara has. Use n for Sara’s rabbits.'
+  - 'Use the model to write an equation and solve: 6 = 3 × n'
+  - 'Think: 3 times what number equals 6?'
+  - The value of n is 2.
+  answer: Sara has 2 rabbits.
+  citation_page: 60
+- id: we3
+  title: Try This! Write an equation.
+  has_visual: false
+  steps:
+  - 'Write an equation for: 21 is 7 times as many as 3.'
+  answer: 21 = 7 × 3
+  citation_page: 60
+- id: we4
+  title: Try This! Write a comparison sentence.
+  has_visual: false
+  steps:
+  - 'Write a comparison sentence for: 8 × 5 = 40.'
+  answer: 8 times as many as 5 is 40.
+  citation_page: 60
+instructional_content:
+  text: ''
+  concepts: *id002
+  example_walkthrough: *id003
+quiz_questions:
+  guided:
+  - id: q_g1
+    type: word_problem
+    has_visual: false
+    prompt: 'There are 8 students in the art club. There are 3 times as many students in chorus. How many students are in
+      chorus?
+
+      '
+    answer: n = 3 × 8; n = 24. So, there are 24 students in chorus.
+    options:
+    - 21 students
+    - 24 students
+    - 11 students
+    correct_answer: 24 students
+    citation_page: 60
+  - id: q_g2
+    type: fill_in
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: A model showing 6 groups of 2, totaling 12.
+    prompt: 'Draw a model and write an equation for: 6 times as many as 2 is 12.
+
+      '
+    answer: 'Model showing 6 groups of 2. Equation: 6 × 2 = 12.'
+    options:
+    - 6 + 2 = 8
+    - 6 × 2 = 12
+    - 12 ÷ 6 = 2
+    correct_answer: 6 × 2 = 12
+    citation_page: 61
+  - id: q_g3
+    type: fill_in
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: A model showing 4 groups of 5, totaling 20.
+    prompt: 'Draw a model and write an equation for: 20 is 4 times as many as 5.
+
+      '
+    answer: 'Model showing 4 groups of 5. Equation: 20 = 4 × 5.'
+    options:
+    - 20 = 5 + 4
+    - 20 = 4 × 5
+    - 20 = 4 ÷ 5
+    correct_answer: 20 = 4 × 5
+    citation_page: 61
+  - id: q_g4
+    type: short_answer
+    has_visual: false
+    prompt: 'Write a comparison sentence for: 18 = 9 × 2.
+
+      '
+    answer: 18 is 9 times as many as 2.
+    options:
+    - 18 is 9 more than 2
+    - 18 is 9 times as many as 2
+    - 18 is 2 times as many as 9
+    correct_answer: 18 is 9 times as many as 2
+    citation_page: 61
+  - id: q_g5
+    type: short_answer
+    has_visual: false
+    prompt: 'Write a comparison sentence for: 8 × 4 = 32.
+
+      '
+    answer: 8 times as many as 4 is 32.
+    options:
+    - 8 plus 4 is 32
+    - 8 times as many as 4 is 32
+    - 32 is 8 times as many as 4
+    correct_answer: 8 times as many as 4 is 32
+    citation_page: 61
+  independent:
+  - id: q_i1
+    type: short_answer
+    has_visual: false
+    prompt: 'Write a comparison sentence for: 5 × 7 = 35.
+
+      '
+    answer: 5 times as many as 7 is 35.
+    options:
+    - 35 is 5 more than 7
+    - 5 times as many as 7 is 35
+    - 35 is 7 times as many as 5
+    correct_answer: 5 times as many as 7 is 35
+    citation_page: 61
+  - id: q_i2
+    type: short_answer
+    has_visual: false
+    prompt: 'Write a comparison sentence for: 54 = 6 × 9.
+
+      '
+    answer: 54 is 6 times as many as 9.
+    options:
+    - 54 is 6 plus 9
+    - 54 is 9 times as many as 6
+    - 54 is 6 times as many as 9
+    correct_answer: 54 is 6 times as many as 9
+    citation_page: 61
+  - id: q_i3
+    type: fill_in
+    has_visual: false
+    prompt: 'Write an equation for: 3 times as many as 7 is 21.
+
+      '
+    answer: 3 × 7 = 21
+    options:
+    - 3 + 7 = 21
+    - 3 × 7 = 21
+    - 21 ÷ 3 = 7
+    correct_answer: 3 × 7 = 21
+    citation_page: 61
+  - id: q_i4
+    type: fill_in
+    has_visual: false
+    prompt: 'Write an equation for: 40 is 5 times as many as 8.
+
+      '
+    answer: 40 = 5 × 8
+    options:
+    - 40 = 5 + 8
+    - 40 = 8 × 5
+    - 40 = 5 × 8
+    correct_answer: 40 = 5 × 8
+    citation_page: 61
+  word_problems:
+  - id: q_w1
+    type: word_problem
+    difficulty: deeper
+    has_visual: false
+    prompt: 'Nando has 4 goldfish. Jill has 3 goldfish. Cooper has 2 times as many goldfish as Nando and Jill combined. Write
+      an equation that compares the number of goldfish Cooper has with the number of goldfish that Nando and Jill have.
+
+      '
+    answer: Nando and Jill combined have 4 + 3 = 7 goldfish. Cooper has 2 times as many, so Cooper's goldfish = 2 × (4 + 3)
+      or Cooper's goldfish = 2 × 7. The equation is C = 2 × (4 + 3) or C = 2 × 7.
+    options:
+    - C = 2 + (4 + 3)
+    - C = 2 × (4 + 3)
+    - C = 2 × 4 + 3
+    correct_answer: C = 2 × (4 + 3)
+    citation_page: 61
+  - id: q_w2
+    type: word_problem
+    difficulty: mathematical_practice
+    has_visual: false
+    prompt: 'Write a comparison sentence about pet food that could be represented using the equation 12 = 4 × 3.
+
+      '
+    answer: 'Example: There are 12 bags of dog food. This is 4 times as many bags as cat food. There are 3 bags of cat food.'
+    options:
+    - 12 bags of food is 4 more than 3 bags.
+    - 12 bags of food is 4 times as many as 3 bags.
+    - 4 bags of food is 3 times as many as 12 bags.
+    correct_answer: 12 bags of food is 4 times as many as 3 bags.
+    citation_page: 61
+  - id: q_w3
+    type: word_problem
+    difficulty: think_smarter
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: A bar model showing 72 baseball cards as 8 times Han's unknown number of cards.
+    prompt: 'Luca has 72 baseball cards. This is 8 times as many cards as Han has. How many baseball cards does Han have?
+      a. What do you need to find? b. How can you use a model to find the number of cards Han has? c. Draw the model. d. Write
+      an equation and solve.
+
+      '
+    answer: a. The number of baseball cards Han has. b. Draw a bar model where 72 is divided into 8 equal parts, with each
+      part representing Han's cards. c. (Model drawn) d. 72 = 8 × n; n = 9. So, Han has 9 baseball cards.
+    options:
+    - Han has 80 baseball cards.
+    - Han has 9 baseball cards.
+    - Han has 64 baseball cards.
+    correct_answer: Han has 9 baseball cards.
+    citation_page: 62
+  - id: q_w4
+    type: multiple_select
+    difficulty: think_smarter
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: Bar models showing 24 as 6 groups of 4, and 24 as 4 groups of 6.
+    prompt: 'Write a statement from the box to show what the model describes.
+
+      '
+    answer: The model shows 24 as 6 groups of 4, and 24 as 4 groups of 6. Both statements are correct descriptions of the
+      model.
+    options:
+    - 24 is 6 times as many as 4.
+    - 24 is 4 times as many as 6.
+    - 24 is 6 more than 4.
+    correct_answer: 24 is 6 times as many as 4.
+    citation_page: 62
+    items:
+    - statement: 24 is 6 times as many as 4.
+      answer: 'True'
+      options:
+      - 'True'
+      - 'False'
+      correct_answer: 'True'
+    - statement: 24 is 4 times as many as 6.
+      answer: 'True'
+      options:
+      - 'True'
+      - 'False'
+      correct_answer: 'True'
+prerequisites: []
+session_mode: teach_then_quiz
+source: parse_chapter.py
+_meta:
+  schema_version: '1.1'
+  merged_at: '2026-03-25T02:14:03.870870+00:00'
+  lesson_id: math_g4_ch2_l1
+  source_script: merge_lesson_yaml.py
+  source_files:
+    concept: concept.yaml
+    questions: questions.yaml

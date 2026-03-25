@@ -1,0 +1,284 @@
+module_id: math_grade4_ch1_les3_compare_and_order_numbers
+lesson_id: math_g4_ch1_l3
+subject: math
+subject_id: math
+grade: 4
+grade_level: 4
+unit: 1
+chapter: 1
+lesson: 3
+title: Compare and Order Numbers
+description: How can you compare and order numbers?
+essential_question: How can you compare and order numbers?
+citation:
+  textbook: GO Math Grade 4 California (Houghton Mifflin Harcourt)
+  chapter: 1
+  lesson: 3
+  pages:
+  - 13
+  - 14
+  - 15
+  - 16
+standards: &id001
+- 4.NBT.2
+standard_tags: *id001
+mathematical_practices:
+- MP.2
+- MP.4
+- MP.5
+has_visual: true
+visual_handling: cite_only
+visual_description: 'Number lines used to order/compare numbers (pp. 14, 16). Pictograph of Grand Canyon tent campers (p.
+  16).
+
+  '
+concepts: &id002
+- id: c1
+  term: compare numbers
+  definition: 'To determine which of two numbers is greater or lesser by aligning digits by place value and comparing from
+    left to right until the digits differ.
+
+    '
+  example: 651,028 vs 665,188 — hundred-thousands equal (6=6), ten-thousands differ (5 < 6), so 651,028 < 665,188.
+- id: c2
+  term: order numbers
+  definition: 'To arrange numbers from least to greatest or greatest to least. A number line can help: numbers to the left
+    are closer to 0 (lesser).
+
+    '
+  example: 10,408; 10,416; 10,433 ordered least to greatest.
+worked_examples: &id003
+- id: we1
+  title: Compare 651,028 and 665,188 using a place-value chart
+  has_visual: false
+  steps:
+  - 'Step 1 — Compare hundred-thousands: 6 = 6 (same, continue).'
+  - 'Step 2 — Compare ten-thousands: 5 < 6.'
+  - Since 5 ten-thousands < 6 ten-thousands, 651,028 < 665,188.
+  answer: 651,028 < 665,188; more visitors in July 2009.
+  citation_page: 13
+- id: we2
+  title: Order 10,408; 10,433; 10,416 from least to greatest using a number line
+  has_visual: true
+  visual_handling: cite_only
+  visual_description: Number line from 10,400 to 10,450 with points plotted (p. 14).
+  steps:
+  - Locate all three points on the number line.
+  - Read from left (smallest) to right (largest).
+  - 'Order: 10,408 < 10,416 < 10,433'
+  answer: 10,408; 10,416; 10,433
+  citation_page: 14
+instructional_content:
+  text: ''
+  concepts: *id002
+  example_walkthrough: *id003
+quiz_questions:
+  guided:
+  - id: q_g1
+    type: compare
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: Number line 15,300–15,360 (p. 14).
+    prompt: 'Compare using <, >, or =: 15,327 ● 15,341'
+    answer: 15,327 < 15,341
+    options:
+    - 15,327 < 15,341
+    - 15,327 > 15,341
+    - 15,327 = 15,341
+    correct_answer: 15,327 < 15,341
+    citation_page: 14
+  - id: q_g2
+    type: compare
+    has_visual: false
+    prompt: 'Compare: $631,328 ● $640,009'
+    answer: $631,328 < $640,009
+    options:
+    - $631,328 < $640,009
+    - $631,328 > $640,009
+    - $631,328 = $640,009
+    correct_answer: $631,328 < $640,009
+    citation_page: 14
+  - id: q_g3
+    type: compare
+    has_visual: false
+    prompt: 'Compare: 708,561 ● 629,672'
+    answer: 708,561 > 629,672
+    options:
+    - 708,561 > 629,672
+    - 708,561 < 629,672
+    - 708,561 = 629,672
+    correct_answer: 708,561 > 629,672
+    citation_page: 14
+  - id: q_g4
+    type: order
+    has_visual: false
+    prompt: 'Order from greatest to least: 20,650; 21,150; 20,890'
+    answer: 21,150; 20,890; 20,650
+    options:
+    - 21,150; 20,890; 20,650
+    - 20,890; 21,150; 20,650
+    - 20,650; 20,890; 21,150
+    correct_answer: 21,150; 20,890; 20,650
+    citation_page: 14
+  independent:
+  - id: q_i1
+    type: compare
+    has_visual: false
+    prompt: 'Compare: $2,212 ● $2,600'
+    answer: $2,212 < $2,600
+    options:
+    - $2,212 < $2,600
+    - $2,212 > $2,600
+    - $2,212 = $2,600
+    correct_answer: $2,212 < $2,600
+    citation_page: 15
+  - id: q_i2
+    type: compare
+    has_visual: false
+    prompt: 'Compare: 88,304 ● 88,304'
+    answer: 88,304 = 88,304
+    options:
+    - 88,304 = 88,304
+    - 88,304 < 88,304
+    - 88,304 > 88,304
+    correct_answer: 88,304 = 88,304
+    citation_page: 15
+  - id: q_i3
+    type: compare
+    has_visual: false
+    prompt: 'Compare: $524,116 ● $61,090'
+    answer: $524,116 > $61,090
+    options:
+    - $524,116 > $61,090
+    - $524,116 < $61,090
+    - $524,116 = $61,090
+    correct_answer: $524,116 > $61,090
+    citation_page: 15
+  - id: q_i4
+    type: compare
+    has_visual: false
+    prompt: 'Compare: 751,272 ● 851,001'
+    answer: 751,272 < 851,001
+    options:
+    - 751,272 < 851,001
+    - 751,272 > 851,001
+    - 751,272 = 851,001
+    correct_answer: 751,272 < 851,001
+    citation_page: 15
+  - id: q_i5
+    type: order
+    has_visual: false
+    prompt: 'Order from least to greatest: 41,090; 41,190; 40,009'
+    answer: 40,009; 41,090; 41,190
+    options:
+    - 40,009; 41,090; 41,190
+    - 41,090; 40,009; 41,190
+    - 41,190; 41,090; 40,009
+    correct_answer: 40,009; 41,090; 41,190
+    citation_page: 15
+  - id: q_i6
+    type: order
+    has_visual: false
+    prompt: 'Order from least to greatest: 910,763; 912,005; 95,408'
+    answer: 95,408; 910,763; 912,005
+    options:
+    - 95,408; 910,763; 912,005
+    - 910,763; 95,408; 912,005
+    - 912,005; 910,763; 95,408
+    correct_answer: 95,408; 910,763; 912,005
+    citation_page: 15
+  - id: q_i7
+    type: algebra_fill
+    has_visual: false
+    prompt: 'Write all digits that can replace ■: 567 < 5■5 < 582'
+    answer: 7 (575)
+    options:
+    - 7 (575)
+    - 6 (565)
+    - 8 (585)
+    correct_answer: 7 (575)
+    citation_page: 15
+  - id: q_i8
+    type: algebra_fill
+    has_visual: false
+    prompt: 'Write all digits that can replace ■: 464,545 > 4■3,535 > 443,550'
+    answer: 4, 5
+    options:
+    - 4, 5
+    - 3, 4
+    - 5, 6
+    correct_answer: 4, 5
+    citation_page: 15
+  word_problems:
+  - id: q_w1
+    type: word_problem
+    difficulty: deeper
+    has_visual: false
+    prompt: 'At Monica''s Used Cars the weekly sales goal is $25,500. Sales for three weeks were $28,288; $25,369; and $25,876.
+      Which total did not meet the goal?
+
+      '
+    answer: $25,369 (less than $25,500)
+    options:
+    - $25,369
+    - $25,876
+    - $28,288
+    correct_answer: $25,369
+    citation_page: 15
+  - id: q_w2
+    type: error_analysis
+    difficulty: think_smarter
+    has_visual: false
+    prompt: 'Max said 36,594 is less than 5,980 because 3 is less than 5. Describe his error and give the correct answer.
+
+      '
+    answer: 'Max compared only the leading digits without considering place value. 36,594 has 5 digits; 5,980 has 4 digits.
+      A 5-digit number is always greater than a 4-digit number. So 36,594 > 5,980.
+
+      '
+    options:
+    - 36,594 > 5,980
+    - 36,594 < 5,980
+    - 36,594 = 5,980
+    correct_answer: 36,594 > 5,980
+    citation_page: 15
+  - id: q_w3
+    type: word_problem
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: 'Pictograph of Grand Canyon National Park tent campers by month (p. 16). Key: each symbol = 5,000
+      campers.'
+    prompt: 'Use the pictograph. In which month shown did the Grand Canyon National Park have about 7,500 tent campers?
+
+      '
+    answer: September (1.5 symbols × 5,000 = 7,500)
+    options:
+    - September
+    - July
+    - August
+    correct_answer: September
+    citation_page: 16
+  - id: q_w4
+    type: word_problem
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: Pictograph of Grand Canyon National Park tent campers (p. 16).
+    prompt: Which months had more than 10,000 tent campers?
+    answer: July (3 symbols = 15,000) and August (2.5 symbols = 12,500)
+    options:
+    - July and August
+    - August and September
+    - July only
+    correct_answer: July and August
+    citation_page: 16
+prerequisites: []
+session_mode: teach_then_quiz
+source: parse_chapter.py
+_meta:
+  schema_version: '1.1'
+  merged_at: '2026-03-25T02:14:03.489021+00:00'
+  lesson_id: math_g4_ch1_l3
+  source_script: merge_lesson_yaml.py
+  source_files:
+    concept: concept.yaml
+    questions: questions.yaml

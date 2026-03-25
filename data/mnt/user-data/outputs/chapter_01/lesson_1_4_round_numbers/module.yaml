@@ -1,0 +1,306 @@
+module_id: math_grade4_ch1_les4_round_numbers
+lesson_id: math_g4_ch1_l4
+subject: math
+subject_id: math
+grade: 4
+grade_level: 4
+unit: 1
+chapter: 1
+lesson: 4
+title: Round Numbers
+description: How can you round numbers?
+essential_question: How can you round numbers?
+citation:
+  textbook: GO Math Grade 4 California (Houghton Mifflin Harcourt)
+  chapter: 1
+  lesson: 4
+  pages:
+  - 17
+  - 18
+  - 19
+  - 20
+standards: &id001
+- 4.NBT.3
+standard_tags: *id001
+mathematical_practices:
+- MP.1
+- MP.2
+- MP.5
+- MP.7
+has_visual: true
+visual_handling: cite_only
+visual_description: 'Number lines used for rounding to nearest hundred-thousand (p. 17) and nearest ten-thousand (p. 18 questions).
+  Benchmark estimation images with jars of shells and beads (p. 20).
+
+  '
+concepts: &id002
+- id: c1
+  term: estimate
+  definition: 'A number close to an exact amount that tells about how many or how much.
+
+    '
+  example: 138,202 rounded to the nearest hundred thousand is about 100,000.
+- id: c2
+  term: round
+  definition: 'To replace a number with another number that tells about how many or how much. Look at the digit one place
+    to the right of the rounding place: if it is 5 or greater, round up; if less than 5, round down. When a number is exactly
+    halfway, round to the greater number.
+
+    '
+  example: '5,725 rounded to the nearest thousand: hundreds digit is 7 ≥ 5, so round up to 6,000.'
+- id: c3
+  term: benchmark
+  definition: 'A known number of things that helps you understand the size or amount of a different number of things; used
+    in estimation.
+
+    '
+  example: If 100 shells fill a small jar and a large jar holds about 5 times as many, estimate ≈ 500 shells.
+worked_examples: &id003
+- id: we1
+  title: Round 138,202 to the nearest hundred thousand using a number line
+  has_visual: true
+  visual_handling: cite_only
+  visual_description: Number line 100,000–200,000 with 138,202 and midpoint 150,000 marked (p. 17).
+  steps:
+  - 'Find the hundred-thousands 138,202 lies between: 100,000 < 138,202 < 200,000.'
+  - Halfway point = 150,000.
+  - 138,202 < 150,000, so it is closer to 100,000.
+  - 'Rounded: 100,000.'
+  answer: 100,000
+  citation_page: 17
+- id: we2
+  title: Round 5,725 to the nearest thousand using place value
+  has_visual: false
+  steps:
+  - 'Find the thousands 5,725 lies between: 5,000 < 5,725 < 6,000.'
+  - 'Look at the digit to the right of the thousands place: hundreds digit = 7.'
+  - 7 ≥ 5, so round up.
+  - 'Rounded: 6,000.'
+  answer: 6,000
+  citation_page: 18
+- id: we3
+  title: Try This — Round to the underlined digit
+  has_visual: false
+  items:
+  - expression: 6̲4,999
+    answer: 60,000 (ten-thousands place; digit to right = 4 < 5, round down)
+  - expression: 8̲50,000
+    answer: 900,000 (hundred-thousands; digit = 5, round up)
+  - expression: 30̲1,587
+    answer: 300,000 (ten-thousands; digit = 1 < 5, round down)
+  - expression: 1̲0,832
+    answer: 10,000 (ten-thousands; digit = 0 < 5, round down)
+  citation_page: 18
+instructional_content:
+  text: ''
+  concepts: *id002
+  example_walkthrough: *id003
+quiz_questions:
+  guided:
+  - id: q_g1
+    type: reasonableness
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: Number line 200,000–300,000 with midpoint 250,000 (p. 19).
+    prompt: 'Suppose 255,113 people live in a city. Is it reasonable to say about 300,000 people live there? Use the number
+      line to explain.
+
+      '
+    answer: 'Yes. 255,113 is above the halfway point of 250,000, so it rounds up to 300,000. The estimate is reasonable.
+
+      '
+    options:
+    - 'Yes'
+    - 'No'
+    - Only on a number line
+    correct_answer: 'Yes'
+    citation_page: 19
+  - id: q_g2
+    type: round
+    has_visual: false
+    prompt: 'Round to the underlined digit: 93̲4,567'
+    answer: 900,000
+    options:
+    - 900,000
+    - 930,000
+    - 90,000
+    correct_answer: 900,000
+    citation_page: 19
+  - id: q_g3
+    type: round
+    has_visual: false
+    prompt: 'Round to the underlined digit: 6̲41,267'
+    answer: 600,000
+    options:
+    - 600,000
+    - 640,000
+    - 700,000
+    correct_answer: 600,000
+    citation_page: 19
+  - id: q_g4
+    type: round
+    has_visual: false
+    prompt: 'Round to the underlined digit: 23̲4,890'
+    answer: 230,000
+    options:
+    - 230,000
+    - 200,000
+    - 235,000
+    correct_answer: 230,000
+    citation_page: 19
+  - id: q_g5
+    type: round
+    has_visual: false
+    prompt: 'Round to the underlined digit: 34̲7,456'
+    answer: 350,000
+    options:
+    - 350,000
+    - 340,000
+    - 300,000
+    correct_answer: 350,000
+    citation_page: 19
+  independent:
+  - id: q_i1
+    type: round
+    has_visual: false
+    prompt: 'Round to the underlined digit: 5̲62,408'
+    answer: 600,000
+    options:
+    - 600,000
+    - 560,000
+    - 500,000
+    correct_answer: 600,000
+    citation_page: 19
+  - id: q_i2
+    type: round
+    has_visual: false
+    prompt: 'Round to the underlined digit: 28̲4,792'
+    answer: 280,000
+    options:
+    - 280,000
+    - 285,000
+    - 300,000
+    correct_answer: 280,000
+    citation_page: 19
+  - id: q_i3
+    type: round
+    has_visual: false
+    prompt: 'Round to the underlined digit: 199,8̲14'
+    answer: 199,800
+    options:
+    - 199,800
+    - 199,810
+    - 200,000
+    correct_answer: 199,800
+    citation_page: 19
+  - id: q_i4
+    type: round
+    has_visual: false
+    prompt: 'Round to the underlined digit: 923,71̲8'
+    answer: 923,720
+    options:
+    - 923,720
+    - 923,700
+    - 923,800
+    correct_answer: 923,720
+    citation_page: 19
+  word_problems:
+  - id: q_w1
+    type: word_problem
+    difficulty: think_smarter
+    has_visual: false
+    prompt: 'The number 2,■00 is missing a digit. Rounded to the nearest thousand it equals 3,000. List all possible missing
+      digits and explain.
+
+      '
+    answer: 'The hundreds digit must be ≥ 5 to round 2,x00 up to 3,000. Possible digits: 5, 6, 7, 8, 9.
+
+      '
+    options:
+    - 5, 6, 7, 8, 9
+    - 4, 5, 6, 7, 8
+    - 6, 7, 8, 9
+    correct_answer: 5, 6, 7, 8, 9
+    citation_page: 19
+  - id: q_w2
+    type: true_false_set
+    difficulty: think_smarter
+    has_visual: false
+    prompt: 'About 300,000 people attended a festival. Choose Yes or No to tell whether each number could be the exact attendance.
+
+      '
+    items:
+    - number: 351,213
+      answer: 'No'
+      options:
+      - 'Yes'
+      - 'No'
+      correct_answer: 'No'
+    - number: 249,899
+      answer: 'No'
+      options:
+      - 'Yes'
+      - 'No'
+      correct_answer: 'No'
+    - number: 252,348
+      answer: 'Yes'
+      options:
+      - 'Yes'
+      - 'No'
+      correct_answer: 'Yes'
+    - number: 389,001
+      answer: 'No'
+      options:
+      - 'Yes'
+      - 'No'
+      correct_answer: 'No'
+    - number: 305,992
+      answer: 'Yes'
+      options:
+      - 'Yes'
+      - 'No'
+      correct_answer: 'Yes'
+    citation_page: 20
+  - id: q_w3
+    type: benchmark_estimation
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: Benchmark jar of 500 beads and a larger jar for estimation (p. 20).
+    prompt: 'A benchmark jar holds 500 beads. Use the benchmark to find a reasonable estimate for the larger jar. Choose:
+      1,000; 2,000; or 3,000.
+
+      '
+    answer: 2,000 (the larger jar appears to hold about 4 times the benchmark)
+    options:
+    - 1,000
+    - 2,000
+    - 3,000
+    correct_answer: 2,000
+    citation_page: 20
+  - id: q_w4
+    type: benchmark_estimation
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: Benchmark patch of 10,000 blades of grass and a larger lawn patch (p. 20).
+    prompt: 'A benchmark patch has 10,000 blades of grass. Use the benchmark to estimate the larger patch. Choose: 1,000;
+      10,000; or 100,000.
+
+      '
+    answer: 10,000 (the larger patch appears roughly the same size as the benchmark)
+    options:
+    - 1,000
+    - 10,000
+    - 100,000
+    correct_answer: 10,000
+    citation_page: 20
+prerequisites: []
+session_mode: teach_then_quiz
+source: parse_chapter.py
+_meta:
+  schema_version: '1.1'
+  merged_at: '2026-03-25T02:14:03.562885+00:00'
+  lesson_id: math_g4_ch1_l4
+  source_script: merge_lesson_yaml.py
+  source_files:
+    concept: concept.yaml
+    questions: questions.yaml

@@ -1,0 +1,248 @@
+module_id: math_grade4_ch1_les2_read_and_write_numbers
+lesson_id: math_g4_ch1_l2
+subject: math
+subject_id: math
+grade: 4
+grade_level: 4
+unit: 1
+chapter: 1
+lesson: 2
+title: Read and Write Numbers
+description: How can you read and write numbers through hundred thousands?
+essential_question: How can you read and write numbers through hundred thousands?
+citation:
+  textbook: GO Math Grade 4 California (Houghton Mifflin Harcourt)
+  chapter: 1
+  lesson: 2
+  pages:
+  - 9
+  - 10
+  - 11
+  - 12
+standards: &id001
+- 4.NBT.2
+standard_tags: *id001
+mathematical_practices:
+- MP.2
+- MP.7
+has_visual: false
+visual_handling: ''
+visual_description: ''
+concepts: &id002
+- id: c1
+  term: standard form
+  definition: 'A way to write numbers using the digits 0–9, with each digit having a place value.
+
+    '
+  example: 262,400
+- id: c2
+  term: word form
+  definition: 'A way to write a number using words.
+
+    '
+  example: two hundred sixty-two thousand, four hundred
+- id: c3
+  term: expanded form
+  definition: 'A way to write numbers by showing the value of each digit as an addition expression.
+
+    '
+  example: 200,000 + 60,000 + 2,000 + 400
+- id: c4
+  term: period
+  definition: 'Each group of three digits separated by a comma in a multi-digit number. Each period has hundreds, tens, and
+    ones.
+
+    '
+  example: In 262,400 the periods are 'thousands' (262) and 'ones' (400).
+worked_examples: &id003
+- id: we1
+  title: Write 262,400 in standard, word, and expanded form
+  has_visual: false
+  steps:
+  - 'Place 262,400 in a place-value chart: 2 hundred-thousands, 6 ten-thousands, 2 thousands, 4 hundreds, 0 tens, 0 ones.'
+  - 'Standard form: 262,400'
+  - 'Word form: two hundred sixty-two thousand, four hundred'
+  - 'Expanded form: 200,000 + 60,000 + 2,000 + 400'
+  answer: See steps above.
+  citation_page: 9
+- id: we2
+  title: 'Try This — A: Write standard form for ninety-two thousand, one hundred seventy'
+  has_visual: false
+  steps:
+  - 'Expanded: 90,000 + 2,000 + 100 + 70'
+  - 'Standard: 92,170'
+  answer: 92,170
+  citation_page: 9
+- id: we3
+  title: 'Try This — B: Write word and expanded form for 200,007'
+  has_visual: false
+  steps:
+  - 'Word form: two hundred thousand, seven'
+  - 'Expanded form: 200,000 + 7'
+  answer: 'Word: two hundred thousand, seven; Expanded: 200,000 + 7'
+  citation_page: 9
+instructional_content:
+  text: ''
+  concepts: *id002
+  example_walkthrough: *id003
+quiz_questions:
+  guided:
+  - id: q_g1
+    type: conversion
+    has_visual: false
+    prompt: 'Read and write in two other forms: four hundred eight thousand, seventeen'
+    answer: 'Standard: 408,017; Expanded: 400,000 + 8,000 + 10 + 7'
+    options:
+    - 408,017
+    - 480,017
+    - 408,170
+    correct_answer: 408,017
+    citation_page: 10
+  - id: q_g2
+    type: conversion
+    has_visual: false
+    prompt: Read and write 65,058 in two other forms.
+    answer: 'Word: sixty-five thousand, fifty-eight; Expanded: 60,000 + 5,000 + 50 + 8'
+    options:
+    - sixty-five thousand, fifty-eight
+    - sixty-five thousand, five hundred eight
+    - six thousand, fifty-eight
+    correct_answer: sixty-five thousand, fifty-eight
+    citation_page: 10
+  independent:
+  - id: q_i1
+    type: conversion
+    has_visual: false
+    prompt: Write five hundred eight thousand in two other forms.
+    answer: 'Standard: 508,000; Expanded: 500,000 + 8,000'
+    options:
+    - 508,000
+    - 580,000
+    - '508'
+    correct_answer: 508,000
+    citation_page: 10
+  - id: q_i2
+    type: conversion
+    has_visual: false
+    prompt: Write forty thousand, six hundred nineteen in two other forms.
+    answer: 'Standard: 40,619; Expanded: 40,000 + 600 + 10 + 9'
+    options:
+    - 40,619
+    - 46,019
+    - 40,609
+    correct_answer: 40,619
+    citation_page: 10
+  - id: q_i3
+    type: conversion
+    has_visual: false
+    prompt: Write 570,020 in two other forms.
+    answer: 'Word: five hundred seventy thousand, twenty; Expanded: 500,000 + 70,000 + 20'
+    options:
+    - 500,000 + 70,000 + 20
+    - 500,000 + 7,000 + 20
+    - 570,000 + 20
+    correct_answer: 500,000 + 70,000 + 20
+    citation_page: 10
+  - id: q_i4
+    type: conversion
+    has_visual: false
+    prompt: Write 400,000 + 60,000 + 5,000 + 100 in two other forms.
+    answer: 'Standard: 465,100; Word: four hundred sixty-five thousand, one hundred'
+    options:
+    - 465,100
+    - 456,100
+    - 465,010
+    correct_answer: 465,100
+    citation_page: 10
+  - id: q_i5
+    type: short_answer
+    has_visual: false
+    prompt: Use the number 145,973. Write the name of the period that has the digits 145.
+    answer: thousands period
+    options:
+    - thousands period
+    - ones period
+    - millions period
+    correct_answer: thousands period
+    citation_page: 10
+  - id: q_i6
+    type: short_answer
+    has_visual: false
+    prompt: Use the number 145,973. Write the digit in the ten-thousands place.
+    answer: '4'
+    options:
+    - '1'
+    - '4'
+    - '5'
+    correct_answer: '4'
+    citation_page: 10
+  word_problems:
+  - id: q_w1
+    type: word_problem
+    has_visual: false
+    prompt: 'Use the Major Cities in North Carolina table (Durham 229,171; Greensboro 255,124; Raleigh 405,612). Which city
+      has a population of two hundred fifty-five thousand, one hundred twenty-four?
+
+      '
+    answer: Greensboro
+    options:
+    - Greensboro
+    - Raleigh
+    - Durham
+    correct_answer: Greensboro
+    citation_page: 11
+  - id: q_w2
+    type: word_problem
+    has_visual: false
+    prompt: 'Write the population of Raleigh (405,612) in expanded form and word form.
+
+      '
+    answer: 'Expanded: 400,000 + 5,000 + 600 + 10 + 2; Word: four hundred five thousand, six hundred twelve'
+    options:
+    - 400,000 + 5,000 + 600 + 10 + 2
+    - 400,000 + 50,000 + 600 + 10 + 2
+    - 400,000 + 5,000 + 60 + 12
+    correct_answer: 400,000 + 5,000 + 600 + 10 + 2
+    citation_page: 11
+  - id: q_w3
+    type: error_analysis
+    difficulty: think_smarter
+    has_visual: false
+    prompt: 'Sophia said the expanded form for 605,970 is 600,000 + 50,000 + 900 + 70. Describe her error and give the correct
+      answer.
+
+      '
+    answer: 'Sophia incorrectly wrote 50,000 for the digit 0 in the ten-thousands place and omitted the 5,000 (hundreds digit
+      of the thousands period). Correct expanded form: 600,000 + 5,000 + 900 + 70.
+
+      '
+    options:
+    - 600,000 + 5,000 + 900 + 70
+    - 600,000 + 50,000 + 900 + 70
+    - 600,000 + 5,000 + 970
+    correct_answer: 600,000 + 5,000 + 900 + 70
+    citation_page: 11
+  - id: q_w4
+    type: multiple_select
+    difficulty: think_smarter
+    has_visual: false
+    prompt: What is another way to write 615,004? Mark all that apply.
+    options:
+      A: six hundred fifteen thousand, four
+      B: six hundred five thousand, fourteen
+      C: 60,000 + 10,000 + 5,000 + 4
+      D: 600,000 + 10,000 + 5,000 + 4
+    answer: A and D
+    correct_answer: A and D
+    citation_page: 12
+prerequisites: []
+session_mode: teach_then_quiz
+source: parse_chapter.py
+_meta:
+  schema_version: '1.1'
+  merged_at: '2026-03-25T02:14:03.409929+00:00'
+  lesson_id: math_g4_ch1_l2
+  source_script: merge_lesson_yaml.py
+  source_files:
+    concept: concept.yaml
+    questions: questions.yaml

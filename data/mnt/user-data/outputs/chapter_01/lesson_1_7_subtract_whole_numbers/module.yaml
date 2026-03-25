@@ -1,0 +1,236 @@
+module_id: math_grade4_ch1_les7_subtract_whole_numbers
+lesson_id: math_g4_ch1_l7
+subject: math
+subject_id: math
+grade: 4
+grade_level: 4
+unit: 1
+chapter: 1
+lesson: 7
+title: Subtract Whole Numbers
+description: How can you subtract whole numbers?
+essential_question: How can you subtract whole numbers?
+citation:
+  textbook: GO Math Grade 4 California (Houghton Mifflin Harcourt)
+  chapter: 1
+  lesson: 7
+  pages:
+  - 31
+  - 32
+  - 33
+  - 34
+standards: &id001
+- 4.NBT.4
+- 4.NBT.3
+- 4.OA.3
+standard_tags: *id001
+mathematical_practices:
+- MP.1
+- MP.5
+- MP.8
+has_visual: false
+visual_handling: ''
+visual_description: ''
+concepts: &id002
+- id: c1
+  term: subtraction algorithm
+  definition: 'Line up the minuend and subtrahend by place value; subtract column by column from right to left, regrouping
+    (borrowing) when needed.
+
+    '
+  example: 16,421 − 14,831 = 1,590
+- id: c2
+  term: inverse operations
+  definition: 'Operations that undo each other. Addition and subtraction are inverse operations — you can use addition to
+    check a subtraction answer.
+
+    '
+  example: 1,590 + 14,831 = 16,421 ✓
+- id: c3
+  term: estimate a difference
+  definition: 'Round each number to a specified place value, then subtract.
+
+    '
+  example: 16,000 − 15,000 = 1,000 (estimate for 16,421 − 14,831)
+worked_examples: &id003
+- id: we1
+  title: Subtract 16,421 − 14,831
+  has_visual: false
+  steps:
+  - 'Estimate: 16,000 − 15,000 = 1,000.'
+  - 'Step 1 — Ones: 1 − 1 = 0. Tens: regroup 4 hundreds 2 tens → 3 hundreds 12 tens; 12 − 3 = 9.'
+  - 'Step 2 — Hundreds: regroup 6 thousands 3 hundreds → 5 thousands 13 hundreds; 13 − 8 = 5.'
+  - 'Step 3 — Thousands: 5 − 4 = 1. Ten-thousands: 1 − 1 = 0. Difference: 1,590.'
+  - 'Check: 1,590 + 14,831 = 16,421 ✓'
+  answer: 1,590 (Mt. Bona is 1,590 feet taller)
+  citation_page: 31
+instructional_content:
+  text: ''
+  concepts: *id002
+  example_walkthrough: *id003
+quiz_questions:
+  guided:
+  - id: q_g1
+    type: subtraction_grid
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: Place-value subtraction grid on p. 32.
+    prompt: 'Subtract using the grid: 637,350 − 43,832'
+    answer: 593,518
+    options:
+    - 593,418
+    - 593,518
+    - 583,518
+    correct_answer: 593,518
+    citation_page: 32
+  - id: q_g2
+    type: subtraction_with_estimate
+    has_visual: false
+    prompt: 14,659 − 11,584
+    answer: 'Estimate ≈ 3,000; Exact: 3,075'
+    options:
+    - 3,175
+    - 3,075
+    - 2,075
+    correct_answer: 3,075
+    citation_page: 32
+  - id: q_g3
+    type: subtraction_with_estimate
+    has_visual: false
+    prompt: 456,912 − 37,800
+    answer: 'Estimate ≈ 419,000; Exact: 419,112'
+    options:
+    - 419,012
+    - 419,112
+    - 429,112
+    correct_answer: 419,112
+    citation_page: 32
+  - id: q_g4
+    type: subtraction_with_estimate
+    has_visual: false
+    prompt: 407,001 − 184,652
+    answer: 'Estimate ≈ 222,000; Exact: 222,349'
+    options:
+    - 223,349
+    - 222,349
+    - 222,249
+    correct_answer: 222,349
+    citation_page: 32
+  independent:
+  - id: q_i1
+    type: subtraction_with_estimate
+    has_visual: false
+    prompt: 942,385 − 461,803
+    answer: 'Estimate ≈ 480,000; Exact: 480,582'
+    options:
+    - 480,482
+    - 480,582
+    - 490,582
+    correct_answer: 480,582
+    citation_page: 32
+  - id: q_i2
+    type: subtraction_with_estimate
+    has_visual: false
+    prompt: 798,300 − 348,659
+    answer: 'Estimate ≈ 450,000; Exact: 449,641'
+    options:
+    - 449,741
+    - 449,641
+    - 450,641
+    correct_answer: 449,641
+    citation_page: 32
+  - id: q_i3
+    type: subtraction_with_estimate
+    has_visual: false
+    prompt: 300,980 − 159,000
+    answer: 'Estimate ≈ 141,000; Exact: 141,980'
+    options:
+    - 141,080
+    - 141,980
+    - 142,980
+    correct_answer: 141,980
+    citation_page: 32
+  - id: q_i4
+    type: copy_and_solve
+    has_visual: false
+    prompt: 653,809 − 256,034. Subtract, then add to check.
+    answer: '397,775; check: 397,775 + 256,034 = 653,809 ✓'
+    options:
+    - 396,775
+    - 397,775
+    - 407,775
+    correct_answer: 397,775
+    citation_page: 33
+  - id: q_i5
+    type: copy_and_solve
+    has_visual: false
+    prompt: 500,000 − 145,609
+    answer: 354,391
+    options:
+    - 355,391
+    - 354,391
+    - 344,391
+    correct_answer: 354,391
+    citation_page: 33
+  word_problems:
+  - id: q_w1
+    type: word_problem
+    difficulty: mathematical_practice
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: Orange Groves acreage table on p. 33 (years 1966–1996).
+    prompt: 'Use the Orange Groves table. How many more acres were grown in 1996 (656,598) than in 1986 (466,256)? Estimate
+      to check reasonableness.
+
+      '
+    answer: 'Exact: 190,342; Estimate: 660,000 − 470,000 = 190,000 (reasonable).'
+    options:
+    - 180,342
+    - 190,342
+    - 190,442
+    correct_answer: 190,342
+    citation_page: 33
+  - id: q_w2
+    type: word_problem
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: Orange Groves acreage table on p. 33.
+    prompt: 'Using the Orange Groves table, what is the difference between the greatest (673,086 in 1966) and least (466,256
+      in 1986) acres?
+
+      '
+    answer: 206,830 acres
+    options:
+    - 206,820 acres
+    - 206,830 acres
+    - 216,830 acres
+    correct_answer: 206,830 acres
+    citation_page: 33
+  - id: q_w3
+    type: error_analysis
+    difficulty: think_smarter
+    has_visual: false
+    prompt: 'Janice computed 268,601 − 12,407 = 144,531. Describe her error and give the correct answer.
+
+      '
+    answer: 'Janice did not align the digits by place value — she subtracted as if 12,407 were a 6-digit number, misaligning
+      columns. Correct: 268,601 − 12,407 = 256,194.
+
+      '
+    options:
+    - 156,194
+    - 256,194
+    - 266,194
+    correct_answer: 256,194
+    citation_page: 34
+prerequisites: []
+session_mode: teach_then_quiz
+source: parse_chapter.py
+_meta:
+  schema_version: '1.1'
+  merged_at: '2026-03-25T02:14:03.753392+00:00'
+  lesson_id: math_g4_ch1_l7
+  source_script: merge_lesson_yaml.py
+  source_files:
+    concept: concept.yaml
+    questions: questions.yaml
