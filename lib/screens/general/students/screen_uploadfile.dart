@@ -1,22 +1,9 @@
-// -----------------------------------------------------------------------
-// Filename: screen_alternative.dart
-// Original Author: Dan Grissom
-// Creation Date: 10/31/2024
-// Copyright: (c) 2024 CSC322
-// Description: This file contains the screen for a dummy alternative screen
-//               history screen.
-
-//////////////////////////////////////////////////////////////////////////
-// Imports
-//////////////////////////////////////////////////////////////////////////
-
 // Flutter imports
 import 'dart:async';
 
-// Flutter external package import
+// Flutter external package importer
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-
 
 //////////////////////////////////////////////////////////////////////////
 // StateFUL widget which manages state. Simply initializes the state object.
