@@ -311,21 +311,11 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                 mainAxisAlignment: widget.isAuth ? MainAxisAlignment.center : MainAxisAlignment.start,
                 children: [
                   ///////////////////////////////////////////////////////////////////////
-                  // Logo
-                  ///////////////////////////////////////////////////////////////////////
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(vertical: 5),
-                  //   child: Image.asset(
-                  //     'images/logo.png',
-                  //     height: MediaQuery.of(context).size.width * .5,
-                  //   ),
-                  // ),
-                  ///////////////////////////////////////////////////////////////////////
                   // Profile Avatar
                   ///////////////////////////////////////////////////////////////////////
                   Center(
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 30, top: 20),
+                      padding: const EdgeInsets.only(bottom: 50, top: 95),
                       child: GestureDetector(
                         onTap: () => setEditVisibile(),
                         child: Stack(
@@ -362,7 +352,7 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                       alignment: WrapAlignment.center,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(0.0),
+                          padding: const EdgeInsets.all(5.0),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -439,9 +429,9 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                   ///////////////////////////////////////////////////////////////////////
                   // First Name Text Field
                   ///////////////////////////////////////////////////////////////////////
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 10),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                     child: TextFormField(
                       controller: _firstNameController,
                       autofillHints: const [AutofillHints.givenName],
@@ -463,7 +453,7 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                   ///////////////////////////////////////////////////////////////////////
                   const SizedBox(height: 15),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                     child: TextFormField(
                       controller: _lastNameController,
                       autofillHints: const [AutofillHints.familyName],

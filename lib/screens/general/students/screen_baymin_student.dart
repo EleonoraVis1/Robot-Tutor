@@ -5,13 +5,8 @@ import 'dart:async';
 import 'package:csc322_starter_app/models/robot_persona.dart';
 import 'package:csc322_starter_app/providers/provider_robot_persona.dart';
 import 'package:csc322_starter_app/services/robot_persona_service.dart';
-import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-
-// App relative file imports
-import '../../../util/message_display/snackbar.dart';
 
 //////////////////////////////////////////////////////////////////////////
 // StateFUL widget which manages state. Simply initializes the state object.

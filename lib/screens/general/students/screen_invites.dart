@@ -8,12 +8,8 @@ import 'package:csc322_starter_app/models/invite.dart';
 import 'package:csc322_starter_app/providers/provides_invites.dart';
 import 'package:csc322_starter_app/widgets/general/invite_avatar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-
-// App relative file imports
-import '../../../util/message_display/snackbar.dart';
 
 //////////////////////////////////////////////////////////////////////////
 // StateFUL widget which manages state. Simply initializes the state object.
