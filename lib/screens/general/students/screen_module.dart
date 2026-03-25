@@ -154,6 +154,8 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
               heroTag: 'Upload-file-tag',
               child: const Icon(Icons.upload_file_outlined),
               onPressed: () {
+                // This is temporary just to show proof of work during individual presentations
+                // TODO: Update to refer to the student's user profile in a different collection
                 context.push('/uploadfile');
               },
             ),
