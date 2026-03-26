@@ -81,6 +81,7 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
   if (isFirstStart) {
     data['startedAt'] = FieldValue.serverTimestamp();
     data['quiz_status'] = 'unaccessible';
+    data['example_question_num'] = -1;
   }
 
   await moduleRef.set(data, SetOptions(merge: true));
