@@ -20,6 +20,24 @@ final modulesProvider = StreamProvider<List<Module>>((ref) {
       });
 });
 
+final exampleQuestionNumProvider = StreamProvider.family<
+    int,
+    ({String studentId, String moduleId})>((ref, params) {
+
+  final moduleRef = FirebaseFirestore.instance
+      .collection('user_profiles')
+      .doc(params.studentId)
+      .collection('modules')
+      .doc(params.moduleId);
+
+  return moduleRef.snapshots().map((doc) {
+    if (!doc.exists) return 0;
+
+    final data = doc.data();
+    return (data?['example_question_num'] as int?) ?? -1;
+  });
+});
+
 final subjectsProvider = Provider<AsyncValue<List<Subject>>>((ref) {
   final modulesAsync = ref.watch(modulesProvider);
 

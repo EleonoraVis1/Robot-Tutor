@@ -34,6 +34,7 @@ class ScreenQuiz extends ConsumerStatefulWidget {
 class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
   // The "instance variables" managed in this state
   bool _isInit = true;
+  bool _increase = true;
 
   ////////////////////////////////////////////////////////////////
   // Runs the following code once upon initialization
@@ -69,7 +70,6 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
     final profileProvider = ref.watch(providerUserProfile); 
     final uid = profileProvider.uid;
 
-    // Watch the quiz provider (AsyncValue)
     final questionsAsync = ref.watch(quizProvider(moduleId));
 
     return questionsAsync.when(
@@ -81,7 +81,6 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
       ),
       
       data: (questions) {
-        // Get the current question safely
 
         if (questions.isEmpty) {
           return Scaffold(
@@ -161,7 +160,7 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
                           onPressed: _selected == null
                               ? null
                               : () {
-                                  if (_selected == question.correctIndex) {
+                                  if (_selected == question.correctIndex && _increase) {
                                     _score++;
                                   }
                                   if (_currentIndex < questions.length - 1) {
@@ -170,6 +169,7 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
                                       _selected = null;
                                     });
                                   } else {
+                                    _increase = false;
                                     _saveAndShowResult(
                                       context,
                                       subjectId,

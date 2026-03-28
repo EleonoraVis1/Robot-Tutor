@@ -37,6 +37,11 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
   // The "instance variables" managed in this state
   bool _isInit = true;
   bool _hasNavigatedToQuiz = false;
+  int? _selectedIndex;
+  int? _lastQuestionIndex;
+  bool _isLastQuestionAnswered = false;
+  int _reviewIndex = -1;
+  bool _completed = false;
 
   ////////////////////////////////////////////////////////////////
   // Runs the following code once upon initialization
@@ -92,39 +97,57 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
     final modulesAsync = ref.watch(modulesProvider);    
     final profileProvider = ref.watch(providerUserProfile);
     final isSupervisor = profileProvider.dataLoaded && profileProvider.userType == UserType.SUPERVISOR;
-
-     final isReady = profileProvider.dataLoaded &&
-      profileProvider.userType != UserType.SUPERVISOR;
-
-  if (isReady) {
-    ref.listen(
-      quizStartProvider((
-        studentId: profileProvider.uid,
-        moduleId: widget.moduleId,
-      )),
-      (previous, next) {
-        if (next.value == true && !_hasNavigatedToQuiz) {
-          final statusAsync = ref.read(quizStatusProvider((
-              studentId: profileProvider.uid,
-              moduleId: widget.moduleId,
-            )));
-            
-            statusAsync.whenData((status) {
-              if (status.toLowerCase() != 'completed') {
-                _hasNavigatedToQuiz = true;
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (mounted) {
-                    context.push(
-                      '/subject/${widget.subjectId}/module/${widget.moduleId}/quiz',
-                    );
+    final questionsAsync = ref.watch(moduleQuestionsProvider(moduleId));
+    final exampleNumAsync = ref.watch(exampleQuestionNumProvider((
+      studentId: profileProvider.uid,
+      moduleId: moduleId,
+    )));
+    final statusAsync = ref.read(quizStatusProvider((
+                studentId: profileProvider.uid,
+                moduleId: widget.moduleId,
+              )));
+              
+              statusAsync.whenData((status) {
+                if (status.toLowerCase() == 'completed') {
+                  _completed = true;
+                  if (_reviewIndex == -1) {
+                    _reviewIndex = 0;
                   }
-                });
-              }
-            });
-        }
-      },
-    );
-  }
+                } 
+              });
+
+    final isReady = profileProvider.dataLoaded && profileProvider.userType != UserType.SUPERVISOR;
+
+    if (isReady) {
+      ref.listen(
+        quizStartProvider((
+          studentId: profileProvider.uid,
+          moduleId: widget.moduleId,
+        )),
+        (previous, next) {
+          if (next.value == true && !_hasNavigatedToQuiz) {
+            final statusAsync = ref.read(quizStatusProvider((
+                studentId: profileProvider.uid,
+                moduleId: widget.moduleId,
+              )));
+              
+              statusAsync.whenData((status) {
+                if (status.toLowerCase() != 'completed' && _isLastQuestionAnswered) {
+                  _hasNavigatedToQuiz = true;
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) {
+                      context.push(
+                        '/subject/${widget.subjectId}/module/${widget.moduleId}/quiz',
+                      );
+                      _reviewIndex = 0;
+                    }
+                  });
+                } 
+              });
+          }
+        },
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -188,12 +211,27 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
                 error: (_, __) => const SizedBox(),
                 data: (status) {
                   if (status.toLowerCase() == 'completed') {
-                    return ElevatedButton.icon(
-                      icon: const Icon(Icons.quiz),
-                      label: const Text('Retake Quiz'),
-                      onPressed: () {
-                        context.push('/subject/$subjectId/module/$moduleId/quiz');
-                      },
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ElevatedButton.icon(
+                          icon: const Icon(Icons.quiz),
+                          label: const Text('Retake Quiz'),
+                          onPressed: () {
+                            context.push('/subject/$subjectId/module/$moduleId/quiz');
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        /*ElevatedButton.icon(
+                          icon: const Icon(Icons.arrow_forward),
+                          label: const Text('Review Questions'),
+                          onPressed: () {
+                            setState(() {
+                              _reviewIndex = 0; 
+                            });
+                          },
+                        ),*/
+                      ],
                     );
                   } else {
                     return const SizedBox();
@@ -242,6 +280,132 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
                 },
               ),
             ],
+            const SizedBox(height: 24),
+           
+            questionsAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Text('Error loading questions: $e'),
+              data: (questions) {
+                return exampleNumAsync.when(
+                  loading: () => const SizedBox(),
+                  error: (_, __) => const SizedBox(),
+                  data: (qIndex) {
+                    if (qIndex < 0) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                
+                    final currentIndex = _reviewIndex >= 0 
+                        ? _reviewIndex 
+                        : (qIndex >= questions.length ? questions.length - 1 : qIndex);
+
+                    final question = questions[currentIndex];
+
+                    if (_lastQuestionIndex != currentIndex) {
+                      _selectedIndex = null;
+                      _lastQuestionIndex = currentIndex;
+                    }
+
+                    Color? getButtonColor(int index) {
+                      if (_selectedIndex == null) return null;
+                      if (index == _selectedIndex) {
+                        return index == question.correctIndex ? Colors.green : Colors.red;
+                      }
+                      if (_selectedIndex != question.correctIndex && index == question.correctIndex) {
+                        return Colors.green.withOpacity(0.5);
+                      }
+                      
+                      return null;
+                    }
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Question ${currentIndex + 1}',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        Text(
+                          question.question,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        const SizedBox(height: 20),
+
+                        ...List.generate(question.options.length, (index) {
+                          final isSelected = _selectedIndex == index;
+                          final isCorrect = index == question.correctIndex;
+
+                          return Container(
+                            width: double.infinity,
+                            margin: const EdgeInsets.symmetric(vertical: 6),
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.resolveWith<Color?>((states) {
+                                  return getButtonColor(index);
+                                }),
+                              ),
+                              onPressed: _selectedIndex != null
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        _selectedIndex = index;
+                                        if (_lastQuestionIndex == questions.length - 1) {
+                                          _isLastQuestionAnswered = true;
+
+                                          final startQuiz = ref.read(quizStartProvider((
+                                            studentId: profileProvider.uid,
+                                            moduleId: widget.moduleId,
+                                          ))).value;
+
+                                          if (startQuiz == true && !_hasNavigatedToQuiz && !_completed) {
+                                            _hasNavigatedToQuiz = true;
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              if (mounted) {
+                                                context.push(
+                                                  '/subject/${widget.subjectId}/module/${widget.moduleId}/quiz',
+                                                );
+                                                _reviewIndex = 0;
+                                              }
+                                            });
+                                          }
+                                        }
+                                      });
+                                    },
+                              child: Text(question.options[index]),
+                            ),
+                          );
+                        }),
+                        if (_reviewIndex >= 0)
+                        Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.only(top: 30),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                if (_reviewIndex! < questions.length - 1) {
+                                  _reviewIndex = _reviewIndex! + 1;
+                                } else {
+                                  _reviewIndex = -1; 
+                                }
+                              });
+                            },
+                            child: Text(
+                              _reviewIndex! < questions.length - 1 ? 'Next' : 'Finish Review',
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
           ],
         ),
       ),

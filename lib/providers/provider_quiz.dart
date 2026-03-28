@@ -2,6 +2,32 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csc322_starter_app/models/quiz_question.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+final moduleQuestionsProvider = FutureProvider.family<List<QuizQuestion>, String>((ref, moduleId) async {
+  final moduleRef = FirebaseFirestore.instance.collection('modules').doc(moduleId);
+  final doc = await moduleRef.get();
+
+  if (!doc.exists) return [];
+
+  final data = doc.data();
+  if (data == null) return [];
+
+  final independentQuestions = (data['quiz_questions']?['guided'] as List<dynamic>?) ?? [];
+
+  return independentQuestions.map((q) {
+    final questionMap = q as Map<String, dynamic>;
+    final options = List<String>.from(questionMap['options'] ?? []);
+    final answer = questionMap['answer']?.toString() ?? '';
+    final correctIndex = options.indexOf(answer);
+
+    return QuizQuestion(
+      id: questionMap['prompt'] ?? '', 
+      question: questionMap['prompt'] ?? '',
+      options: options,
+      correctIndex: correctIndex >= 0 ? correctIndex : 0,
+    );
+  }).toList();
+});
+
 final quizProvider = FutureProvider.family<List<QuizQuestion>, String>((ref, moduleId) async {
   final moduleRef = FirebaseFirestore.instance.collection('modules').doc(moduleId);
   final doc = await moduleRef.get();
