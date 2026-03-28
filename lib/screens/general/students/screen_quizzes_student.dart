@@ -6,13 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/providers/provider_quiz.dart';
 import 'package:csc322_starter_app/services/quiz_result_service.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-// App relative file imports
-import '../../../util/message_display/snackbar.dart';
 
 //////////////////////////////////////////////////////////////////////////
 // StateFUL widget which manages state. Simply initializes the state object.

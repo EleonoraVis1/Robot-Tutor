@@ -12,21 +12,17 @@
 // Dart imports
 
 // Flutter external package imports
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:csc322_starter_app/models/user_profile.dart';
-import 'package:csc322_starter_app/screens/auth/screen_auth.dart';
 import 'package:csc322_starter_app/screens/auth/screen_profile_setup.dart';
-import 'package:csc322_starter_app/screens/auth/screen_role.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_chathistory_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_invites.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_subject.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_uploadfile.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistory_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
-import 'package:csc322_starter_app/screens/general/supervisors/screen_studentinfo_supervisor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -37,7 +33,7 @@ import 'package:flutter/material.dart';
 import 'screens/general/students/screen_home_student.dart';
 import 'widgets/navigation/widget_primary_scaffold.dart';
 import 'screens/auth/screen_login_validation.dart';
-import 'screens/settings/screen_profile_edit.dart';
+import 'screens/settings/screen_profile.dart';
 import 'providers/provider_user_profile.dart';
 import 'screens/settings/screen_settings.dart';
 import 'providers/provider_auth.dart';
@@ -121,8 +117,12 @@ class _MyAppState extends State<MyApp> {
         builder: (context, state) => ScreenSettings(),
       ),
       GoRoute(
-        path: ScreenProfileEdit.routeName,
-        builder: (context, state) => const ScreenProfileEdit(),
+        path: ScreenProfile.routeName,
+        builder: (context, state) => const ScreenProfile(),
+      ),
+      GoRoute(
+        path: ScreenProfileSetup.routeName,
+        builder: (context, state) => const ScreenProfileSetup(isAuth: false),
       ),
       GoRoute(
         path: WidgetPrimaryScaffold.routeName,
@@ -244,6 +244,7 @@ class _MyAppState extends State<MyApp> {
       GoRoute( path: ScreenInvites.routeName, builder: (context, state) => ScreenInvites(), ),
       GoRoute( path: ScreenBayminStudent.routeName, builder: (context, state) => ScreenBayminStudent(), ),
       GoRoute( path: ScreenAddStudentSupervisor.routeName, builder: (context, state) => ScreenAddStudentSupervisor(), ),
+      GoRoute( path: ScreenUploadfile.routeName, builder: (context, state) => ScreenUploadfile(), )
     ],
   );
 

@@ -5,25 +5,18 @@ import 'dart:async';
 import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/providers/provider_subjects.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
-import 'package:csc322_starter_app/screens/general/students/screen_chathistory_student.dart';
-import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:csc322_starter_app/widgets/general/subject_card.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-// App relative file imports
-import '../../../util/message_display/snackbar.dart';
-
-const List<Map<String, dynamic>> _kSubjects = [
-  {'title': 'Math', 'icon': Icons.calculate},
-  {'title': 'Korean', 'icon': Icons.language},
-  {'title': 'Physics', 'icon': Icons.science},
-  {'title': 'English', 'icon': Icons.menu_book},
-];
+// const List<Map<String, dynamic>> _kSubjects = [
+//   {'title': 'Math', 'icon': Icons.calculate},
+//   {'title': 'Korean', 'icon': Icons.language},
+//   {'title': 'Physics', 'icon': Icons.science},
+//   {'title': 'English', 'icon': Icons.menu_book},
+// ];
 
 //////////////////////////////////////////////////////////////////////////
 // StateFUL widget which manages state. Simply initializes the state object.

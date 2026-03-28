@@ -8,15 +8,10 @@ import 'package:csc322_starter_app/models/user_profile.dart';
 import 'package:csc322_starter_app/providers/provider_module_result.dart';
 import 'package:csc322_starter_app/providers/provider_quiz.dart';
 import 'package:csc322_starter_app/providers/provider_subjects.dart';
-import 'package:csc322_starter_app/screens/general/students/screen_chathistory_student.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-// App relative file imports
-import '../../../util/message_display/snackbar.dart';
 
 //////////////////////////////////////////////////////////////////////////
 // StateFUL widget which manages state. Simply initializes the state object.
@@ -145,23 +140,40 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
         ),
         centerTitle: true,
       ),
-      floatingActionButton:  FloatingActionButton(
-        tooltip: 'Chat history',
-        child: const Icon(Icons.chat),
-        onPressed: () {
-
-          if (widget.studentUid == null) {
-            context.push(
-              '/subject/$subjectId/module/$moduleId/chat',
-            );
-          } else {
-            context.push(
-              '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/$subjectId/module/$moduleId/chat',
-            );
-          }
-        },
-      ),
-      
+      floatingActionButton: Row(
+        children: [
+          const SizedBox(width: 35),
+          if (!isSupervisor)
+            FloatingActionButton(
+              tooltip: 'Upload Files',
+              heroTag: 'Upload-file-tag',
+              child: const Icon(Icons.upload_file_outlined),
+              onPressed: () {
+                // This is temporary just to show proof of work during individual presentations
+                // TODO: Update to refer to the student's user profile in a different collection
+                context.push('/uploadfile');
+              },
+            ),
+          const Spacer(),
+          FloatingActionButton(
+            tooltip: 'Chat history',
+            heroTag: 'Chat-history-tag',
+            child: const Icon(Icons.chat),
+            onPressed: () {
+          
+              if (widget.studentUid == null) {
+                context.push(
+                  '/subject/$subjectId/module/$moduleId/chat',
+                );
+              } else {
+                context.push(
+                  '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/$subjectId/module/$moduleId/chat',
+                );
+              }
+            },
+          ),
+        ],
+      ), 
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
