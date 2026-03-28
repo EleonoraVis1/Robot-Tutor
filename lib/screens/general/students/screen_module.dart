@@ -220,17 +220,7 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
                           onPressed: () {
                             context.push('/subject/$subjectId/module/$moduleId/quiz');
                           },
-                        ),
-                        const SizedBox(height: 12),
-                        /*ElevatedButton.icon(
-                          icon: const Icon(Icons.arrow_forward),
-                          label: const Text('Review Questions'),
-                          onPressed: () {
-                            setState(() {
-                              _reviewIndex = 0; 
-                            });
-                          },
-                        ),*/
+                        ),              
                       ],
                     );
                   } else {
