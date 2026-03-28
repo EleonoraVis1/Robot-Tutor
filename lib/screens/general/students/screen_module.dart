@@ -219,6 +219,7 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
                           label: const Text('Retake Quiz'),
                           onPressed: () {
                             context.push('/subject/$subjectId/module/$moduleId/quiz');
+                            _reviewIndex = 0;
                           },
                         ),              
                       ],
@@ -271,8 +272,8 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
               ),
             ],
             const SizedBox(height: 24),
-           
-            questionsAsync.when(
+            if (!isSupervisor)
+              questionsAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Text('Error loading questions: $e'),
               data: (questions) {
@@ -396,6 +397,7 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
                 );
               },
             ),
+            
           ],
         ),
       ),
