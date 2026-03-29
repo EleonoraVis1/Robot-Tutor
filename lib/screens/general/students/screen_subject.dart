@@ -74,13 +74,12 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
 
   Map<String, dynamic> data = {
     'lastAccessed': FieldValue.serverTimestamp(),
-    'completed': false,
     'messageCount': FieldValue.increment(1),
   };
 
   if (isFirstStart) {
     data['startedAt'] = FieldValue.serverTimestamp();
-    data['quiz_status'] = 'unaccessible';
+    data['quiz_status'] = 'inaccessible';
     data['example_question_num'] = -1;
   }
 
@@ -112,8 +111,15 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
     
     final subjectsAsync = ref.watch(subjectsProvider);
     final profileProvider = ref.watch(providerUserProfile);
-
     final isSupervisor = profileProvider.dataLoaded && profileProvider.userType == UserType.SUPERVISOR;
+    
+    final studentId = isSupervisor
+      ? widget.studentUid
+      : profileProvider.uid;
+
+    final studentModulesAsync = studentId != null
+      ? ref.watch(studentModulesProvider(studentId))
+      : const AsyncValue.data({});
 
     return subjectsAsync.when(
       loading: () => const Scaffold(
@@ -128,6 +134,109 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
           orElse: () => throw Exception('Subject not found'),
         );
 
+        Widget buildModuleCard(module, String status) {
+          Color? badgeColor;
+          String badgeText = '';
+
+          switch (status) {
+            case 'not_started':
+              badgeColor = Colors.grey;
+              badgeText = 'Not Started';
+              break;
+            case 'started':
+              badgeColor = Colors.orange;
+              badgeText = 'Started';
+              break;
+            case 'completed':
+              badgeColor = Colors.green;
+              badgeText = 'Completed';
+              break;
+          }
+
+          return Card(
+            elevation: 3,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20),
+              onTap: () async {
+                try {
+                  if (profileProvider.dataLoaded && !isSupervisor) {
+                    await startModule(profileProvider.uid, module.id, profileProvider.wholeName);
+                    await context.push('/subject/${widget.subjectId}/module/${module.id}');
+                    await exitModule(profileProvider.uid);
+
+                  } else if (profileProvider.dataLoaded && isSupervisor) {
+                    context.push(
+                      '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/${widget.subjectId}/module/${module.id}',
+                    );
+                  }
+
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Failed to start module'),
+                    ),
+                  );
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.view_module_outlined,
+                      color: Colors.blueGrey[600],
+                      size: 28,
+                    ),
+                    const SizedBox(width: 16),
+
+                    Expanded(
+                      child: Text(
+                        module.title,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+
+                    if (badgeText.isNotEmpty)
+                      Container(
+                        margin: const EdgeInsets.only(right: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: badgeColor,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          badgeText,
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+
+                    const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                      color: Colors.black38,
+                    ),
+                  ],
+                )
+              ),
+            ),
+          );
+        }
+
         return Scaffold(
           appBar: AppBar(
             title: Text(subject.title),
@@ -140,66 +249,26 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
             itemBuilder: (_, i) {
               final module = subject.modules[i];
 
-              return Card(
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(20),
-                  onTap: () async {
-                    try {
-                      if (profileProvider.dataLoaded && !isSupervisor) {
-                        await startModule(profileProvider.uid, module.id, profileProvider.wholeName);
-                        await context.push('/subject/${widget.subjectId}/module/${module.id}');
+              return studentModulesAsync.when(
+                loading: () => const SizedBox(),
+                error: (_, __) => const SizedBox(),
+                data: (studentModules) {
+                  final moduleData = studentModules[module.id];
 
-                        await exitModule(profileProvider.uid);
+                  String status = 'not_started';
 
-                      } else if (profileProvider.dataLoaded && isSupervisor) {
-                        context.push(
-                          '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/${widget.subjectId}/module/${module.id}',
-                        );
-                      }
+                  if (moduleData != null) {
+                    final quizStatus = moduleData['quiz_status'] ?? '';
 
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Failed to start module'),
-                      ),
-                    );
+                    if (quizStatus == 'completed') {
+                      status = 'completed';
+                    } else {
+                      status = 'started';
                     }
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 16,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.view_module_outlined,
-                          color: Colors.blueGrey[600],
-                          size: 28,
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Text(
-                            module.title,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        const Icon(
-                          Icons.arrow_forward_ios,
-                          size: 16,
-                          color: Colors.black38,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                  }
+
+                  return buildModuleCard(module, status);
+                },
               );
             },
           ),

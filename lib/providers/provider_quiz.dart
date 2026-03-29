@@ -88,9 +88,9 @@ final quizStatusProvider =
         .doc(params.moduleId);
 
     return moduleRef.snapshots().map((doc) {
-      if (!doc.exists) return 'unaccessible'; 
+      if (!doc.exists) return 'inaccessible'; 
       final data = doc.data();
-      return data?['quiz_status']?.toString() ?? 'unaccessible';
+      return data?['quiz_status']?.toString() ?? 'inaccessible';
     });
   },
 );

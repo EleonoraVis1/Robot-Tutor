@@ -20,6 +20,24 @@ final modulesProvider = StreamProvider<List<Module>>((ref) {
       });
 });
 
+final studentModulesProvider = StreamProvider.family<
+    Map<String, dynamic>, String>((ref, studentId) {
+  return FirebaseFirestore.instance
+      .collection('user_profiles')
+      .doc(studentId)
+      .collection('modules')
+      .snapshots()
+      .map((snapshot) {
+        final Map<String, dynamic> modulesMap = {};
+
+        for (var doc in snapshot.docs) {
+          modulesMap[doc.id] = doc.data();
+        }
+
+        return modulesMap;
+      });
+});
+
 final exampleQuestionNumProvider = StreamProvider.family<
     int,
     ({String studentId, String moduleId})>((ref, params) {
