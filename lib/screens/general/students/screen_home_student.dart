@@ -10,13 +10,7 @@ import 'package:csc322_starter_app/widgets/general/subject_card.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-
-// const List<Map<String, dynamic>> _kSubjects = [
-//   {'title': 'Math', 'icon': Icons.calculate},
-//   {'title': 'Korean', 'icon': Icons.language},
-//   {'title': 'Physics', 'icon': Icons.science},
-//   {'title': 'English', 'icon': Icons.menu_book},
-// ];
+import 'package:go_router/go_router.dart';
 
 //////////////////////////////////////////////////////////////////////////
 // StateFUL widget which manages state. Simply initializes the state object.
@@ -77,7 +71,7 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
 
     return Scaffold( 
       appBar: widget.supervisorView ? WidgetPrimaryAppBar(title: const Text('Subjects')) : null,
-      body: _buildStudentView(profileProvider),
+      body: _buildStudentView(profileProvider),      
     );
   }
 
@@ -131,6 +125,11 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
                 );
               },
             ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => context.push('/test_bluetooth'),
+            child: const Text('Test'),
           ),
         ],
       ),

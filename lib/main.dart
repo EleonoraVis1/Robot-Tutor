@@ -19,6 +19,7 @@ import 'package:csc322_starter_app/screens/general/students/screen_invites.dart'
 import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_subject.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_test_bluetooth.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_uploadfile.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistory_supervisor.dart';
@@ -108,6 +109,10 @@ class _MyAppState extends State<MyApp> {
   final GoRouter _router = GoRouter(
     initialLocation: ScreenLoginValidation.routeName,
     routes: [
+      GoRoute(
+        path: '/test_bluetooth',
+        builder: (context, state) => ScreenTestBluetooth(),
+      ),
       GoRoute(
         path: ScreenLoginValidation.routeName,
         builder: (context, state) => const ScreenLoginValidation(),
