@@ -141,7 +141,7 @@ class _ScreenTestBluetoothState extends ConsumerState<ScreenTestBluetooth> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("Sent UID $uid to ${c.uuid}")),
             );
-            return;
+            
           } catch (e) {
             debugPrint("Write failed for ${c.uuid}: $e");
           }
