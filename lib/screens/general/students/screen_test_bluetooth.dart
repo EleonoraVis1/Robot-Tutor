@@ -30,6 +30,7 @@ class _ScreenTestBluetoothState extends ConsumerState<ScreenTestBluetooth> {
   final FlutterBluePlus flutterBlue = FlutterBluePlus(); 
   final List<BluetoothDevice> _devicesList = [];
   BluetoothDevice? _connectedDevice;
+  BluetoothCharacteristic? _notifyCharacteristic;
   String _connectionState = "Not connected";
 
   ////////////////////////////////////////////////////////////////
@@ -113,13 +114,30 @@ class _ScreenTestBluetoothState extends ConsumerState<ScreenTestBluetooth> {
         }
       });
 
-      // Discover services and print characteristics
       List<BluetoothService> services = await device.discoverServices();
       for (var service in services) {
         debugPrint("Service: ${service.uuid}");
         for (var c in service.characteristics) {
           debugPrint(
               "  Characteristic: ${c.uuid} (Read:${c.properties.read} Write:${c.properties.write} Notify:${c.properties.notify})");
+
+          if (c.properties.notify) {
+            _notifyCharacteristic = c;
+
+            await c.setNotifyValue(true);
+
+            c.lastValueStream.listen((value) {
+              final message = utf8.decode(value);
+              debugPrint("Received from robot: $message");
+
+              if (message == "ACK") {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Robot acknowledged UID!")),
+                );
+                Navigator.of(context).pop();
+              }
+            });
+          }
         }
       }
     } catch (e) {
@@ -154,10 +172,6 @@ class _ScreenTestBluetoothState extends ConsumerState<ScreenTestBluetooth> {
         }
       }
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("No writable characteristic found")),
-    );
   }
 
   @override
