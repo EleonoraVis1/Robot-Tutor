@@ -15,6 +15,7 @@ final modulesProvider = StreamProvider<List<Module>>((ref) {
             id: doc.id,
             title: data['title'],
             subjectId: data['subject_id'], 
+            grade_level: data['grade_level']
           );
         }).toList();
       });

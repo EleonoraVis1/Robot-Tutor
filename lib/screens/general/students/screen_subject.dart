@@ -23,7 +23,7 @@ class ScreenSubject extends ConsumerStatefulWidget {
   const ScreenSubject({
     super.key,
     required this.subjectId,
-    required this.studentUid
+    required this.studentUid,
   });
 
   @override
@@ -59,42 +59,45 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
   ////////////////////////////////////////////////////////////////
   Future<void> _init() async {}
 
-  Future<void> startModule(String studentId, String moduleId, String studentName) async {
-  final moduleRef = FirebaseFirestore.instance
-      .collection('user_profiles')
-      .doc(studentId)
-      .collection('modules')
-      .doc(moduleId);
+  Future<void> startModule(
+    String studentId,
+    String moduleId,
+    String studentName,
+  ) async {
+    final moduleRef = FirebaseFirestore.instance
+        .collection('user_profiles')
+        .doc(studentId)
+        .collection('modules')
+        .doc(moduleId);
 
-  final messagesRef = moduleRef.collection('messages');
+    final messagesRef = moduleRef.collection('messages');
 
-  final moduleSnapshot = await moduleRef.get();
-  final isFirstStart = !moduleSnapshot.exists;
-  
+    final moduleSnapshot = await moduleRef.get();
+    final isFirstStart = !moduleSnapshot.exists;
 
-  Map<String, dynamic> data = {
-    'lastAccessed': FieldValue.serverTimestamp(),
-    'messageCount': FieldValue.increment(1),
-  };
+    Map<String, dynamic> data = {
+      'lastAccessed': FieldValue.serverTimestamp(),
+      'messageCount': FieldValue.increment(1),
+    };
 
-  if (isFirstStart) {
-    data['startedAt'] = FieldValue.serverTimestamp();
-    data['quiz_status'] = 'inaccessible';
-    data['example_question_num'] = -1;
+    if (isFirstStart) {
+      data['startedAt'] = FieldValue.serverTimestamp();
+      data['quiz_status'] = 'inaccessible';
+      data['example_question_num'] = -1;
+    }
+
+    await moduleRef.set(data, SetOptions(merge: true));
+
+    final messagesSnapshot = await messagesRef.limit(1).get();
+
+    if (messagesSnapshot.docs.isEmpty) {
+      await messagesRef.add({
+        'from': 'system',
+        'message': 'Module \'$moduleId\' started for $studentName',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    }
   }
-
-  await moduleRef.set(data, SetOptions(merge: true));
-
-  final messagesSnapshot = await messagesRef.limit(1).get();
-
-  if (messagesSnapshot.docs.isEmpty) {
-    await messagesRef.add({
-      'from': 'system',
-      'message': 'Module \'$moduleId\' started for $studentName',
-      'createdAt': FieldValue.serverTimestamp(),
-    });
-  }
-}
 
   Future<void> exitModule(String studentId) async {
     final activeModuleRef = FirebaseFirestore.instance
@@ -102,32 +105,28 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
         .doc(studentId);
 
     await activeModuleRef.set({
-      'active_module_id' : ''
+      'active_module_id': '',
     }, SetOptions(merge: true));
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    
     final subjectsAsync = ref.watch(subjectsProvider);
     final profileProvider = ref.watch(providerUserProfile);
-    final isSupervisor = profileProvider.dataLoaded && profileProvider.userType == UserType.SUPERVISOR;
-    
-    final studentId = isSupervisor
-      ? widget.studentUid
-      : profileProvider.uid;
+    final isSupervisor =
+        profileProvider.dataLoaded &&
+        profileProvider.userType == UserType.SUPERVISOR;
+
+    final studentId = isSupervisor ? widget.studentUid : profileProvider.uid;
 
     final studentModulesAsync = studentId != null
-      ? ref.watch(studentModulesProvider(studentId))
-      : const AsyncValue.data({});
+        ? ref.watch(studentModulesProvider(studentId))
+        : const AsyncValue.data({});
 
     return subjectsAsync.when(
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
-      error: (e, _) => Scaffold(
-        body: Center(child: Text('Error: $e')),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
       data: (subjects) {
         final subject = subjects.firstWhere(
           (s) => s.id == widget.subjectId,
@@ -163,53 +162,78 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
               onTap: () async {
                 try {
                   if (profileProvider.dataLoaded && !isSupervisor) {
-                    await startModule(profileProvider.uid, module.id, profileProvider.wholeName);
-                    await context.push('/subject/${widget.subjectId}/module/${module.id}');
+                    await startModule(
+                      profileProvider.uid,
+                      module.id,
+                      profileProvider.wholeName,
+                    );
+                    await context.push(
+                      '/subject/${widget.subjectId}/module/${module.id}',
+                    );
                     await exitModule(profileProvider.uid);
-
                   } else if (profileProvider.dataLoaded && isSupervisor) {
                     context.push(
                       '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/${widget.subjectId}/module/${module.id}',
                     );
                   }
-
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Failed to start module'),
-                    ),
+                    const SnackBar(content: Text('Failed to start module')),
                   );
                 }
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
+                  horizontal: 14,
                   vertical: 16,
                 ),
-                child: Row(
+                child: Column(
                   children: [
-                    Icon(
-                      Icons.view_module_outlined,
-                      color: Colors.blueGrey[600],
-                      size: 28,
-                    ),
-                    const SizedBox(width: 16),
-
-                    Expanded(
-                      child: Text(
-                        module.title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.view_module_outlined,
+                          color: Colors.blueGrey[600],
+                          size: 28,
                         ),
-                      ),
-                    ),
+                        const SizedBox(width: 16),
 
+                        Expanded(
+                          child: Text(
+                            module.title,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Grade '+ module.grade_level.toString(),
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
                     if (badgeText.isNotEmpty)
                       Container(
-                        margin: const EdgeInsets.only(right: 12),
+                        margin: const EdgeInsets.only(right: 230),
+                        alignment: Alignment.bottomLeft,
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
+                          horizontal: 14,
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
@@ -219,29 +243,21 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
                         child: Text(
                           badgeText,
                           style: const TextStyle(
-                            fontSize: 10,
+                            fontSize: 14,
                             color: Colors.white,
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
-
-                    const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: Colors.black38,
-                    ),
                   ],
-                )
+                ),
               ),
             ),
           );
         }
 
         return Scaffold(
-          appBar: AppBar(
-            title: Text(subject.title),
-            centerTitle: true,
-          ),
+          appBar: AppBar(title: Text(subject.title), centerTitle: true),
           body: ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: subject.modules.length,
