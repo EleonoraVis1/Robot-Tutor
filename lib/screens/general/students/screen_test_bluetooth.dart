@@ -80,10 +80,16 @@ class _ScreenTestBluetoothState extends ConsumerState<ScreenTestBluetooth> {
     // Listen to scan results
     FlutterBluePlus.scanResults.listen((results) {
       for (ScanResult r in results) {
-        if (!_devicesList.contains(r.device)) {
-          setState(() {
-            _devicesList.add(r.device);
-          });
+        final name = r.advertisementData.localName.isNotEmpty
+          ? r.advertisementData.localName.toLowerCase()
+          : r.device.name.toLowerCase();
+
+        if (name.contains("bay-min")) {
+          if (!_devicesList.any((d) => d.id == r.device.id)) {
+            setState(() {
+              _devicesList.add(r.device);
+            });
+          }
         }
       }
     });
@@ -182,6 +188,7 @@ class _ScreenTestBluetoothState extends ConsumerState<ScreenTestBluetooth> {
               itemCount: _devicesList.length,
               itemBuilder: (context, index) {
                 final device = _devicesList[index];
+
                 return ListTile(
                   title: Text(device.name.isNotEmpty ? device.name : "Unknown Device"),
                   subtitle: Text(device.id.id),
