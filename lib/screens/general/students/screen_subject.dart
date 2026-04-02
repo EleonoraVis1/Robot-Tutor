@@ -1,5 +1,6 @@
 // Flutter imports
 import 'dart:async';
+import 'dart:math';
 
 // Flutter external package imports
 import 'package:csc322_starter_app/main.dart';
@@ -153,9 +154,13 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
           }
 
           return Card(
-            elevation: 3,
+            elevation: 6,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
+              side: BorderSide(
+                width: 2,
+                color: Colors.black
+              ),
             ),
             child: InkWell(
               borderRadius: BorderRadius.circular(20),
@@ -223,7 +228,7 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
                         const Icon(
                           Icons.arrow_forward_ios,
                           size: 16,
-                          color: Colors.grey,
+                          color: Colors.blueGrey,
                         ),
                       ],
                     ),
@@ -246,7 +251,6 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
                             fontSize: 14,
                             color: Colors.white,
                           ),
-                          textAlign: TextAlign.center,
                         ),
                       ),
                   ],
