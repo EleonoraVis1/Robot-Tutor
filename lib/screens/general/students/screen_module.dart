@@ -282,9 +282,7 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
                   error: (_, __) => const SizedBox(),
                   data: (qIndex) {
                     if (qIndex < 0) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const Center(child: Text('Learning In Progress', style: TextStyle(fontSize: 20),),);
                     }
                 
                     final currentIndex = _reviewIndex >= 0 

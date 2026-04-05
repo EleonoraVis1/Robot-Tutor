@@ -3,7 +3,9 @@ import 'dart:async';
 import 'dart:convert';
 
 // Flutter external package importer
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csc322_starter_app/main.dart';
+import 'package:csc322_starter_app/providers/provider_bluetooth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -55,21 +57,67 @@ class _ScreenTestBluetoothState extends ConsumerState<ScreenTestBluetooth> {
   ////////////////////////////////////////////////////////////////
   // Initializes state variables and resources
   ////////////////////////////////////////////////////////////////
-  Future<void> _init() async {}
+  Future<void> _init() async {
+    final profileProvider = ref.read(providerUserProfile);
+    final uid = profileProvider.uid;
+    if (uid == null) return;
+
+    final doc = await FirebaseFirestore.instance
+        .collection("user_profiles")
+        .doc(uid)
+        .get();
+
+    final savedDeviceId = doc.data()?['connected_device_id'] as String?;
+    final savedDeviceName = doc.data()?['connected_device'] as String?;
+
+    if (savedDeviceId != null && savedDeviceName != null) {
+      setState(() {
+        _connectionState = "Restoring connection to $savedDeviceName...";
+      });
+
+      BluetoothDevice? device;
+      int attempts = 0;
+      while (device == null && attempts < 10) { 
+        device = _devicesList.cast<BluetoothDevice?>().firstWhere(
+          (d) => d!.id.id == savedDeviceId,
+          orElse: () => null,
+        );
+        if (device == null) {
+          await Future.delayed(Duration(seconds: 1));
+        }
+        attempts++;
+      }
+
+      if (device != null) {
+        await _connectToDevice(device);
+        // Provider state is already correct from Firestore
+        setState(() {
+        // _connectionState = "Connected to ${savedDeviceName}";
+        });
+      } else {
+        debugPrint("Saved device not found in scan");
+
+        final notifier = ref.read(connectedDeviceProvider.notifier);
+        await notifier.removeDevice();
+
+        setState(() {
+          _connectionState = "Disconnected";
+          _connectedDevice = null;
+        });
+      }
+    }
+  }
 
   Future<void> requestBluetoothPermissions() async {
     if (await Permission.bluetoothScan.request().isDenied) {
-      // Handle denied
       return;
     }
 
     if (await Permission.bluetoothConnect.request().isDenied) {
-      // Handle denied
       return;
     }
 
     if (await Permission.location.request().isDenied) {
-      // Handle denied
       return;
     }
   }
@@ -78,7 +126,6 @@ class _ScreenTestBluetoothState extends ConsumerState<ScreenTestBluetooth> {
     await requestBluetoothPermissions();
     FlutterBluePlus.startScan(timeout: Duration(seconds: 5));
 
-    // Listen to scan results
     FlutterBluePlus.scanResults.listen((results) {
       for (ScanResult r in results) {
         final name = r.advertisementData.localName.isNotEmpty
@@ -97,39 +144,44 @@ class _ScreenTestBluetoothState extends ConsumerState<ScreenTestBluetooth> {
   }
 
   Future<void> _connectToDevice(BluetoothDevice device) async {
-    try {
-      await device.connect(license: License.free);
+    final notifier = ref.read(connectedDeviceProvider.notifier);
 
+    try {
+      setState(() {
+        _connectionState = "Connecting to ${device.name}...";
+      });
+
+      await device.connect(license: License.free);
+      final profileProvider = ref.watch(providerUserProfile);
+      final uid = profileProvider.uid ?? "unknown_uid";
+
+      await notifier.saveDevice(device.name, device.id.id);
       setState(() {
         _connectedDevice = device;
         _connectionState = "Connected to ${device.name}";
+        sendTestData(uid);
       });
 
-      device.connectionState.listen((state) {
+      device.connectionState.listen((state) async {
         if (state == BluetoothConnectionState.disconnected) {
+          debugPrint("${device.name} disconnected");
+          await notifier.removeDevice();
           setState(() {
-            _connectionState = "Disconnected";
             _connectedDevice = null;
+            _connectionState = "Disconnected";
           });
         }
       });
 
       List<BluetoothService> services = await device.discoverServices();
       for (var service in services) {
-        debugPrint("Service: ${service.uuid}");
         for (var c in service.characteristics) {
-          debugPrint(
-              "  Characteristic: ${c.uuid} (Read:${c.properties.read} Write:${c.properties.write} Notify:${c.properties.notify})");
-
           if (c.properties.notify) {
             _notifyCharacteristic = c;
-
             await c.setNotifyValue(true);
-
             c.lastValueStream.listen((value) {
               final message = utf8.decode(value);
-              debugPrint("Received from robot: $message");
-
+              debugPrint("Received: $message");
               if (message == "ACK") {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Robot acknowledged UID!")),
@@ -141,10 +193,42 @@ class _ScreenTestBluetoothState extends ConsumerState<ScreenTestBluetooth> {
         }
       }
     } catch (e) {
-      debugPrint("Connection error: $e");
+      debugPrint("Connection failed: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to connect: $e')),
-      );
+          SnackBar(content: Text('Failed to connect: $e')),
+        );
+
+      await notifier.removeDevice();
+      setState(() {
+        _connectedDevice = null;
+        _connectionState = "Failed to connect";
+      });
+    }
+  }
+
+  Future<void> _disconnectDevice() async {
+    if (_connectedDevice == null) return;
+    final notifier = ref.read(connectedDeviceProvider.notifier);
+
+    try {
+
+      await sendDisconnectMessage();
+
+      await notifier.removeDevice();
+
+      await _connectedDevice?.disconnect();
+
+      setState(() {
+        _connectedDevice = null;
+        _connectionState = "Disconnected";
+      });
+    } catch (e) {
+      debugPrint("Error during disconnect: $e");
+      setState(() {
+        _connectedDevice = null;
+        _connectionState = "Disconnected (with errors)";
+      });
+      await notifier.removeDevice();
     }
   }
 
@@ -168,6 +252,30 @@ class _ScreenTestBluetoothState extends ConsumerState<ScreenTestBluetooth> {
             
           } catch (e) {
             debugPrint("Write failed for ${c.uuid}: $e");
+          }
+        }
+      }
+    }
+  }
+
+  Future<void> sendDisconnectMessage() async {
+    if (_connectedDevice == null) return;
+
+    List<BluetoothService> services = await _connectedDevice!.discoverServices();
+    for (var service in services) {
+      for (var c in service.characteristics) {
+        if (c.properties.write || c.properties.writeWithoutResponse) {
+          try {
+            await c.write(
+              utf8.encode("DISCONNECT"),
+              withoutResponse: !c.properties.write,
+            );
+            debugPrint("Sent DISCONNECT to ${c.uuid}");
+             ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Sent DISCONNECT to ${c.uuid}")),
+            );
+          } catch (e) {
+            debugPrint("Failed to send DISCONNECT to ${c.uuid}: $e");
           }
         }
       }
@@ -206,27 +314,24 @@ class _ScreenTestBluetoothState extends ConsumerState<ScreenTestBluetooth> {
                 return ListTile(
                   title: Text(device.name.isNotEmpty ? device.name : "Unknown Device"),
                   subtitle: Text(device.id.id),
-                  trailing: ElevatedButton(
-                    onPressed: _connectedDevice == null
-                        ? () => _connectToDevice(device)
-                        : null,
-                    child: const Text("Connect"),
-                  ),
-                );
-              },
-            ),
-          ),
-          if (_connectedDevice != null)
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Consumer(
-              builder: (context, ref, _) {
-                final profileProvider = ref.watch(providerUserProfile);
-                final uid = profileProvider.uid ?? "unknown_uid";
+                  trailing: Consumer(
+                    builder: (context, ref, child) {
+                      final connectedDeviceName = ref.watch(connectedDeviceProvider);
+                      final isConnectedToThisDevice = connectedDeviceName == device.name;
 
-                return ElevatedButton(
-                  onPressed: () => sendTestData(uid),
-                  child: const Text("Send My UID"),
+                      return ElevatedButton(
+                        onPressed: () async {
+                          final notifier = ref.read(connectedDeviceProvider.notifier);
+                          if (isConnectedToThisDevice) {
+                            await _disconnectDevice();
+                          } else {
+                            await _connectToDevice(device);
+                          }
+                        },
+                        child: Text(isConnectedToThisDevice ? "Disconnect" : "Connect"),
+                      );
+                    },
+                  ),
                 );
               },
             ),
