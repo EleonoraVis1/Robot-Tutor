@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:csc322_starter_app/models/grade.dart';
 import 'package:csc322_starter_app/models/module.dart';
 import 'package:csc322_starter_app/models/subject.dart';
 import 'package:flutter/material.dart';
@@ -11,14 +12,28 @@ final modulesProvider = StreamProvider<List<Module>>((ref) {
       .map((snapshot) {
         return snapshot.docs.map((doc) {
           final data = doc.data();
+          final id = doc.id; 
+
+          final grade = _extractGradeFromId(id);
+
           return Module(
-            id: doc.id,
+            id: id,
             title: data['title'],
-            subjectId: data['subject_id'], 
+            subjectId: data['subject_id'],
+            grade: grade,
           );
         }).toList();
       });
 });
+
+int _extractGradeFromId(String id) {
+  final regex = RegExp(r'grade(\d+)');
+  final match = regex.firstMatch(id);
+  if (match != null) {
+    return int.tryParse(match.group(1) ?? '') ?? 0;
+  }
+  return 0; 
+}
 
 final studentModulesProvider = StreamProvider.family<
     Map<String, dynamic>, String>((ref, studentId) {
@@ -67,12 +82,11 @@ final subjectsProvider = Provider<AsyncValue<List<Subject>>>((ref) {
         grouped.putIfAbsent(m.subjectId, () => []).add(m);
       }
 
-      final subjects = grouped.entries.map((entry) {
+      final subjects = grouped.entries.where((entry) => entry.key.toLowerCase() != 'unknown').map((entry) {
         return Subject(
           id: entry.key,
           title: _capitalize(entry.key),
           icon: _subjectIcon(entry.key),
-          modules: entry.value,
         );
       }).toList();
 
@@ -96,3 +110,54 @@ IconData _subjectIcon(String key) {
     default: return Icons.school;
   }
 }
+
+final subjectsWithGradesProvider = Provider<AsyncValue<List<Subject>>>((ref) {
+  final modulesAsync = ref.watch(modulesProvider);
+
+  return modulesAsync.when(
+    data: (modules) {
+      final Map<String, Map<int, List<Module>>> grouped = {};
+
+      for (final m in modules) {
+        grouped.putIfAbsent(m.subjectId, () => {});
+        grouped[m.subjectId]!.putIfAbsent(m.grade, () => []).add(m);
+      }
+
+      final subjects = grouped.entries.map((subjectEntry) {
+        final subjectId = subjectEntry.key;
+        final grades = subjectEntry.value.entries.map((gradeEntry) {
+          final gradeNumber = gradeEntry.key;
+          return Grade(
+            id: gradeNumber.toString(),
+            title: 'Grade $gradeNumber',
+            modules: gradeEntry.value,
+          );
+        }).toList();
+
+        return Subject(
+          id: subjectId,
+          title: _capitalize(subjectId),
+          icon: _subjectIcon(subjectId),
+          grades: grades,
+        );
+      }).toList();
+
+      return AsyncValue.data(subjects);
+    },
+    loading: () => const AsyncValue.loading(),
+    error: (e, st) => AsyncValue.error(e, st),
+  );
+});
+
+final modulesByGradeProvider = Provider.family<AsyncValue<List<Module>>, ({String subjectId, int gradeId})>((ref, params) {
+  final modulesAsync = ref.watch(modulesProvider);
+
+  return modulesAsync.when(
+    data: (modules) {
+      final filtered = modules.where((m) => m.subjectId == params.subjectId && m.grade == params.gradeId).toList();
+      return AsyncValue.data(filtered);
+    },
+    loading: () => const AsyncValue.loading(),
+    error: (e, st) => AsyncValue.error(e, st),
+  );
+});

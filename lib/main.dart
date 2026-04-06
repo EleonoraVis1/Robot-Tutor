@@ -15,6 +15,7 @@
 import 'package:csc322_starter_app/screens/auth/screen_profile_setup.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_chathistory_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_grade.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_invites.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
@@ -144,39 +145,55 @@ class _MyAppState extends State<MyApp> {
         path: '/subject/:subjectId',
         builder: (context, state) {
           final subjectId = state.pathParameters['subjectId']!;
-          return ScreenSubject(subjectId: subjectId, studentUid: null,);
+          return ScreenSubject(subjectId: subjectId, studentUid: null);
         },
         routes: [
+          // Grade layer
           GoRoute(
-            path: 'module/:moduleId',
+            path: 'grade/:gradeId',
             builder: (context, state) {
               final subjectId = state.pathParameters['subjectId']!;
-              final moduleId = state.pathParameters['moduleId']!;
-              return ScreenModule(
-                subjectId: subjectId,
-                moduleId: moduleId,
-                studentUid: null, // student will use their own UID
-              );
+              final gradeId = int.parse(state.pathParameters['gradeId']!); // integer
+              return ScreenGrade(subjectId: subjectId, gradeId: gradeId, studentUid: null);
             },
             routes: [
+              // Module layer
               GoRoute(
-                path: 'quiz',
+                path: 'module/:moduleId',
                 builder: (context, state) {
                   final subjectId = state.pathParameters['subjectId']!;
+                  final gradeId = int.parse(state.pathParameters['gradeId']!);
                   final moduleId = state.pathParameters['moduleId']!;
-                  return ScreenQuiz(
+                  return ScreenModule(
                     subjectId: subjectId,
+                    grade: gradeId,
                     moduleId: moduleId,
-                    studentUid: null, // student uses their own UID
+                    studentUid: null,
                   );
                 },
-              ),
-              GoRoute(
-                path: 'chat',
-                builder: (context, state) {
-                  final moduleId = state.pathParameters['moduleId']!;
-                  return ScreenChathistoryStudent(moduleId: moduleId);
-                },
+                routes: [
+                  GoRoute(
+                    path: 'quiz',
+                    builder: (context, state) {
+                      final subjectId = state.pathParameters['subjectId']!;
+                      final gradeId = int.parse(state.pathParameters['gradeId']!);
+                      final moduleId = state.pathParameters['moduleId']!;
+                      return ScreenQuiz(
+                        subjectId: subjectId,
+                        grade: gradeId,
+                        moduleId: moduleId,
+                        studentUid: null,
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    path: 'chat',
+                    builder: (context, state) {
+                      final moduleId = state.pathParameters['moduleId']!;
+                      return ScreenChathistoryStudent(moduleId: moduleId);
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -187,7 +204,6 @@ class _MyAppState extends State<MyApp> {
         path: ScreenHomeSupervisor.routeName,
         builder: (context, state) => ScreenHomeSupervisor(),
         routes: [
-          // Supervisor selects a student -> show student's subjects
           GoRoute(
             path: 'student/:studentUid',
             builder: (context, state) {
@@ -198,45 +214,59 @@ class _MyAppState extends State<MyApp> {
               );
             },
             routes: [
-              // Subject
               GoRoute(
                 path: 'subject/:subjectId',
                 builder: (context, state) {
                   final studentUid = state.pathParameters['studentUid']!;
                   final subjectId = state.pathParameters['subjectId']!;
-
                   return ScreenSubject(
                     subjectId: subjectId,
                     studentUid: studentUid,
                   );
                 },
                 routes: [
-                  // Module
+                  // Grade layer
                   GoRoute(
-                    path: 'module/:moduleId',
+                    path: 'grade/:gradeId',
                     builder: (context, state) {
                       final studentUid = state.pathParameters['studentUid']!;
                       final subjectId = state.pathParameters['subjectId']!;
-                      final moduleId = state.pathParameters['moduleId']!;
-
-                      return ScreenModule(
-                        studentUid: studentUid,
+                      final gradeId = int.parse(state.pathParameters['gradeId']!);
+                      return ScreenGrade(
                         subjectId: subjectId,
-                        moduleId: moduleId,
+                        gradeId: gradeId,
+                        studentUid: studentUid,
                       );
                     },
                     routes: [
+                      // Module layer
                       GoRoute(
-                        path: 'chat',
+                        path: 'module/:moduleId',
                         builder: (context, state) {
                           final studentUid = state.pathParameters['studentUid']!;
+                          final subjectId = state.pathParameters['subjectId']!;
+                          final gradeId = int.parse(state.pathParameters['gradeId']!);
                           final moduleId = state.pathParameters['moduleId']!;
-
-                          return ScreenChathistorySupervisor(
+                          return ScreenModule(
                             studentUid: studentUid,
+                            subjectId: subjectId,
+                            grade: gradeId,
                             moduleId: moduleId,
                           );
                         },
+                        routes: [
+                          GoRoute(
+                            path: 'chat',
+                            builder: (context, state) {
+                              final studentUid = state.pathParameters['studentUid']!;
+                              final moduleId = state.pathParameters['moduleId']!;
+                              return ScreenChathistorySupervisor(
+                                studentUid: studentUid,
+                                moduleId: moduleId,
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),

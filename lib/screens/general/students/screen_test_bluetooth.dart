@@ -211,11 +211,8 @@ class _ScreenTestBluetoothState extends ConsumerState<ScreenTestBluetooth> {
     final notifier = ref.read(connectedDeviceProvider.notifier);
 
     try {
-
       await sendDisconnectMessage();
-
       await notifier.removeDevice();
-
       await _connectedDevice?.disconnect();
 
       setState(() {

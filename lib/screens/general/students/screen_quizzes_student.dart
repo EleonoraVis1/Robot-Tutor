@@ -20,9 +20,10 @@ class ScreenQuiz extends ConsumerStatefulWidget {
   final String? studentUid;
   final String subjectId;
   final String moduleId;
+  final int grade;
   
 
-  const ScreenQuiz({super.key, required this.studentUid, required this.subjectId, required this.moduleId});
+  const ScreenQuiz({super.key, required this.studentUid, required this.subjectId, required this.grade, required this.moduleId});
 
   @override
   ConsumerState<ScreenQuiz> createState() => _ScreenQuizState();
@@ -61,6 +62,48 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
   int _currentIndex = 0;
   int _score = 0;
   int? _selected;
+
+  Future<void> _saveAndShowResult(
+    BuildContext context,
+    String subjectId,
+    String moduleId,
+    int total,
+    String uid,
+  ) async {
+    await QuizResultService.saveResult(
+      subjectId: subjectId,
+      moduleId: moduleId,
+      score: _score,
+      totalQuestions: total,
+    );
+    final moduleRef = FirebaseFirestore.instance
+          .collection('user_profiles')
+          .doc(uid)
+          .collection('modules')
+          .doc(moduleId);
+
+      await moduleRef.set({'quiz_status': 'completed'}, SetOptions(merge: true));
+    _showResult(context, total);
+  }
+
+  void _showResult(BuildContext context, int total) {
+        showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Quiz Complete 🎉'),
+        content: Text('Score: $_score / $total'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop(); 
+            },
+            child: const Text('Done'),
+          ),
+        ],
+      ),
+    );
+  }
  
   @override
   Widget build(BuildContext context) {
@@ -81,7 +124,6 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
       ),
       
       data: (questions) {
-
         if (questions.isEmpty) {
           return Scaffold(
             body: Center(
@@ -98,12 +140,12 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
                     ElevatedButton(
                       onPressed: () async {
                         await _saveAndShowResult(
-                                      context,
-                                      subjectId,
-                                      moduleId,
-                                      questions.length,
-                                      uid,
-                                    );
+                          context,
+                          subjectId,
+                          moduleId,
+                          questions.length,
+                          uid,
+                        );
                       },
                       child: const Text('Done'),
                     ),
@@ -158,27 +200,27 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: _selected == null
-                              ? null
-                              : () {
-                                  if (_selected == question.correctIndex && _increase) {
-                                    _score++;
-                                  }
-                                  if (_currentIndex < questions.length - 1) {
-                                    setState(() {
-                                      _currentIndex++;
-                                      _selected = null;
-                                    });
-                                  } else {
-                                    _increase = false;
-                                    _saveAndShowResult(
-                                      context,
-                                      subjectId,
-                                      moduleId,
-                                      questions.length,
-                                      uid,
-                                    );
-                                  }
-                                },
+                            ? null
+                            : () {
+                              if (_selected == question.correctIndex && _increase) {
+                                _score++;
+                              }
+                              if (_currentIndex < questions.length - 1) {
+                                setState(() {
+                                  _currentIndex++;
+                                  _selected = null;
+                                });
+                              } else {
+                                _increase = false;
+                                _saveAndShowResult(
+                                  context,
+                                  subjectId,
+                                  moduleId,
+                                  questions.length,
+                                  uid,
+                                );
+                              }
+                            },
                           child: Text(
                             _currentIndex < questions.length - 1
                                 ? 'Next'
@@ -194,48 +236,6 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
           ),
         );
       },
-    );
-  }
-
-  Future<void> _saveAndShowResult(
-    BuildContext context,
-    String subjectId,
-    String moduleId,
-    int total,
-    String uid,
-  ) async {
-    await QuizResultService.saveResult(
-      subjectId: subjectId,
-      moduleId: moduleId,
-      score: _score,
-      totalQuestions: total,
-    );
-    final moduleRef = FirebaseFirestore.instance
-          .collection('user_profiles')
-          .doc(uid)
-          .collection('modules')
-          .doc(moduleId);
-
-      await moduleRef.set({'quiz_status': 'completed'}, SetOptions(merge: true));
-    _showResult(context, total);
-  }
-
-  void _showResult(BuildContext context, int total) {
-        showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Quiz Complete 🎉'),
-        content: Text('Score: $_score / $total'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop(); 
-            },
-            child: const Text('Done'),
-          ),
-        ],
-      ),
     );
   }
 }
