@@ -263,7 +263,20 @@ def merge_questions_yamls(docs: list[dict]) -> dict:
     if len(docs) == 1:
         return docs[0]
 
-    merged = {"lesson_id": docs[0].get("lesson_id", ""), "title": docs[0].get("title", "")}
+    preferred_lesson_id = ""
+    fallback_lesson_id = ""
+    for doc in docs:
+        candidate = str(doc.get("lesson_id", "")).strip()
+        if not candidate:
+            continue
+        if not fallback_lesson_id:
+            fallback_lesson_id = candidate
+        if not candidate.startswith("upload_"):
+            preferred_lesson_id = candidate
+            break
+
+    merged_lesson_id = preferred_lesson_id or fallback_lesson_id
+    merged = {"lesson_id": merged_lesson_id, "title": docs[0].get("title", "")}
     sections = ["guided", "independent", "word_problems"]
     counters = {s: 1 for s in sections}
     section_suffix = {"guided": "g", "independent": "i", "word_problems": "w"}
@@ -312,6 +325,10 @@ def process_upload(
     api_key: Optional[str] = None,
     model: str = "gemini-2.5-flash",
     max_pages: Optional[int] = None,
+    subject: str = "math",
+    grade: str = "4",
+    source_type: str = "worksheet",
+    textbook: Optional[str] = None,
 ) -> tuple[dict, dict]:
     """
     Full upload processing pipeline: file → YAML concept + questions.
@@ -328,6 +345,10 @@ def process_upload(
         api_key:      Gemini API key (falls back to GEMINI_API_KEY env var).
         model:        Gemini model name.
         max_pages:    Limit pages processed (for testing).
+        subject:      Subject label for prompt context.
+        grade:        Grade level label for prompt context.
+        source_type:  Source type label such as textbook, worksheet, or notes.
+        textbook:     Citation textbook override.
 
     Returns:
         Tuple of (concept_dict, questions_dict). Empty dicts in dry_run mode.
@@ -402,7 +423,12 @@ def process_upload(
 
         # Build multi-image payload: first image triggers Vision mode
         # Additional images included as separate inline_data parts
-        prompt = build_upload_concept_prompt(filename)
+        prompt = build_upload_concept_prompt(
+            filename,
+            subject=subject,
+            grade_level=grade,
+            source_type=source_type,
+        )
 
         # For multi-page batches, we send the first image to the standard
         # call_gemini() and include subsequent images in the prompt text
@@ -422,12 +448,31 @@ def process_upload(
 
         try:
             clean = strip_yaml_fences(text_result)
+            # Pre-process: fix unquoted strings with colons that break YAML
+            import re
+            # Wrap prompt/correct_answer values that contain colons but aren't quoted
+            clean = re.sub(
+                r'^(\s+(?:prompt|correct_answer|title):\s)([^\'"{\[].+:.+)$',
+                lambda m: m.group(1) + '"' + m.group(2).replace('"', '\\"') + '"',
+                clean,
+                flags=re.MULTILINE
+            )
             doc = yaml.safe_load(clean)
+            # Unwrap if Gemini returned {"questions.yaml": {...}} instead of flat dict
+            if isinstance(doc, dict) and len(doc) == 1:
+                key = next(iter(doc))
+                if isinstance(doc[key], dict):
+                    doc = doc[key]
             if not isinstance(doc, dict):
                 raise ValueError(f"Expected dict, got {type(doc)}")
             # Set lesson_id from slug if Gemini didn't
             if not doc.get("lesson_id"):
                 doc["lesson_id"] = f"upload_{slug}"
+            citation = doc.get("citation")
+            if not isinstance(citation, dict):
+                citation = {}
+            citation["textbook"] = textbook or citation.get("textbook") or "Uploaded Document"
+            doc["citation"] = citation
             concept_docs.append(doc)
             log.info("    OK — lesson_id: %s", doc.get("lesson_id"))
         except yaml.YAMLError as exc:
@@ -450,7 +495,12 @@ def process_upload(
         for batch_idx, batch in enumerate(batches, 1):
             log.info("  Batch %d/%d (%d page(s))...", batch_idx, len(batches), len(batch))
 
-            prompt = build_upload_questions_prompt(filename)
+            prompt = build_upload_questions_prompt(
+                filename,
+                subject=subject,
+                grade_level=grade,
+                source_type=source_type,
+            )
             primary_image_b64 = image_to_b64(batch[0])
             additional_b64s = [image_to_b64(p) for p in batch[1:]]
 
@@ -465,16 +515,36 @@ def process_upload(
                 api_key=api_key,
                 model=model,
             )
+            log.debug("Questions raw response batch %d: %r", batch_idx, text_result[:300])
 
             try:
                 clean = strip_yaml_fences(text_result)
+                # Pre-process: fix unquoted strings with colons that break YAML
+                import re
+                # Wrap prompt/correct_answer values that contain colons but aren't quoted
+                clean = re.sub(
+                    r'^(\s+(?:prompt|correct_answer|title):\s)([^\'"{\[].+:.+)$',
+                    lambda m: m.group(1) + '"' + m.group(2).replace('"', '\\"') + '"',
+                    clean,
+                    flags=re.MULTILINE
+                )
                 doc = yaml.safe_load(clean)
+                # Unwrap if Gemini returned {"questions.yaml": {...}} instead of flat dict
+                if isinstance(doc, dict) and len(doc) == 1:
+                    key = next(iter(doc))
+                    if isinstance(doc[key], dict):
+                        doc = doc[key]
                 if not isinstance(doc, dict):
                     raise ValueError(f"Expected dict, got {type(doc)}")
                 if not doc.get("lesson_id"):
                     doc["lesson_id"] = f"upload_{slug}"
                 if not doc.get("title"):
                     doc["title"] = concept_doc.get("title", filename)
+                citation = doc.get("citation")
+                if not isinstance(citation, dict):
+                    citation = {}
+                citation["textbook"] = textbook or citation.get("textbook") or "Uploaded Document"
+                doc["citation"] = citation
                 question_docs.append(doc)
                 guided_count = len(doc.get("guided", []))
                 indep_count = len(doc.get("independent", []))
@@ -509,6 +579,13 @@ def process_upload(
             log.warning("  Writing output anyway; fix issues before Firestore ingestion.")
     except Exception as exc:
         log.warning("  Validation error (non-fatal): %s", exc)
+
+    if not concept_doc.get("subject"):
+        concept_doc["subject"] = subject
+    if not concept_doc.get("grade"):
+        concept_doc["grade"] = grade
+    if not concept_doc.get("grade_level"):
+        concept_doc["grade_level"] = grade
 
     # ----- Step 7: Write YAML output -----
     lesson_out.mkdir(parents=True, exist_ok=True)
@@ -568,7 +645,7 @@ def _call_gemini_multiimage(
 
     payload = {
         "contents": [{"parts": parts}],
-        "generationConfig": {"temperature": 0.2, "maxOutputTokens": 4096},
+        "generationConfig": {"temperature": 0.2, "maxOutputTokens": 16000},
     }
 
     max_retries = 3
@@ -646,6 +723,14 @@ Examples (Windows PowerShell):
                         help="Gemini API key (default: $env:GEMINI_API_KEY)")
     parser.add_argument("--model", type=str, default="gemini-2.5-flash",
                         help="Gemini model name (default: gemini-2.5-flash)")
+    parser.add_argument("--subject", type=str, default="math",
+                        help="Subject label for prompt context (default: math)")
+    parser.add_argument("--grade", type=str, default="4",
+                        help="Grade level label for prompt context (default: 4)")
+    parser.add_argument("--source-type", type=str, default="worksheet",
+                        help="Source type label such as textbook, worksheet, or notes (default: worksheet)")
+    parser.add_argument("--textbook", type=str, default=None,
+                        help='Citation textbook override (default: "Uploaded Document")')
     parser.add_argument("--verbose", "-v", action="store_true",
                         help="Enable debug logging")
 
@@ -667,6 +752,10 @@ Examples (Windows PowerShell):
             api_key=args.api_key,
             model=args.model,
             max_pages=args.max_pages,
+            subject=args.subject,
+            grade=args.grade,
+            source_type=args.source_type,
+            textbook=args.textbook,
         )
     except FileNotFoundError as exc:
         log.error("File not found: %s", exc)

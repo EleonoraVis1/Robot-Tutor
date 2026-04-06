@@ -133,6 +133,11 @@ A teacher or student has uploaded this document page. Extract CONCEPT content.
 
 {schema_reminder}
 
+Document context:
+- subject: {subject}
+- grade_level: {grade_level}
+- source_type: {source_type}
+
 Rules:
 - Infer grade level from content difficulty if not stated.
 - For handwritten notes: transcribe faithfully, then structure into the YAML.
@@ -145,20 +150,49 @@ Rules:
 Document filename: {filename}
 """.strip()
 
-UPLOAD_QUESTIONS_PROMPT = """You are a curriculum parser for an elementary school tutoring robot (BAY-min).
-A teacher or student has uploaded this document. Generate quiz questions from it.
+UPLOAD_QUESTIONS_PROMPT = """You are a quiz question generator for a tutoring robot.
+Your ONLY output must be questions.yaml. Do NOT generate concept.yaml or any instructional content.
 
-{schema_reminder}
+Document context:
+- subject: {subject}
+- grade_level: {grade_level}
+- source_type: {source_type}
+- filename: {filename}
 
-Rules (same as standard pipeline, plus):
-- For worksheets that already contain problems: reformat them into the schema.
-- For handwritten notes: generate questions that test the concepts written.
-- Aim for 2 guided, 2 independent, 1 word_problem minimum (scale up if content
-  is rich enough for more).
-- Use lesson_id: "upload_<filename_slug>".
+OUTPUT FORMAT — strict YAML, no markdown fences, no extra commentary:
 
-Document filename: {filename}
-""".strip()
+questions.yaml:
+  lesson_id: <string>
+  title: <string>
+  guided:
+    - id: <string>
+      type: multiple_choice
+      prompt: <string>
+      options: [exactly 3 strings]
+      correct_answer: <string>
+  independent:
+    - id: <string>
+      type: multiple_choice
+      prompt: <string>
+      options: [exactly 3 strings]
+      correct_answer: <string>
+  word_problems:
+    - id: <string>
+      type: multiple_choice
+      prompt: <string>
+      options: [exactly 3 strings]
+      correct_answer: <string>
+
+REQUIRED: You MUST generate actual questions from the problems visible on the page.
+- guided: at least 3 questions based on worked examples
+- independent: at least 3 questions based on practice problems
+- word_problems: at least 2 questions based on word problems
+- Each question needs exactly 3 options and a correct_answer matching one option exactly
+- If the document has blank answer lines (=___ or ___), you MUST calculate and fill in the correct answer yourself — do not leave correct_answer blank
+- For math problems, compute the answer: 6 x 8 = 48, correct_answer must be "48"
+- Do NOT return empty lists
+- Do NOT generate concept.yaml
+"""
 
 
 # ---------------------------------------------------------------------------
@@ -317,15 +351,31 @@ def build_questions_prompt(
     )
 
 
-def build_upload_concept_prompt(filename: str) -> str:
+def build_upload_concept_prompt(
+    filename: str,
+    subject: str,
+    grade_level: str,
+    source_type: str,
+) -> str:
     return UPLOAD_CONCEPT_PROMPT.format(
         schema_reminder=_SCHEMA_REMINDER,
         filename=filename,
+        subject=subject,
+        grade_level=grade_level,
+        source_type=source_type,
     )
 
 
-def build_upload_questions_prompt(filename: str) -> str:
+def build_upload_questions_prompt(
+    filename: str,
+    subject: str,
+    grade_level: str,
+    source_type: str,
+) -> str:
     return UPLOAD_QUESTIONS_PROMPT.format(
         schema_reminder=_SCHEMA_REMINDER,
         filename=filename,
+        subject=subject,
+        grade_level=grade_level,
+        source_type=source_type,
     )
