@@ -3,9 +3,6 @@
 merge_lesson_yaml.py
 --------------------
 Merge concept.yaml + questions.yaml into one module.yaml per lesson folder.
-
-Output schema is designed to be close to the eventual Firestore lesson-module
-document while preserving the original concept/question payloads.
 """
 
 from __future__ import annotations
@@ -21,10 +18,7 @@ except ImportError as exc:  # pragma: no cover
     raise SystemExit("pyyaml not installed. Run: pip install pyyaml") from exc
 
 
-TEXT_REPLACEMENTS = {
-    "횞": "×",
-    "첨": "÷",
-}
+TEXT_REPLACEMENTS = {}
 
 
 def normalize_text(value):
@@ -45,7 +39,7 @@ def load_yaml(path: Path) -> dict:
         return yaml.safe_load(handle) or {}
 
 
-def make_module_id(subject: str, grade: int, chapter: int, lesson: int, title: str) -> str:
+def make_module_id(subject: str, grade: object, chapter: object, lesson: object, title: str) -> str:
     title_slug = re.sub(r"[^a-z0-9]+", "_", title.lower()).strip("_")
     return f"{subject}_grade{grade}_ch{chapter}_les{lesson}_{title_slug}"
 
@@ -54,32 +48,43 @@ def build_module_doc(concept: dict, questions: dict) -> dict:
     concept = normalize_text(concept)
     questions = normalize_text(questions)
 
-    subject = str(concept.get("subject", "math")).strip() or "math"
-    grade = int(concept.get("grade", 0) or 0)
-    chapter = int(concept.get("chapter", 0) or 0)
-    lesson = int(concept.get("lesson", 0) or 0)
-    title = str(concept.get("title", "")).strip()
+    citation = concept.get("citation", questions.get("citation", {}))
+    subject = str(concept.get("subject", questions.get("subject", citation.get("subject", "unknown")))).strip() or "unknown"
+    grade = concept.get("grade_level", concept.get("grade", questions.get("grade_level", questions.get("grade", citation.get("grade", "unknown")))))
+    chapter = concept.get("chapter", questions.get("chapter", citation.get("chapter", "unknown")))
+    lesson = concept.get("lesson", questions.get("lesson", citation.get("lesson", "unknown")))
+    title = str(concept.get("title", questions.get("title", ""))).strip()
 
     concepts = concept.get("concepts", [])
     worked_examples = concept.get("worked_examples", [])
-    q_block = questions.get("questions", {}) if isinstance(questions.get("questions"), dict) else {}
+    ic = concept.get("instructional_content", {})
+    ic_text = ic.get("text", "") if isinstance(ic, dict) else ""
+    ic_concepts = ic.get("concepts", concepts) if isinstance(ic, dict) else concepts
+    ic_examples = ic.get("example_walkthrough", worked_examples) if isinstance(ic, dict) else worked_examples
+
+    # Support both schemas:
+    # Old: questions: {guided: [], independent: [], word_problems: []}
+    # New (upload): guided: [], independent: [], word_problems: [] (top-level)
+    q_block = questions.get("questions", {})
+    if not q_block:
+        q_block = questions
 
     module_doc = {
         "module_id": make_module_id(subject, grade, chapter, lesson, title),
-        "lesson_id": concept.get("lesson_id", ""),
+        "lesson_id": concept.get("lesson_id", questions.get("lesson_id", "")),
         "subject": subject,
         "subject_id": subject,
         "grade": grade,
         "grade_level": grade,
-        "unit": int(concept.get("unit", chapter) or chapter),
+        "unit": concept.get("unit", questions.get("unit", chapter)),
         "chapter": chapter,
         "lesson": lesson,
         "title": title,
         "description": concept.get("essential_question", ""),
         "essential_question": concept.get("essential_question", ""),
-        "citation": concept.get("citation", {}),
-        "standards": concept.get("standards", []),
-        "standard_tags": concept.get("standards", []),
+        "citation": citation,
+        "standards": concept.get("standards", questions.get("standards", [])),
+        "standard_tags": concept.get("standards", questions.get("standards", [])),
         "mathematical_practices": concept.get("mathematical_practices", []),
         "has_visual": concept.get("has_visual", False),
         "visual_handling": concept.get("visual_handling", ""),
@@ -87,9 +92,9 @@ def build_module_doc(concept: dict, questions: dict) -> dict:
         "concepts": concepts,
         "worked_examples": worked_examples,
         "instructional_content": {
-            "text": "",
-            "concepts": concepts,
-            "example_walkthrough": worked_examples,
+            "text": ic_text,
+            "concepts": ic_concepts,
+            "example_walkthrough": ic_examples,
         },
         "quiz_questions": {
             "guided": q_block.get("guided", []),
@@ -98,11 +103,11 @@ def build_module_doc(concept: dict, questions: dict) -> dict:
         },
         "prerequisites": [],
         "session_mode": "teach_then_quiz",
-        "source": "parse_chapter.py",
+        "source": "pipeline",
         "_meta": {
             "schema_version": "1.1",
             "merged_at": datetime.now(timezone.utc).isoformat(),
-            "lesson_id": concept.get("lesson_id", ""),
+            "lesson_id": concept.get("lesson_id", questions.get("lesson_id", "")),
             "source_script": "merge_lesson_yaml.py",
             "source_files": {
                 "concept": "concept.yaml",
