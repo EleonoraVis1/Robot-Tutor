@@ -272,4 +272,6 @@ class ProviderUserProfile extends ChangeNotifier {
   Future<void> deleteAccountData() async {
     await DBUserProfile.deleteAccountData(); // Delete the account data associated with the current user
   }
+
+  
 }

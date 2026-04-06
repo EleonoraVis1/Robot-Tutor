@@ -17,14 +17,14 @@ import 'package:go_router/go_router.dart';
 // StateFUL widget which manages state. Simply initializes the state object.
 //////////////////////////////////////////////////////////////////////////
 class ScreenModule extends ConsumerStatefulWidget {
-  static const routeName =
-      '/subject/:subjectId/module/:moduleId';
+  static const routeName = '/subject/:subjectId/module/:moduleId';
 
   final String? studentUid;
   final String subjectId;
+  final int grade;
   final String moduleId;
 
-  const ScreenModule({super.key, required this.studentUid, required this.subjectId, required this.moduleId});
+  const ScreenModule({super.key, required this.studentUid, required this.grade, required this.subjectId, required this.moduleId});
 
   @override
   ConsumerState<ScreenModule> createState() => _ScreenModuleState();
@@ -103,18 +103,18 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
       moduleId: moduleId,
     )));
     final statusAsync = ref.read(quizStatusProvider((
-                studentId: profileProvider.uid,
-                moduleId: widget.moduleId,
-              )));
+      studentId: profileProvider.uid,
+      moduleId: widget.moduleId,
+    )));
               
-              statusAsync.whenData((status) {
-                if (status.toLowerCase() == 'completed') {
-                  _completed = true;
-                  if (_reviewIndex == -1) {
-                    _reviewIndex = 0;
-                  }
-                } 
-              });
+    statusAsync.whenData((status) {
+      if (status.toLowerCase() == 'completed') {
+        _completed = true;
+        if (_reviewIndex == -1) {
+          _reviewIndex = 0;
+        }
+      } 
+    });
 
     final isReady = profileProvider.dataLoaded && profileProvider.userType != UserType.SUPERVISOR;
 
@@ -131,19 +131,19 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
                 moduleId: widget.moduleId,
               )));
               
-              statusAsync.whenData((status) {
-                if (status.toLowerCase() != 'completed' && _isLastQuestionAnswered) {
-                  _hasNavigatedToQuiz = true;
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (mounted) {
-                      context.push(
-                        '/subject/${widget.subjectId}/module/${widget.moduleId}/quiz',
-                      );
-                      _reviewIndex = 0;
-                    }
-                  });
-                } 
-              });
+            statusAsync.whenData((status) {
+              if (status.toLowerCase() != 'completed' && _isLastQuestionAnswered) {
+                _hasNavigatedToQuiz = true;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    context.push(
+                      '/subject/${widget.subjectId}/grade/${widget.grade}/module/${widget.moduleId}/quiz',
+                    );
+                    _reviewIndex = 0;
+                  }
+                });
+              } 
+            });
           }
         },
       );
@@ -186,11 +186,11 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
           
               if (widget.studentUid == null) {
                 context.push(
-                  '/subject/$subjectId/module/$moduleId/chat',
+                  '/subject/$subjectId/grade/${widget.grade}/module/$moduleId/chat',
                 );
               } else {
                 context.push(
-                  '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/$subjectId/module/$moduleId/chat',
+                  '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/$subjectId/grade/${widget.grade}/module/$moduleId/chat',
                 );
               }
             },
@@ -218,7 +218,7 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
                           icon: const Icon(Icons.quiz),
                           label: const Text('Retake Quiz'),
                           onPressed: () {
-                            context.push('/subject/$subjectId/module/$moduleId/quiz');
+                            context.push('/subject/$subjectId/grade/${widget.grade}/module/$moduleId/quiz');
                             _reviewIndex = 0;
                           },
                         ),              
@@ -282,9 +282,7 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
                   error: (_, __) => const SizedBox(),
                   data: (qIndex) {
                     if (qIndex < 0) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const Center(child: Text('Learning In Progress', style: TextStyle(fontSize: 20),),);
                     }
                 
                     final currentIndex = _reviewIndex >= 0 
@@ -359,7 +357,7 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
                                             WidgetsBinding.instance.addPostFrameCallback((_) {
                                               if (mounted) {
                                                 context.push(
-                                                  '/subject/${widget.subjectId}/module/${widget.moduleId}/quiz',
+                                                  '/subject/${widget.subjectId}/grade/${widget.grade}/module/${widget.moduleId}/quiz',
                                                 );
                                                 _reviewIndex = 0;
                                               }
@@ -397,7 +395,6 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
                 );
               },
             ),
-            
           ],
         ),
       ),

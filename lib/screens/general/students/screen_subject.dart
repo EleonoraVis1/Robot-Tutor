@@ -60,56 +60,6 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
   ////////////////////////////////////////////////////////////////
   Future<void> _init() async {}
 
-  Future<void> startModule(
-    String studentId,
-    String moduleId,
-    String studentName,
-  ) async {
-    final moduleRef = FirebaseFirestore.instance
-        .collection('user_profiles')
-        .doc(studentId)
-        .collection('modules')
-        .doc(moduleId);
-
-    final messagesRef = moduleRef.collection('messages');
-
-    final moduleSnapshot = await moduleRef.get();
-    final isFirstStart = !moduleSnapshot.exists;
-
-    Map<String, dynamic> data = {
-      'lastAccessed': FieldValue.serverTimestamp(),
-      'messageCount': FieldValue.increment(1),
-    };
-
-    if (isFirstStart) {
-      data['startedAt'] = FieldValue.serverTimestamp();
-      data['quiz_status'] = 'inaccessible';
-      data['example_question_num'] = -1;
-    }
-
-    await moduleRef.set(data, SetOptions(merge: true));
-
-    final messagesSnapshot = await messagesRef.limit(1).get();
-
-    if (messagesSnapshot.docs.isEmpty) {
-      await messagesRef.add({
-        'from': 'system',
-        'message': 'Module \'$moduleId\' started for $studentName',
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-    }
-  }
-
-  Future<void> exitModule(String studentId) async {
-    final activeModuleRef = FirebaseFirestore.instance
-        .collection('user_profiles')
-        .doc(studentId);
-
-    await activeModuleRef.set({
-      'active_module_id': '',
-    }, SetOptions(merge: true));
-  }
-
   @override
   Widget build(BuildContext context) {
     final subjectsAsync = ref.watch(subjectsProvider);
@@ -134,161 +84,50 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
           orElse: () => throw Exception('Subject not found'),
         );
 
-        Widget buildModuleCard(module, String status) {
-          Color? badgeColor;
-          String badgeText = '';
-
-          switch (status) {
-            case 'not_started':
-              badgeColor = Colors.grey;
-              badgeText = 'Not Started';
-              break;
-            case 'started':
-              badgeColor = Colors.orange;
-              badgeText = 'Started';
-              break;
-            case 'completed':
-              badgeColor = Colors.green;
-              badgeText = 'Completed';
-              break;
-          }
-
-          return Card(
-            elevation: 6,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-              side: BorderSide(
-                width: 2,
-                color: Colors.black
-              ),
-            ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(20),
-              onTap: () async {
-                try {
-                  if (profileProvider.dataLoaded && !isSupervisor) {
-                    await startModule(
-                      profileProvider.uid,
-                      module.id,
-                      profileProvider.wholeName,
-                    );
-                    await context.push(
-                      '/subject/${widget.subjectId}/module/${module.id}',
-                    );
-                    await exitModule(profileProvider.uid);
-                  } else if (profileProvider.dataLoaded && isSupervisor) {
-                    context.push(
-                      '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/${widget.subjectId}/module/${module.id}',
-                    );
-                  }
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Failed to start module')),
-                  );
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 16,
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.view_module_outlined,
-                          color: Colors.blueGrey[600],
-                          size: 28,
-                        ),
-                        const SizedBox(width: 16),
-
-                        Expanded(
-                          child: Text(
-                            module.title,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Grade '+ module.grade_level.toString(),
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const Icon(
-                          Icons.arrow_forward_ios,
-                          size: 16,
-                          color: Colors.blueGrey,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    if (badgeText.isNotEmpty)
-                      Container(
-                        margin: const EdgeInsets.only(right: 230),
-                        alignment: Alignment.bottomLeft,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: badgeColor,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          badgeText,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }
+        final availableGrades = subject.grades.where((g) => g.modules.isNotEmpty).toList();
 
         return Scaffold(
           appBar: AppBar(title: Text(subject.title), centerTitle: true),
           body: ListView.separated(
             padding: const EdgeInsets.all(16),
-            itemCount: subject.modules.length,
+            itemCount: availableGrades.length,
             separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (_, i) {
-              final module = subject.modules[i];
+              final grade = availableGrades[i];
 
-              return studentModulesAsync.when(
-                loading: () => const SizedBox(),
-                error: (_, __) => const SizedBox(),
-                data: (studentModules) {
-                  final moduleData = studentModules[module.id];
-
-                  String status = 'not_started';
-
-                  if (moduleData != null) {
-                    final quizStatus = moduleData['quiz_status'] ?? '';
-
-                    if (quizStatus == 'completed') {
-                      status = 'completed';
-                    } else {
-                      status = 'started';
+              return Card(
+                elevation: 3,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(20),
+                  onTap: () {
+                    if (studentId != null) {
+                      if (isSupervisor) {
+                        context.push(
+                          '${ScreenHomeSupervisor.routeName}/student/$studentId/subject/${widget.subjectId}/grade/${grade.id}',
+                        );
+                      } else {
+                        context.push('/subject/${widget.subjectId}/grade/${grade.id}');
+                      }
                     }
-                  }
-
-                  return buildModuleCard(module, status);
-                },
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.grade, color: Colors.blueGrey, size: 28),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            grade.title,
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black38),
+                      ],
+                    ),
+                  ),
+                ),
               );
             },
           ),
