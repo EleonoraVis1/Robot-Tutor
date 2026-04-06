@@ -1,0 +1,7 @@
+pdfplumber
+pdf2image
+pillow
+pyyaml
+requests
+firebase-admin
+google-cloud-storage
