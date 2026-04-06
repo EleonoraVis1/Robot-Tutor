@@ -90,10 +90,6 @@ class _ScreenTestBluetoothState extends ConsumerState<ScreenTestBluetooth> {
 
       if (device != null) {
         await _connectToDevice(device);
-        // Provider state is already correct from Firestore
-        setState(() {
-        // _connectionState = "Connected to ${savedDeviceName}";
-        });
       } else {
         debugPrint("Saved device not found in scan");
 

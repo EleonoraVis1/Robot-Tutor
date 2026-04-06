@@ -127,10 +127,11 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
             ),
           ),
           const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () => context.push('/test_bluetooth'),
-            child: const Text('Connect'),
-          ),
+          if (!(widget.supervisorView))
+            ElevatedButton(
+              onPressed: () => context.push('/test_bluetooth'),
+              child: const Text('Connect'),
+            ),
         ],
       ),
     );

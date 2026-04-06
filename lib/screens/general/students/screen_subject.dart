@@ -1,6 +1,5 @@
 // Flutter imports
 import 'dart:async';
-import 'dart:math';
 
 // Flutter external package imports
 import 'package:csc322_starter_app/main.dart';
@@ -24,7 +23,7 @@ class ScreenSubject extends ConsumerStatefulWidget {
   const ScreenSubject({
     super.key,
     required this.subjectId,
-    required this.studentUid,
+    required this.studentUid
   });
 
   @override
@@ -62,21 +61,14 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
 
   @override
   Widget build(BuildContext context) {
-    final subjectsAsync = ref.watch(subjectsProvider);
     final profileProvider = ref.watch(providerUserProfile);
-    final isSupervisor =
-        profileProvider.dataLoaded &&
-        profileProvider.userType == UserType.SUPERVISOR;
-
+    final isSupervisor = profileProvider.dataLoaded && profileProvider.userType == UserType.SUPERVISOR;
     final studentId = isSupervisor ? widget.studentUid : profileProvider.uid;
 
-    final studentModulesAsync = studentId != null
-        ? ref.watch(studentModulesProvider(studentId))
-        : const AsyncValue.data({});
+    final subjectsAsync = ref.watch(subjectsWithGradesProvider);
 
     return subjectsAsync.when(
-      loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
       data: (subjects) {
         final subject = subjects.firstWhere(
@@ -87,7 +79,10 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
         final availableGrades = subject.grades.where((g) => g.modules.isNotEmpty).toList();
 
         return Scaffold(
-          appBar: AppBar(title: Text(subject.title), centerTitle: true),
+          appBar: AppBar(
+            title: Text(subject.title),
+            centerTitle: true,
+          ),
           body: ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: availableGrades.length,
