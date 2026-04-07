@@ -19,6 +19,7 @@ import 'package:csc322_starter_app/screens/general/students/screen_grade.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_invites.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_student_supervisors.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_subject.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_test_bluetooth.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_uploadfile.dart';
@@ -135,7 +136,10 @@ class _MyAppState extends State<MyApp> {
         builder: (BuildContext context, GoRouterState state) =>
           const WidgetPrimaryScaffold(),
       ),
-
+      GoRoute(
+        path: ScreenStudentSupervisors.routeName,
+        builder: (context, state) => ScreenStudentSupervisors(),
+      ),
       // Student home flow
       GoRoute(
         path: ScreenHomeStudent.routeName,

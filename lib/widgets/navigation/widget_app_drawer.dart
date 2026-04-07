@@ -14,6 +14,7 @@ import 'package:csc322_starter_app/providers/provider_firestore.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_invites.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_student_supervisors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
@@ -87,6 +88,15 @@ class WidgetAppDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).pop();
                     context.push(ScreenBayminStudent.routeName);
+                  }
+                ),
+              if (!isSupervisor)
+                ListTile(
+                  leading: Icon(Icons.person), 
+                  title: Text('Supervisors'), 
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    context.push(ScreenStudentSupervisors.routeName);
                   }
                 ),
               if (!isSupervisor)

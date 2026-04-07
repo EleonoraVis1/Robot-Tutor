@@ -87,11 +87,12 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 5),
-          Text(
-            'Hello, $firstName! 👋\nWhat would you like to learn today?',
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
+          if(!(widget.supervisorView))
+            Text(
+              'Hello, $firstName! 👋\nWhat would you like to learn today?',
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
           const SizedBox(height: 30),
           const Text(
             'Subjects',
