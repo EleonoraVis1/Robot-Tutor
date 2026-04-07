@@ -1,0 +1,117 @@
+module_id: math_grade4_ch0_les_multiplication_practice_worksheet
+lesson_id: upload_test_worksheet
+subject: math
+subject_id: math
+grade: '4'
+grade_level: '4'
+unit: 0
+chapter: 0
+lesson: ''
+title: Multiplication Practice Worksheet
+description: ''
+essential_question: ''
+citation:
+  textbook: N/A (Worksheet)
+  chapter: 0
+  lesson: ''
+  pages: uploaded document
+standards: []
+standard_tags: []
+mathematical_practices: []
+has_visual: false
+visual_handling: ''
+visual_description: ''
+concepts: []
+worked_examples: []
+instructional_content:
+  text: This document is a practice worksheet for Grade 4 multiplication. It contains word problems and direct multiplication
+    problems designed to reinforce multiplication skills.
+  concepts: []
+  example_walkthrough: ''
+quiz_questions:
+  guided:
+  - id: G1
+    type: multiple_choice
+    prompt: What is the product of 8 and 7?
+    options:
+    - '49'
+    - '56'
+    - '63'
+    correct_answer: '56'
+  - id: G2
+    type: multiple_choice
+    prompt: 'Calculate: 9 x 6'
+    options:
+    - '45'
+    - '54'
+    - '63'
+    correct_answer: '54'
+  - id: G3
+    type: multiple_choice
+    prompt: Find the value of 4 x 12.
+    options:
+    - '40'
+    - '44'
+    - '48'
+    correct_answer: '48'
+  independent:
+  - id: I1
+    type: multiple_choice
+    prompt: A store has 3 shelves. Each shelf has 12 books. How many books are on all the shelves?
+    options:
+    - '30'
+    - '36'
+    - '42'
+    correct_answer: '36'
+  - id: I2
+    type: multiple_choice
+    prompt: Which multiplication equation represents '5 times as many as 6'?
+    options:
+    - 5 + 6 = 11
+    - 5 x 6 = 30
+    - 6 - 5 = 1
+    correct_answer: 5 x 6 = 30
+  - id: I3
+    type: multiple_choice
+    prompt: What is the value of '5 times as many as 6'?
+    options:
+    - '25'
+    - '30'
+    - '35'
+    correct_answer: '30'
+  word_problems:
+  - id: WP1
+    type: multiple_choice
+    prompt: There are 6 boxes of crayons. Each box has 8 crayons. How many crayons are there in all?
+    options:
+    - '42'
+    - '48'
+    - '54'
+    correct_answer: '48'
+  - id: WP2
+    type: multiple_choice
+    prompt: A farmer has 4 rows of apple trees. Each row has 9 trees. How many trees are there?
+    options:
+    - '32'
+    - '36'
+    - '40'
+    correct_answer: '36'
+  - id: WP3
+    type: multiple_choice
+    prompt: Maria read 7 pages every day for 5 days. How many pages did she read in all?
+    options:
+    - '30'
+    - '35'
+    - '40'
+    correct_answer: '35'
+prerequisites: []
+session_mode: teach_then_quiz
+source: pipeline
+_meta:
+  schema_version: '1.1'
+  merged_at: '2026-04-06T05:23:59.137148+00:00'
+  lesson_id: upload_test_worksheet
+  source_script: merge_lesson_yaml.py
+  source_files:
+    concept: concept.yaml
+    questions: questions.yaml

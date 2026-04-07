@@ -1,0 +1,53 @@
+lesson_id: math_g4_ch2_l2
+title: Comparison Problems
+standard_tags:
+- 4.OA.2
+- MP.1
+- MP.3
+- MP.4
+- MP.7
+- 4.OA.3
+- 4.MD.3
+instructional_content:
+  text: 'Comparison problems involve comparing two quantities. A model, such as a bar model, can help you visualize and solve
+    these problems.
+
+
+    When a problem uses phrases like "times as much" or "times as many," it typically indicates a multiplication relationship.
+    You can use a multiplication equation to represent and solve these problems.
+
+
+    When a problem asks "how many more" or "how many fewer," it typically indicates an addition or subtraction relationship.
+    You can use an addition or subtraction model to represent and solve these problems.
+
+
+    This page provides practice problems focusing on problem-solving strategies and applications of previously learned mathematical
+    concepts, including multi-step word problems, multiplicative comparison, and perimeter. Students are asked to analyze
+    given information, interpret diagrams, and apply appropriate operations to solve real-world scenarios.'
+  concepts:
+  - Comparison Problems
+  - Bar Models
+  - Multiplication Equations
+  - Addition Models
+  - Subtraction Models
+  - problem solving
+  - multi-step problems
+  - multiplicative comparison
+  - perimeter
+  - interpreting diagrams
+  - bar models
+  example_walkthrough: "**Problem:** Evan's dog weighs 7 times as much as Oxana's dog. Together, the dogs weigh 72 pounds.\
+    \ How much does Evan's dog weigh?\n\n**Step 1: Draw a model.**\nLet 'n' represent the unknown weight of Oxana's dog.\n\
+    - Oxana's dog: Draw one bar segment and label it 'n'.\n- Evan's dog: Draw 7 bar segments, each labeled 'n', to represent\
+    \ 7 times as much.\n- The total length of all 8 segments combined represents the total weight of 72 pounds.\n\n**Step\
+    \ 2: Use the model to write an equation and find the value of n.**\nThe model shows that there are 8 equal parts (n) that\
+    \ make up the total weight of 72 pounds.\n- Equation: n + 7n = 72, which simplifies to 8n = 72.\n- Solve for n: Divide\
+    \ both sides by 8.\n  n = 72 / 8\n  n = 9\nSo, Oxana's dog weighs 9 pounds.\n\n**Step 3: Find how much Evan's dog weighs.**\n\
+    Evan's dog weighs 7 times as much as Oxana's dog.\n- Evan's dog weight = 7 * n\n- Evan's dog weight = 7 * 9\n- Evan's\
+    \ dog weight = 63 pounds.\n\n**Answer:** Evan's dog weighs 63 pounds."
+cite_only: false
+citation:
+  textbook: GO Math Grade 4 California Edition
+  chapter: 2
+  lesson: 2.2
+  pages: pp. 51-52

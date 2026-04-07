@@ -1,4 +1,68 @@
-# AUTO-GENERATED STUB — API call failed
-# Lesson 2.2: Comparison  Problems
-# Error: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CYgbnBJ4wTDjsA1ds9pTd'}
-lesson_id: '# TODO'
+lesson_id: math_g4_ch2_l2
+subject: math
+grade: 4
+unit: 2
+chapter: 2
+lesson: 2
+title: Comparison Problems
+essential_question: How does a model help you solve a comparison problem?
+standards:
+- 4.OA.2
+mathematical_practices:
+- MP.1
+- MP.3
+- MP.4
+- MP.7
+citation:
+  textbook: GO Math Grade 4 California (Houghton Mifflin Harcourt)
+  chapter: 2
+  lesson: 2
+  pages:
+  - 63
+  - 64
+  - 65
+  - 66
+has_visual: true
+visual_handling: cite_only
+visual_description: 'Models for comparison problems, including multiplication models
+  (bar models) and addition/subtraction models (bar models) to represent unknown quantities
+  and relationships.
+
+  '
+concepts:
+- id: c1
+  term: Comparison Problems
+  definition: 'Comparison problems involve comparing two quantities, often using multiplication
+    (e.g., "x times as much") or addition/subtraction (e.g., "how much more or fewer").
+    These problems can be solved by drawing models to represent the unknown quantities
+    and relationships.
+
+    '
+  example: Evan’s dog weighs 7 times as much as Oxana’s dog. Together, the dogs weigh
+    72 pounds. How much does Evan’s dog weigh?
+worked_examples:
+- id: we1
+  title: Use a multiplication model.
+  has_visual: true
+  visual_handling: cite_only
+  visual_description: A bar model showing Oxana's dog as 'n' and Evan's dog as '7n',
+    with the total '72' for 8 parts.
+  steps:
+  - Draw a model. Let n represent how much Oxana’s dog weighs. Together, the dogs
+    weigh 72 pounds.
+  - Use the model to write an equation. Find the value of n. 8 × n = 72. The value
+    of n is 9.
+  - Find how much Evan’s dog weighs. Evan’s dog = 7 × 9. Multiply.
+  answer: 63 pounds.
+  citation_page: 63
+- id: we2
+  title: Use an addition or subtraction model.
+  has_visual: true
+  visual_handling: cite_only
+  visual_description: A bar model showing Evan's dog (63 pounds) and Oxana's dog (9
+    pounds), with 'n' representing the difference.
+  steps:
+  - Draw a model. Let n represent the difference.
+  - Use the model to write an equation. Find the value of n. 63 – 9 = n. Subtract.
+  answer: The value of n is 54. Evan’s dog weighs 54 pounds more than Oxana’s dog.
+  citation_page: 64

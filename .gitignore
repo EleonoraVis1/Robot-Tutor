@@ -53,4 +53,4 @@ secrets/gemini_api_key.txt
 serviceAccountKey.json
 *.json.key
 .env
-gomath_g4_ca.pdf
+gomath_g4_ca.pdfsecrets/*.json

@@ -3,5 +3,6 @@ RUN apt-get update && apt-get install -y poppler-utils && rm -rf /var/lib/apt/li
 WORKDIR /app
 COPY lib/ ./lib/
 COPY cloudrun/ ./cloudrun/
-RUN pip install -r cloudrun/requirements.txt
-CMD ["python", "cloudrun/pipeline_job.py"]
+RUN pip install --no-cache-dir -r cloudrun/requirements.txt
+ENV PYTHONUNBUFFERED=1
+CMD ["python", "cloudrun/server.py"]

@@ -1,4 +1,231 @@
-# AUTO-GENERATED STUB — API call failed
-# Lesson 2.2: Comparison  Problems
-# Error: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CYgbnBJ4wTDjsA1ds9pTd'}
-lesson_id: '# TODO'
+lesson_id: math_g4_ch2_l2
+subject: math
+grade: 4
+unit: 2
+chapter: 2
+lesson: 2
+title: Comparison Problems
+standards:
+- 4.OA.2
+citation:
+  textbook: GO Math Grade 4 California (Houghton Mifflin Harcourt)
+  chapter: 2
+  lesson: 2
+  pages:
+  - 63
+  - 64
+  - 65
+  - 66
+questions:
+  guided:
+  - id: q_g1
+    type: word_problem
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: A bar model representing Maria's dog and rabbit, with Maria's
+      dog weighing 6 times as much as the rabbit, and a total weight of 56 pounds.
+    prompt: 'Maria’s dog weighs 6 times as much as her rabbit. Together the pets weigh
+      56 pounds. What does Maria’s dog weigh?
+
+      '
+    answer: Draw a model. Let n represent the unknown. Write an equation to find the
+      value of n. 7 × n = 56. n is 8 pounds. Multiply to find how much Maria’s dog
+      weighs. 8 × 6 = 48. So, Maria’s dog weighs 48 pounds.
+    options:
+    - 42 pounds
+    - 48 pounds
+    - 56 pounds
+    correct_answer: 48 pounds
+    citation_page: 64
+  independent:
+  - id: q_i1
+    type: word_problem
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: A bar model showing cats and dogs, with dogs being 3 times
+      as many as cats, and a total of 28 animals.
+    prompt: 'Last month Kim trained 3 times as many dogs as cats. If the total number
+      of cats and dogs she trained last month is 28, how many cats did Kim train?
+
+      '
+    answer: Draw a model. Let n represent the number of cats. Dogs are 3n. Total is
+      n + 3n = 4n. 4n = 28. n = 7. Kim trained 7 cats.
+    options:
+    - 6 cats
+    - 7 cats
+    - 21 cats
+    correct_answer: 7 cats
+    citation_page: 65
+  - id: q_i2
+    type: word_problem
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: A bar model showing the number of dogs (21) and cats (7) trained
+      by Kim, with the difference highlighted.
+    prompt: 'How many more dogs than cats did Kim train?
+
+      '
+    answer: From Q2, Kim trained 7 cats and 3 * 7 = 21 dogs. The difference is 21
+      - 7 = 14. Kim trained 14 more dogs than cats.
+    options:
+    - 7 more dogs
+    - 14 more dogs
+    - 21 more dogs
+    correct_answer: 14 more dogs
+    citation_page: 65
+  - id: q_i3
+    type: word_problem
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: A bar model showing spaniels and boxers, with boxers being
+      4 times as many as spaniels, and a total of 30 dogs.
+    prompt: 'At the dog show, there are 4 times as many boxers as spaniels. If there
+      are a total of 30 dogs, how many dogs are spaniels?
+
+      '
+    answer: Let n be spaniels. Boxers are 4n. Total is n + 4n = 5n. 5n = 30. n = 6.
+      There are 6 spaniels.
+    options:
+    - 5 dogs
+    - 6 dogs
+    - 24 dogs
+    correct_answer: 6 dogs
+    citation_page: 65
+  - id: q_i4
+    type: word_problem
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: A bar model showing terriers and yellow labs, with yellow
+      labs being 5 times as many as terriers, and a total of 18 dogs.
+    prompt: 'There are 5 times as many yellow labs as terriers in the dog park. If
+      there are a total of 18 dogs, how many dogs are terriers?
+
+      '
+    answer: Let n be terriers. Yellow labs are 5n. Total is n + 5n = 6n. 6n = 18.
+      n = 3. There are 3 terriers.
+    options:
+    - 3 dogs
+    - 15 dogs
+    - 18 dogs
+    correct_answer: 3 dogs
+    citation_page: 65
+  - id: q_i5
+    type: word_problem
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: A bar model showing goldfish and guppies, with guppies being
+      3 times as many as goldfish, and a total of 20 fish.
+    prompt: 'Ben has 3 times as many guppies as goldfish. If he has a total of 20
+      fish, how many guppies does he have?
+
+      '
+    answer: Let n be goldfish. Guppies are 3n. Total is n + 3n = 4n. 4n = 20. n =
+      5 (goldfish). Guppies = 3 * 5 = 15. Ben has 15 guppies.
+    options:
+    - 5 guppies
+    - 15 guppies
+    - 20 guppies
+    correct_answer: 15 guppies
+    citation_page: 65
+  - id: q_i6
+    type: word_problem
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: A bar model showing cardinals and robins, with robins being
+      5 times as many as cardinals, and a total of 24 birds. The difference between
+      robins and cardinals is highlighted.
+    prompt: 'Carlita saw 5 times as many robins as cardinals while bird watching.
+      She saw a total of 24 birds. How many more robins did she see than cardinals?
+
+      '
+    answer: Let n be cardinals. Robins are 5n. Total is n + 5n = 6n. 6n = 24. n =
+      4 (cardinals). Robins = 5 * 4 = 20. Difference = 20 - 4 = 16. She saw 16 more
+      robins than cardinals.
+    options:
+    - 4 more robins
+    - 16 more robins
+    - 20 more robins
+    correct_answer: 16 more robins
+    citation_page: 65
+  word_problems:
+  - id: q_w1
+    type: word_problem_diagram
+    difficulty: deeper
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: 'Two diagrams (Dara''s and Cliff''s) showing Mr. Luna''s driving
+      path: 7 miles west, 3 miles north, 11 miles east, 4 miles north. The diagrams
+      would show the net displacement north and east/west.'
+    prompt: 'To get to a dog show, Mr. Luna first drives 7 miles west from his home
+      and then 3 miles north. Next, he turns east and drives 11 miles. Finally, he
+      turns north and drives 4 miles to the dog show. How far north of Mr. Luna’s
+      home is the dog show? To solve the problem, Dara and Cliff drew diagrams. Which
+      diagram is correct? Explain.
+
+      '
+    answer: 'To find how far north, add the north movements: 3 miles + 4 miles = 7
+      miles. The dog show is 7 miles north of Mr. Luna''s home. Without seeing the
+      diagrams, it''s impossible to determine which is correct, but the total distance
+      north is 7 miles.'
+    options:
+    - 3 miles
+    - 7 miles
+    - 11 miles
+    correct_answer: 7 miles
+    citation_page: 66
+  - id: q_w2
+    type: word_problem
+    difficulty: mathematical_practice
+    has_visual: false
+    prompt: 'Valerie and Bret have a total of 24 dog show ribbons. Bret has twice
+      as many ribbons as Valerie. How many ribbons does each have?
+
+      '
+    answer: 'Let V be Valerie''s ribbons and B be Bret''s ribbons. V + B = 24. B =
+      2V. Substitute B into the first equation: V + 2V = 24. 3V = 24. V = 8. So, Valerie
+      has 8 ribbons. Bret has 2 * 8 = 16 ribbons.'
+    options:
+    - 'Valerie: 6, Bret: 18'
+    - 'Valerie: 8, Bret: 16'
+    - 'Valerie: 12, Bret: 12'
+    correct_answer: 'Valerie: 8, Bret: 16'
+    citation_page: 66
+  - id: q_w3
+    type: word_problem
+    difficulty: think_smarter
+    has_visual: false
+    prompt: 'Noah built a fenced dog run that is 8 yards long and 6 yards wide. He
+      placed posts at every corner and every yard along the length and width of the
+      run. How many posts did he use?
+
+      '
+    answer: The perimeter of the run is 2 * (length + width) = 2 * (8 + 6) = 2 * 14
+      = 28 yards. Since posts are placed at every corner and every yard, the number
+      of posts is equal to the perimeter. So, Noah used 28 posts.
+    options:
+    - 14 posts
+    - 24 posts
+    - 28 posts
+    correct_answer: 28 posts
+    citation_page: 66
+  - id: q_w4
+    type: word_problem_diagram
+    difficulty: think_smarter
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: A bar model showing Cameron's shells and Mandy's shells (4
+      times Cameron's), with a total of 40 shells. The model needs to be completed
+      to show the individual parts.
+    prompt: 'Last weekend, Mandy collected 4 times as many shells as Cameron. Together,
+      they collected 40 shells. How many shells did Mandy collect? Complete the bar
+      model. Then write an equation and solve.
+
+      '
+    answer: Let C be Cameron's shells. Mandy collected 4C. Total is C + 4C = 5C. 5C
+      = 40. C = 8 (Cameron's shells). Mandy collected 4 * 8 = 32 shells.
+    options:
+    - 8 shells
+    - 32 shells
+    - 40 shells
+    correct_answer: 32 shells
+    citation_page: 66

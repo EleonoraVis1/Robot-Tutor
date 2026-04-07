@@ -233,7 +233,7 @@ session_mode: teach_then_quiz
 source: parse_chapter.py
 _meta:
   schema_version: '1.1'
-  merged_at: '2026-03-25T02:14:03.697151+00:00'
+  merged_at: '2026-04-06T03:10:56.291307+00:00'
   lesson_id: math_g4_ch1_l6
   source_script: merge_lesson_yaml.py
   source_files:

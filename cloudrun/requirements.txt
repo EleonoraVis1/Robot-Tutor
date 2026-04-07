@@ -5,3 +5,5 @@ pyyaml
 requests
 firebase-admin
 google-cloud-storage
+fpdf2
+flask

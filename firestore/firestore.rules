@@ -1,8 +1,60 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isSignedIn() {
-      return request.auth != null;
+
+    ////////////////////////////////////////////////////////////////////
+    // Simple Access Rules
+    ////////////////////////////////////////////////////////////////////
+    // allow read, write: if request.time < timestamp.date(2024, 10, 31);
+    // Allow authenticated users to query user_profiles (email lookup only)
+    match /user_profiles/{uid} {
+      // Allow querying user_profiles (email lookup)
+      allow list: if request.auth != null;
+
+      // Users can read/write their own profile
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    match /user_profiles/{uid}/invites/{inviteId} {
+      // Student can read their invites
+      allow read: if request.auth != null && request.auth.uid == uid;
+
+      // Supervisor can create an invite for a student
+      allow create: if request.auth != null
+        && request.resource.data.supervisorUid == request.auth.uid
+        && request.resource.data.status == "Pending";
+
+      // Student can accept or decline
+      allow update: if request.auth != null
+        && request.auth.uid == uid
+        && resource.data.status == "Pending"
+        && request.resource.data.status in ["Accepted", "Declined"];
+
+      // Student can delete invite
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
+
+    match /user_profiles/{uid}/supervisors/{supervisorUid} {
+      // Student can read their supervisors
+      allow read: if request.auth != null && request.auth.uid == uid;
+
+      // Student adds supervisor (after accepting invite)
+      allow create: if request.auth != null && request.auth.uid == uid;
+
+      // Student removes supervisor
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
+
+    match /user_profiles/{supervisorUid}/students/{studentUid} {
+      // Supervisor can read their students
+      allow read: if request.auth != null && request.auth.uid == supervisorUid;
+
+      // Student can add THEMSELVES after accepting invite
+      allow create: if request.auth != null
+        && request.auth.uid == studentUid;
+
+      // Supervisor can remove student
+      allow delete: if request.auth != null && request.auth.uid == supervisorUid;
     }
 
     match /subjects/{docId} {

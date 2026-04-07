@@ -583,9 +583,9 @@ def process_upload(
     if not concept_doc.get("subject"):
         concept_doc["subject"] = subject
     if not concept_doc.get("grade"):
-        concept_doc["grade"] = grade
+        concept_doc["grade"] = int(grade) if str(grade).isdigit() else 0
     if not concept_doc.get("grade_level"):
-        concept_doc["grade_level"] = grade
+        concept_doc["grade_level"] = int(grade) if str(grade).isdigit() else 0
 
     # ----- Step 7: Write YAML output -----
     lesson_out.mkdir(parents=True, exist_ok=True)

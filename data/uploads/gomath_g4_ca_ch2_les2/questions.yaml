@@ -1,0 +1,196 @@
+lesson_id: '2.2'
+title: Comparison Problems
+guided:
+- id: q_2_2_g1
+  type: multiple_choice
+  prompt: Evan's dog weighs 7 times as much as Oxana's dog. Together, the dogs weigh 72 pounds. What is the weight of Oxana's
+    dog?
+  options:
+  - 9 pounds
+  - 63 pounds
+  - 7 pounds
+  correct_answer: 9 pounds
+- id: q_2_2_g2
+  type: multiple_choice
+  prompt: Evan's dog weighs 7 times as much as Oxana's dog. Together, the dogs weigh 72 pounds. How much does Evan's dog weigh?
+  options:
+  - 9 pounds
+  - 63 pounds
+  - 72 pounds
+  correct_answer: 63 pounds
+- id: q_2_2_g3
+  type: multiple_choice
+  prompt: Evan's dog weighs 63 pounds. Oxana's dog weighs 9 pounds. How much more does Evan's dog weigh than Oxana's dog?
+  options:
+  - 72 pounds
+  - 54 pounds
+  - 6 pounds
+  correct_answer: 54 pounds
+- id: q_2_2_g4
+  type: multiple_choice
+  prompt: Maria's dog weighs 6 times as much as her rabbit. Together the pets weigh 56 pounds. What is the weight of Maria's
+    rabbit?
+  options:
+  - 8 pounds
+  - 48 pounds
+  - 6 pounds
+  correct_answer: 8 pounds
+- id: q_2_2_g5
+  type: multiple_choice
+  prompt: Maria's dog weighs 6 times as much as her rabbit. Together the pets weigh 56 pounds. What does Maria's dog weigh?
+  options:
+  - 56 pounds
+  - 8 pounds
+  - 48 pounds
+  correct_answer: 48 pounds
+- id: q_2_2_g6
+  type: multiple_choice
+  prompt: A car travels 5 miles north, then travels another 3 miles north. How far north is the car from its starting point?
+  options:
+  - 2 miles
+  - 5 miles
+  - 8 miles
+  correct_answer: 8 miles
+- id: q_2_2_g7
+  type: multiple_choice
+  prompt: If John has 3 apples and Mary has twice as many apples as John, how many apples does Mary have?
+  options:
+  - 3 apples
+  - 5 apples
+  - 6 apples
+  correct_answer: 6 apples
+- id: q_2_2_g8
+  type: multiple_choice
+  prompt: What is the perimeter of a rectangle that is 7 feet long and 4 feet wide?
+  options:
+  - 11 feet
+  - 22 feet
+  - 28 feet
+  correct_answer: 22 feet
+independent:
+- id: q_2_2_i1
+  type: multiple_choice
+  prompt: At the dog show, there are 4 times as many boxers as spaniels. If there are a total of 30 dogs, how many dogs are
+    spaniels?
+  options:
+  - '6'
+  - '24'
+  - '30'
+  correct_answer: '6'
+- id: q_2_2_i2
+  type: multiple_choice
+  prompt: There are 5 times as many yellow labs as terriers in the dog park. If there are a total of 18 dogs, how many dogs
+    are terriers?
+  options:
+  - '3'
+  - '15'
+  - '18'
+  correct_answer: '3'
+- id: q_2_2_i3
+  type: multiple_choice
+  prompt: Ben has 3 times as many guppies as goldfish. If he has a total of 20 fish, how many guppies does he have?
+  options:
+  - '5'
+  - '15'
+  - '20'
+  correct_answer: '15'
+- id: q_2_2_i4
+  type: multiple_choice
+  prompt: Carlita saw 5 times as many robins as cardinals while bird watching. She saw a total of 24 birds. How many robins
+    did she see?
+  options:
+  - '4'
+  - '20'
+  - '24'
+  correct_answer: '20'
+- id: q_2_2_i5
+  type: multiple_choice
+  prompt: Carlita saw 5 times as many robins as cardinals while bird watching. She saw a total of 24 birds. How many more
+    robins did she see than cardinals?
+  options:
+  - '16'
+  - '20'
+  - '4'
+  correct_answer: '16'
+- id: q_2_2_i6
+  type: multiple_choice
+  prompt: A bird flies 6 miles east, then 2 miles west. How far is the bird from its starting point?
+  options:
+  - 2 miles
+  - 4 miles
+  - 8 miles
+  correct_answer: 4 miles
+- id: q_2_2_i7
+  type: multiple_choice
+  prompt: Sarah and Tom have a total of 15 stickers. Sarah has 4 times as many stickers as Tom. How many stickers does Tom
+    have?
+  options:
+  - 3 stickers
+  - 5 stickers
+  - 12 stickers
+  correct_answer: 3 stickers
+- id: q_2_2_i8
+  type: multiple_choice
+  prompt: A square garden has a side length of 5 meters. If you want to put a fence around it, how many meters of fencing
+    do you need?
+  options:
+  - 10 meters
+  - 15 meters
+  - 20 meters
+  correct_answer: 20 meters
+word_problems:
+- id: q_2_2_w1
+  type: multiple_choice
+  prompt: Last month Kim trained 3 times as many dogs as cats. If the total number of cats and dogs she trained last month
+    is 28, how many cats did Kim train?
+  options:
+  - '7'
+  - '21'
+  - '28'
+  correct_answer: '7'
+- id: q_2_2_w2
+  type: multiple_choice
+  prompt: Referring to the previous problem, Kim trained 3 times as many dogs as cats, with a total of 28 animals. How many
+    more dogs than cats did Kim train?
+  options:
+  - '7'
+  - '14'
+  - '21'
+  correct_answer: '14'
+- id: q_2_2_w3
+  type: multiple_choice
+  prompt: To get to a dog show, Mr. Luna first drives 7 miles west from his home and then 3 miles north. Next, he turns east
+    and drives 11 miles. Finally, he turns north and drives 4 miles to the dog show. How far north of Mr. Luna's home is the
+    dog show?
+  options:
+  - 3 miles
+  - 4 miles
+  - 7 miles
+  correct_answer: 7 miles
+- id: q_2_2_w4
+  type: multiple_choice
+  prompt: Valerie and Bret have a total of 24 dog show ribbons. Bret has twice as many ribbons as Valerie. How many ribbons
+    does Valerie have?
+  options:
+  - 8 ribbons
+  - 12 ribbons
+  - 16 ribbons
+  correct_answer: 8 ribbons
+- id: q_2_2_w5
+  type: multiple_choice
+  prompt: Noah built a fenced dog run that is 8 yards long and 6 yards wide. He placed posts at every corner and every yard
+    along the length and width of the run. How many posts did he use?
+  options:
+  - 14 posts
+  - 24 posts
+  - 28 posts
+  correct_answer: 28 posts
+- id: q_2_2_w6
+  type: multiple_choice
+  prompt: Mandy collected 4 times as many shells as Cameron. Together, they collected 40 shells. How many shells did Mandy
+    collect?
+  options:
+  - 8 shells
+  - 32 shells
+  - 40 shells
+  correct_answer: 32 shells

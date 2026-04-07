@@ -53,6 +53,17 @@ def build_module_doc(concept: dict, questions: dict) -> dict:
     grade = concept.get("grade_level", concept.get("grade", questions.get("grade_level", questions.get("grade", citation.get("grade", "unknown")))))
     chapter = concept.get("chapter", questions.get("chapter", citation.get("chapter", "unknown")))
     lesson = concept.get("lesson", questions.get("lesson", citation.get("lesson", "unknown")))
+    try:
+        grade_int = int(str(grade).strip())
+    except (ValueError, TypeError):
+        grade_int = 0
+
+    try:
+        chapter_int = int(str(chapter).strip())
+    except (ValueError, TypeError):
+        chapter_int = 0
+
+    lesson_str = str(lesson).strip() if lesson else "0"
     title = str(concept.get("title", questions.get("title", ""))).strip()
 
     concepts = concept.get("concepts", [])
@@ -70,15 +81,15 @@ def build_module_doc(concept: dict, questions: dict) -> dict:
         q_block = questions
 
     module_doc = {
-        "module_id": make_module_id(subject, grade, chapter, lesson, title),
+        "module_id": make_module_id(subject, grade_int, chapter_int, lesson_str, title),
         "lesson_id": concept.get("lesson_id", questions.get("lesson_id", "")),
         "subject": subject,
         "subject_id": subject,
-        "grade": grade,
-        "grade_level": grade,
-        "unit": concept.get("unit", questions.get("unit", chapter)),
-        "chapter": chapter,
-        "lesson": lesson,
+        "grade": grade_int,
+        "grade_level": grade_int,
+        "unit": concept.get("unit", questions.get("unit", chapter_int)),
+        "chapter": chapter_int,
+        "lesson": lesson_str,
         "title": title,
         "description": concept.get("essential_question", ""),
         "essential_question": concept.get("essential_question", ""),

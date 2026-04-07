@@ -1,201 +1,158 @@
-from __future__ import annotations
-
+#!/usr/bin/env python3
+"""
+pipeline_job.py
+---------------
+Cloud Run job: GCS upload -> parse_upload -> merge -> Firestore
+Triggered by Eventarc when a PDF lands in raw-uploads/
+"""
+import logging
 import os
 import sys
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
-import firebase_admin
 import yaml
-from firebase_admin import credentials, firestore
-from google.cloud import storage
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-PARSER_DIR = REPO_ROOT / "lib" / "parser"
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+log = logging.getLogger(__name__)
 
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
-if str(PARSER_DIR) not in sys.path:
-    sys.path.insert(0, str(PARSER_DIR))
-
-from merge_lesson_yaml import merge_lesson_dir
-from parse_upload import filename_to_slug, process_upload
+# Add repo root to path so lib.parser imports work
+sys.path.insert(0, str(Path(__file__).parents[1]))
 
 
-def get_required_env(name: str) -> str:
-    value = os.environ.get(name, "").strip()
-    if not value:
-        raise RuntimeError(f"Missing required environment variable: {name}")
-    return value
+def main():
+    # --- 1. Env vars ---
+    bucket_name = os.environ.get("GCS_BUCKET", "robot-tutor.firebasestorage.app")
+    object_path = os.environ.get("GCS_OBJECT_PATH")
+    gemini_key = os.environ.get("GEMINI_API_KEY")
+    gcp_project = os.environ.get("GCP_PROJECT", "robot-tutor")
 
+    if not object_path:
+        log.error("GCS_OBJECT_PATH not set")
+        os._exit(1)
+    if not gemini_key:
+        log.error("GEMINI_API_KEY not set")
+        os._exit(1)
 
-def init_firestore(project_id: str):
-    creds_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "").strip()
-    if creds_path:
-        cred = credentials.Certificate(creds_path)
-    else:
-        cred = credentials.ApplicationDefault()
+    os.environ["GEMINI_API_KEY"] = gemini_key
+    slug = object_path.replace("/", "_").replace(".", "_")
+
+    # --- 2. Init Firebase ---
+    import firebase_admin
+    from firebase_admin import credentials, firestore
+    from google.cloud import storage
 
     if not firebase_admin._apps:
-        firebase_admin.initialize_app(cred, {"projectId": project_id})
+        creds_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+        if creds_path:
+            cred = credentials.Certificate(creds_path)
+            firebase_admin.initialize_app(cred)
+        else:
+            firebase_admin.initialize_app()  # uses ADC on Cloud Run
+    db = firestore.client()
 
-    return firestore.client()
+    # --- 3. Download PDF + read metadata ---
+    gcs_client = storage.Client(project=gcp_project)
+    bucket = gcs_client.bucket(bucket_name)
+    blob = bucket.blob(object_path)
+    blob.reload()
+    meta = blob.metadata or {}
 
+    subject = meta.get("subject", "math")
+    grade = meta.get("grade", "4")
+    source_type = meta.get("source_type", "worksheet")
+    chapter = meta.get("chapter", "0")
+    lesson = meta.get("lesson", "0")
 
-def apply_metadata_defaults(path: Path, metadata: dict[str, str]) -> None:
-    if not path.exists():
-        return
-
-    with path.open(encoding="utf-8") as handle:
-        doc = yaml.safe_load(handle) or {}
-
-    if not isinstance(doc, dict):
-        raise RuntimeError(f"Expected YAML object in {path}")
-
-    doc["subject"] = metadata["subject"]
-    doc["grade"] = metadata["grade"]
-    doc["grade_level"] = metadata["grade"]
-    doc["chapter"] = metadata["chapter"]
-    doc["lesson"] = metadata["lesson"]
-    doc["source_type"] = metadata["source_type"]
-
-    with path.open("w", encoding="utf-8") as handle:
-        yaml.safe_dump(doc, handle, sort_keys=False, allow_unicode=True, width=120)
-
-
-def load_module_yaml(module_yaml_path: Path) -> dict:
-    with module_yaml_path.open(encoding="utf-8") as handle:
-        module_doc = yaml.safe_load(handle) or {}
-    if not isinstance(module_doc, dict):
-        raise RuntimeError(f"Expected YAML object in {module_yaml_path}")
-    module_id = str(module_doc.get("module_id", "")).strip()
-    if not module_id:
-        raise RuntimeError(f"module_id missing in {module_yaml_path}")
-    return module_doc
-
-
-def write_job_status(
-    db,
-    slug: str,
-    *,
-    status: str,
-    module_id: str | None,
-    error_message: str,
-) -> None:
-    db.collection("upload_jobs").document(slug).set(
-        {
-            "status": status,
-            "module_id": module_id,
-            "processed_at": datetime.now(timezone.utc),
-            "error_message": error_message,
-        },
-        merge=True,
+    log.info(
+        "Processing: %s | subject=%s grade=%s chapter=%s lesson=%s",
+        object_path,
+        subject,
+        grade,
+        chapter,
+        lesson,
     )
 
-
-def processed_object_path(object_path: str) -> str:
-    raw_prefix = "raw-uploads/"
-    processed_prefix = "processed/"
-    if object_path.startswith(raw_prefix):
-        return processed_prefix + object_path[len(raw_prefix):]
-    return processed_prefix + object_path.lstrip("/")
-
-
-def move_blob(bucket, source_path: str, destination_path: str) -> None:
-    source_blob = bucket.blob(source_path)
-    if not source_blob.exists():
-        raise RuntimeError(f"GCS object not found during move: {source_path}")
-    bucket.copy_blob(source_blob, bucket, new_name=destination_path)
-    source_blob.delete()
-
-
-def main() -> int:
-    bucket_name = os.environ.get("GCS_BUCKET", "robot-tutor.firebasestorage.app").strip()
-    object_path = get_required_env("GCS_OBJECT_PATH")
-    gemini_api_key = get_required_env("GEMINI_API_KEY")
-    project_id = os.environ.get("GCP_PROJECT", "robot-tutor").strip() or "robot-tutor"
-    creds_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "").strip()
-
-    if creds_path:
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = creds_path
-    os.environ["GEMINI_API_KEY"] = gemini_api_key
-
-    slug = filename_to_slug(Path(object_path).name)
-    db = init_firestore(project_id)
-    storage_client = storage.Client(project=project_id)
-    bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(object_path)
-
     try:
-        if not blob.exists():
-            raise RuntimeError(f"GCS object not found: {object_path}")
-
-        metadata = {
-            "subject": "math",
-            "grade": "4",
-            "chapter": "0",
-            "lesson": "0",
-            "source_type": "worksheet",
-        }
-        blob.reload()
-        for key in metadata:
-            if blob.metadata and blob.metadata.get(key):
-                metadata[key] = str(blob.metadata[key]).strip()
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            tmp_path = Path(tmpdir)
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
             pdf_path = tmp_path / Path(object_path).name
-            out_dir = tmp_path / "parsed"
+            out_dir = tmp_path / "output"
+            out_dir.mkdir()
+
+            # --- 4. Download ---
+            log.info("Downloading PDF...")
             blob.download_to_filename(str(pdf_path))
+
+            # --- 5. Parse ---
+            log.info("Parsing PDF...")
+            from lib.parser.parse_upload import process_upload
 
             process_upload(
                 input_path=pdf_path,
                 out_dir=out_dir,
-                subject=metadata["subject"],
-                grade=metadata["grade"],
-                source_type=metadata["source_type"],
-                api_key=gemini_api_key,
+                subject=subject,
+                grade=grade,
+                source_type=source_type,
             )
 
-            lesson_dir = out_dir / slug
-            if not lesson_dir.exists():
-                raise RuntimeError(f"Expected parsed lesson directory: {lesson_dir}")
+            # Find the output lesson dir (parse_upload creates a slug subdir)
+            lesson_dirs = [d for d in out_dir.iterdir() if d.is_dir()]
+            if not lesson_dirs:
+                raise RuntimeError("parse_upload produced no output directory")
+            lesson_dir = lesson_dirs[0]
 
-            apply_metadata_defaults(lesson_dir / "concept.yaml", metadata)
-            apply_metadata_defaults(lesson_dir / "questions.yaml", metadata)
+            # --- 6. Merge ---
+            log.info("Merging YAML...")
+            from lib.parser.merge_lesson_yaml import merge_lesson_dir
 
-            if not merge_lesson_dir(lesson_dir):
-                raise RuntimeError(f"Failed to merge lesson YAML in {lesson_dir}")
+            merge_lesson_dir(lesson_dir)
 
-            module_doc = load_module_yaml(lesson_dir / "module.yaml")
-            module_id = str(module_doc["module_id"]).strip()
-            db.collection("modules").document(module_id).set(module_doc)
+            # --- 7. Seed Firestore ---
+            module_path = lesson_dir / "module.yaml"
+            if not module_path.exists():
+                raise RuntimeError("module.yaml not created by merge step")
 
-        move_blob(bucket, object_path, processed_object_path(object_path))
-        write_job_status(
-            db,
-            slug,
-            status="processed",
-            module_id=module_id,
-            error_message="",
-        )
-        return 0
+            module = yaml.safe_load(module_path.read_text(encoding="utf-8"))
+            module_id = module.get("module_id", slug)
+
+            log.info("Seeding Firestore: modules/%s", module_id)
+            db.collection("modules").document(module_id).set(module)
+
+            # --- 8. Move GCS object to processed/ ---
+            new_path = object_path.replace("raw-uploads/", "processed/", 1)
+            log.info("Moving GCS object to %s", new_path)
+            bucket.copy_blob(blob, bucket, new_path)
+            blob.delete()
+
+            # --- 9. Write success status ---
+            db.collection("upload_jobs").document(slug).set({
+                "status": "complete",
+                "module_id": module_id,
+                "object_path": object_path,
+                "processed_at": datetime.now(timezone.utc).isoformat(),
+                "error_message": None,
+            })
+
+            log.info("Pipeline complete: %s", module_id)
+
     except Exception as exc:
-        error_message = str(exc)
+        log.error("Pipeline failed: %s", exc, exc_info=True)
         try:
-            write_job_status(
-                db,
-                slug,
-                status="error",
-                module_id=None,
-                error_message=error_message,
-            )
+            db.collection("upload_jobs").document(slug).set({
+                "status": "error",
+                "module_id": None,
+                "object_path": object_path,
+                "processed_at": datetime.now(timezone.utc).isoformat(),
+                "error_message": str(exc),
+            })
         except Exception:
             pass
-        print(error_message, file=sys.stderr)
-        return 1
+        os._exit(1)
+
+    os._exit(0)
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

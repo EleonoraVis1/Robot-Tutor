@@ -1,0 +1,44 @@
+module_id: unknown_gradeunknown_ch2_les2.2_comparison_problems
+lesson_id: math_g4_ch2_l2
+subject: unknown
+subject_id: unknown
+grade: unknown
+grade_level: unknown
+unit: 2
+chapter: 2
+lesson: 2.2
+title: Comparison Problems
+description: ''
+essential_question: ''
+citation:
+  textbook: GO Math Grade 4 California Edition
+  chapter: 2
+  lesson: 2.2
+  pages: pp. 51-52
+standards: []
+standard_tags: []
+mathematical_practices: []
+has_visual: false
+visual_handling: ''
+visual_description: ''
+concepts: &id001 []
+worked_examples: &id002 []
+instructional_content:
+  text: ''
+  concepts: *id001
+  example_walkthrough: *id002
+quiz_questions:
+  guided: []
+  independent: []
+  word_problems: []
+prerequisites: []
+session_mode: teach_then_quiz
+source: parse_chapter.py
+_meta:
+  schema_version: '1.1'
+  merged_at: '2026-04-06T04:51:24.319489+00:00'
+  lesson_id: math_g4_ch2_l2
+  source_script: merge_lesson_yaml.py
+  source_files:
+    concept: concept.yaml
+    questions: questions.yaml

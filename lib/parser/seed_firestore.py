@@ -260,6 +260,7 @@ def build_arg_parser():
     p.add_argument("--grade", required=True, type=int, help="Grade level e.g. 4")
     p.add_argument("--subject", default="math", help="Subject (default: math)")
     p.add_argument("--lesson", default=None, help="Seed only this lesson e.g. '1.1'")
+    p.add_argument("--project", default=None, help="Target Firebase/GCP project ID e.g. robot-tutor")
     p.add_argument("--creds", default=None, help="Path to Firebase service account JSON")
     p.add_argument("--dry-run", action="store_true", help="No writes; just log what would happen")
     p.add_argument("--preview", action="store_true", help="Print full document JSON before writing")
@@ -303,9 +304,13 @@ def run(args):
                 log.info("Auth:  Application Default Credentials")
 
             if not firebase_admin._apps:
-                firebase_admin.initialize_app(cred)
+                options = {"projectId": args.project} if args.project else None
+                firebase_admin.initialize_app(cred, options)
             db = firestore.client()
-            log.info("Firestore: connected")
+            if args.project:
+                log.info("Firestore: connected (project=%s)", args.project)
+            else:
+                log.info("Firestore: connected")
         except Exception as exc:
             log.error("Firestore init failed: %s", exc)
             return 1
