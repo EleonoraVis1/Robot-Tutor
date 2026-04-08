@@ -17,14 +17,18 @@ import 'package:go_router/go_router.dart';
 // StateFUL widget which manages state. Simply initializes the state object.
 //////////////////////////////////////////////////////////////////////////
 class ScreenModule extends ConsumerStatefulWidget {
-  static const routeName =
-      '/subject/:subjectId/module/:moduleId';
+  static const routeName = '/subject/:subjectId/module/:moduleId';
 
   final String? studentUid;
   final String subjectId;
   final String moduleId;
 
-  const ScreenModule({super.key, required this.studentUid, required this.subjectId, required this.moduleId});
+  const ScreenModule({
+    super.key,
+    required this.studentUid,
+    required this.subjectId,
+    required this.moduleId,
+  });
 
   @override
   ConsumerState<ScreenModule> createState() => _ScreenModuleState();
@@ -59,7 +63,6 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
   void initState() {
     super.initState();
 
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final profileProvider = ref.read(providerUserProfile);
 
@@ -69,7 +72,7 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
       }
     });
   }
-  
+
   Future<void> startModule(String studentId, String moduleId) async {
     final ref = FirebaseFirestore.instance
         .collection('user_profiles')
@@ -78,9 +81,7 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
     final doc = await ref.get();
 
     if (doc.data()?['active_module_id'] != moduleId) {
-      await ref.set({
-        'active_module_id': moduleId
-      }, SetOptions(merge: true));
+      await ref.set({'active_module_id': moduleId}, SetOptions(merge: true));
     }
   }
 
@@ -94,29 +95,37 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
     final params = GoRouterState.of(context).pathParameters;
     final subjectId = params['subjectId']!;
     final moduleId = params['moduleId']!;
-    final modulesAsync = ref.watch(modulesProvider);    
+    final modulesAsync = ref.watch(modulesProvider);
     final profileProvider = ref.watch(providerUserProfile);
-    final isSupervisor = profileProvider.dataLoaded && profileProvider.userType == UserType.SUPERVISOR;
+    final isSupervisor =
+        profileProvider.dataLoaded &&
+        profileProvider.userType == UserType.SUPERVISOR;
     final questionsAsync = ref.watch(moduleQuestionsProvider(moduleId));
-    final exampleNumAsync = ref.watch(exampleQuestionNumProvider((
-      studentId: profileProvider.uid,
-      moduleId: moduleId,
-    )));
-    final statusAsync = ref.read(quizStatusProvider((
-                studentId: profileProvider.uid,
-                moduleId: widget.moduleId,
-              )));
-              
-              statusAsync.whenData((status) {
-                if (status.toLowerCase() == 'completed') {
-                  _completed = true;
-                  if (_reviewIndex == -1) {
-                    _reviewIndex = 0;
-                  }
-                } 
-              });
+    final exampleNumAsync = ref.watch(
+      exampleQuestionNumProvider((
+        studentId: profileProvider.uid,
+        moduleId: moduleId,
+      )),
+    );
+    final statusAsync = ref.read(
+      quizStatusProvider((
+        studentId: profileProvider.uid,
+        moduleId: widget.moduleId,
+      )),
+    );
 
-    final isReady = profileProvider.dataLoaded && profileProvider.userType != UserType.SUPERVISOR;
+    statusAsync.whenData((status) {
+      if (status.toLowerCase() == 'completed') {
+        _completed = true;
+        if (_reviewIndex == -1) {
+          _reviewIndex = 0;
+        }
+      }
+    });
+
+    final isReady =
+        profileProvider.dataLoaded &&
+        profileProvider.userType != UserType.SUPERVISOR;
 
     if (isReady) {
       ref.listen(
@@ -126,24 +135,27 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
         )),
         (previous, next) {
           if (next.value == true && !_hasNavigatedToQuiz) {
-            final statusAsync = ref.read(quizStatusProvider((
+            final statusAsync = ref.read(
+              quizStatusProvider((
                 studentId: profileProvider.uid,
                 moduleId: widget.moduleId,
-              )));
-              
-              statusAsync.whenData((status) {
-                if (status.toLowerCase() != 'completed' && _isLastQuestionAnswered) {
-                  _hasNavigatedToQuiz = true;
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (mounted) {
-                      context.push(
-                        '/subject/${widget.subjectId}/module/${widget.moduleId}/quiz',
-                      );
-                      _reviewIndex = 0;
-                    }
-                  });
-                } 
-              });
+              )),
+            );
+
+            statusAsync.whenData((status) {
+              if (status.toLowerCase() != 'completed' &&
+                  _isLastQuestionAnswered) {
+                _hasNavigatedToQuiz = true;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    context.push(
+                      '/subject/${widget.subjectId}/module/${widget.moduleId}/quiz',
+                    );
+                    _reviewIndex = 0;
+                  }
+                });
+              }
+            });
           }
         },
       );
@@ -155,80 +167,64 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
           loading: () => const Text('Loading module...'),
           error: (_, __) => const Text('Module'),
           data: (modules) {
-            final module = modules.firstWhere(
-              (m) => m.id == moduleId,
-            );
-            return Text( 'Module: ${module.title}');
+            final module = modules.firstWhere((m) => m.id == moduleId);
+            return Text('Module: ${module.title}');
           },
         ),
         centerTitle: true,
       ),
-      floatingActionButton: Row(
-        children: [
-          const SizedBox(width: 35),
-          if (!isSupervisor)
-            FloatingActionButton(
-              tooltip: 'Upload Files',
-              heroTag: 'Upload-file-tag',
-              child: const Icon(Icons.upload_file_outlined),
-              onPressed: () {
-                // This is temporary just to show proof of work during individual presentations
-                // TODO: Update to refer to the student's user profile in a different collection
-                context.push('/uploadfile');
-              },
-            ),
-          const Spacer(),
-          FloatingActionButton(
-            tooltip: 'Chat history',
-            heroTag: 'Chat-history-tag',
-            child: const Icon(Icons.chat),
-            onPressed: () {
-          
-              if (widget.studentUid == null) {
-                context.push(
-                  '/subject/$subjectId/module/$moduleId/chat',
-                );
-              } else {
-                context.push(
-                  '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/$subjectId/module/$moduleId/chat',
-                );
-              }
-            },
-          ),
-        ],
-      ), 
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Chat history',
+        heroTag: 'Chat-history-tag',
+        child: const Icon(Icons.chat),
+        onPressed: () {
+          if (widget.studentUid == null) {
+            context.push('/subject/$subjectId/module/$moduleId/chat');
+          } else {
+            context.push(
+              '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/$subjectId/module/$moduleId/chat',
+            );
+          }
+        },
+      ),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (!isSupervisor) ...[
-              ref.watch(quizStatusProvider((
-                studentId: widget.studentUid ?? profileProvider.uid,
-                moduleId: moduleId,
-              ))).when(
-                loading: () => const SizedBox(), 
-                error: (_, __) => const SizedBox(),
-                data: (status) {
-                  if (status.toLowerCase() == 'completed') {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ElevatedButton.icon(
-                          icon: const Icon(Icons.quiz),
-                          label: const Text('Retake Quiz'),
-                          onPressed: () {
-                            context.push('/subject/$subjectId/module/$moduleId/quiz');
-                            _reviewIndex = 0;
-                          },
-                        ),              
-                      ],
-                    );
-                  } else {
-                    return const SizedBox();
-                  }
-                },
-              ),
+              ref
+                  .watch(
+                    quizStatusProvider((
+                      studentId: widget.studentUid ?? profileProvider.uid,
+                      moduleId: moduleId,
+                    )),
+                  )
+                  .when(
+                    loading: () => const SizedBox(),
+                    error: (_, __) => const SizedBox(),
+                    data: (status) {
+                      if (status.toLowerCase() == 'completed') {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ElevatedButton.icon(
+                              icon: const Icon(Icons.quiz),
+                              label: const Text('Retake Quiz'),
+                              onPressed: () {
+                                context.push(
+                                  '/subject/$subjectId/module/$moduleId/quiz',
+                                );
+                                _reviewIndex = 0;
+                              },
+                            ),
+                          ],
+                        );
+                      } else {
+                        return const SizedBox();
+                      }
+                    },
+                  ),
             ] else ...[
               const Text(
                 'Quiz Result',
@@ -236,168 +232,190 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
               ),
               const SizedBox(height: 16),
 
-              ref.watch(moduleResultProvider((
-                studentUid: widget.studentUid ?? profileProvider.uid,
-                moduleId: moduleId,)
-              )).when(
-                loading: () => const CircularProgressIndicator(),
-                error: (e, _) => Text('Error: $e'),
-                data: (doc) {
-                  if (doc == null) {
-                    return const Card(
-                      child: ListTile(
-                        leading: Icon(Icons.hourglass_empty),
-                        title: Text('Not completed'),
-                        subtitle: Text('Student has not taken this quiz yet'),
-                      ),
-                    );
-                  }
+              ref
+                  .watch(
+                    moduleResultProvider((
+                      studentUid: widget.studentUid ?? profileProvider.uid,
+                      moduleId: moduleId,
+                    )),
+                  )
+                  .when(
+                    loading: () => const CircularProgressIndicator(),
+                    error: (e, _) => Text('Error: $e'),
+                    data: (doc) {
+                      if (doc == null) {
+                        return const Card(
+                          child: ListTile(
+                            leading: Icon(Icons.hourglass_empty),
+                            title: Text('Not completed'),
+                            subtitle: Text(
+                              'Student has not taken this quiz yet',
+                            ),
+                          ),
+                        );
+                      }
 
-                  final data = doc.data()!;
-                  final score = data['score'];
-                  final total = data['totalQuestions'];
+                      final data = doc.data()!;
+                      final score = data['score'];
+                      final total = data['totalQuestions'];
 
-                  return Card(
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: ListTile(
-                      leading: const Icon(Icons.check_circle_outline),
-                      title: Text('Score: $score / $total'),
-                      subtitle: const Text('Quiz completed'),
-                    ),
-                  );
-                },
-              ),
+                      return Card(
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ListTile(
+                          leading: const Icon(Icons.check_circle_outline),
+                          title: Text('Score: $score / $total'),
+                          subtitle: const Text('Quiz completed'),
+                        ),
+                      );
+                    },
+                  ),
             ],
             const SizedBox(height: 24),
             if (!isSupervisor)
               questionsAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Text('Error loading questions: $e'),
-              data: (questions) {
-                return exampleNumAsync.when(
-                  loading: () => const SizedBox(),
-                  error: (_, __) => const SizedBox(),
-                  data: (qIndex) {
-                    if (qIndex < 0) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                
-                    final currentIndex = _reviewIndex >= 0 
-                        ? _reviewIndex 
-                        : (qIndex >= questions.length ? questions.length - 1 : qIndex);
-
-                    final question = questions[currentIndex];
-
-                    if (_lastQuestionIndex != currentIndex) {
-                      _selectedIndex = null;
-                      _lastQuestionIndex = currentIndex;
-                    }
-
-                    Color? getButtonColor(int index) {
-                      if (_selectedIndex == null) return null;
-                      if (index == _selectedIndex) {
-                        return index == question.correctIndex ? Colors.green : Colors.red;
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (e, _) => Text('Error loading questions: $e'),
+                data: (questions) {
+                  return exampleNumAsync.when(
+                    loading: () => const SizedBox(),
+                    error: (_, __) => const SizedBox(),
+                    data: (qIndex) {
+                      if (qIndex < 0) {
+                        return const Center(child: CircularProgressIndicator());
                       }
-                      if (_selectedIndex != question.correctIndex && index == question.correctIndex) {
-                        return Colors.green.withOpacity(0.5);
-                      }
-                      
-                      return null;
-                    }
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Question ${currentIndex + 1}',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                      final currentIndex = _reviewIndex >= 0
+                          ? _reviewIndex
+                          : (qIndex >= questions.length
+                                ? questions.length - 1
+                                : qIndex);
+
+                      final question = questions[currentIndex];
+
+                      if (_lastQuestionIndex != currentIndex) {
+                        _selectedIndex = null;
+                        _lastQuestionIndex = currentIndex;
+                      }
+
+                      Color? getButtonColor(int index) {
+                        if (_selectedIndex == null) return null;
+                        if (index == _selectedIndex) {
+                          return index == question.correctIndex
+                              ? Colors.green
+                              : Colors.red;
+                        }
+                        if (_selectedIndex != question.correctIndex &&
+                            index == question.correctIndex) {
+                          return Colors.green.withOpacity(0.5);
+                        }
+
+                        return null;
+                      }
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Question ${currentIndex + 1}',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
+                          const SizedBox(height: 12),
 
-                        Text(
-                          question.question,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        const SizedBox(height: 20),
+                          Text(
+                            question.question,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 20),
 
-                        ...List.generate(question.options.length, (index) {
-                          final isSelected = _selectedIndex == index;
-                          final isCorrect = index == question.correctIndex;
+                          ...List.generate(question.options.length, (index) {
+                            final isSelected = _selectedIndex == index;
+                            final isCorrect = index == question.correctIndex;
 
-                          return Container(
-                            width: double.infinity,
-                            margin: const EdgeInsets.symmetric(vertical: 6),
-                            child: ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.resolveWith<Color?>((states) {
-                                  return getButtonColor(index);
-                                }),
-                              ),
-                              onPressed: _selectedIndex != null
-                                  ? null
-                                  : () {
-                                      setState(() {
-                                        _selectedIndex = index;
-                                        if (_lastQuestionIndex == questions.length - 1) {
-                                          _isLastQuestionAnswered = true;
+                            return Container(
+                              width: double.infinity,
+                              margin: const EdgeInsets.symmetric(vertical: 6),
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.resolveWith<Color?>(
+                                        (states) {
+                                          return getButtonColor(index);
+                                        },
+                                      ),
+                                ),
+                                onPressed: _selectedIndex != null
+                                    ? null
+                                    : () {
+                                        setState(() {
+                                          _selectedIndex = index;
+                                          if (_lastQuestionIndex ==
+                                              questions.length - 1) {
+                                            _isLastQuestionAnswered = true;
 
-                                          final startQuiz = ref.read(quizStartProvider((
-                                            studentId: profileProvider.uid,
-                                            moduleId: widget.moduleId,
-                                          ))).value;
+                                            final startQuiz = ref
+                                                .read(
+                                                  quizStartProvider((
+                                                    studentId:
+                                                        profileProvider.uid,
+                                                    moduleId: widget.moduleId,
+                                                  )),
+                                                )
+                                                .value;
 
-                                          if (startQuiz == true && !_hasNavigatedToQuiz && !_completed) {
-                                            _hasNavigatedToQuiz = true;
-                                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                                              if (mounted) {
-                                                context.push(
-                                                  '/subject/${widget.subjectId}/module/${widget.moduleId}/quiz',
-                                                );
-                                                _reviewIndex = 0;
-                                              }
-                                            });
+                                            if (startQuiz == true &&
+                                                !_hasNavigatedToQuiz &&
+                                                !_completed) {
+                                              _hasNavigatedToQuiz = true;
+                                              WidgetsBinding.instance
+                                                  .addPostFrameCallback((_) {
+                                                    if (mounted) {
+                                                      context.push(
+                                                        '/subject/${widget.subjectId}/module/${widget.moduleId}/quiz',
+                                                      );
+                                                      _reviewIndex = 0;
+                                                    }
+                                                  });
+                                            }
                                           }
-                                        }
-                                      });
-                                    },
-                              child: Text(question.options[index]),
+                                        });
+                                      },
+                                child: Text(question.options[index]),
+                              ),
+                            );
+                          }),
+                          if (_reviewIndex >= 0)
+                            Container(
+                              width: double.infinity,
+                              margin: const EdgeInsets.only(top: 30),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    if (_reviewIndex! < questions.length - 1) {
+                                      _reviewIndex = _reviewIndex! + 1;
+                                    } else {
+                                      _reviewIndex = -1;
+                                    }
+                                  });
+                                },
+                                child: Text(
+                                  _reviewIndex! < questions.length - 1
+                                      ? 'Next'
+                                      : 'Finish Review',
+                                ),
+                              ),
                             ),
-                          );
-                        }),
-                        if (_reviewIndex >= 0)
-                        Container(
-                          width: double.infinity,
-                          margin: const EdgeInsets.only(top: 30),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                if (_reviewIndex! < questions.length - 1) {
-                                  _reviewIndex = _reviewIndex! + 1;
-                                } else {
-                                  _reviewIndex = -1; 
-                                }
-                              });
-                            },
-                            child: Text(
-                              _reviewIndex! < questions.length - 1 ? 'Next' : 'Finish Review',
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-            
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
           ],
         ),
       ),

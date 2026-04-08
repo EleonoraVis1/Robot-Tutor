@@ -1,6 +1,7 @@
 // Flutter imports
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 // Flutter external package importer
 import 'package:csc322_starter_app/util/logging/app_logger.dart';
@@ -28,10 +29,10 @@ class _ScreenUploadFileState extends ConsumerState<ScreenUploadfile> {
   final _formKey = GlobalKey<FormState>();
   var _subjectName = "";
   var _gradeLevel = "";
-  var _sourceType = "";
 
   final ImagePicker _picker = ImagePicker();
   XFile? _pickedImage;
+  Uint8List? _webImage;
 
   ////////////////////////////////////////////////////////////////
   // Runs the following code once upon initialization
@@ -65,8 +66,10 @@ class _ScreenUploadFileState extends ConsumerState<ScreenUploadfile> {
       );
 
       if (image != null) {
+        final bytes = await image.readAsBytes();
         setState(() {
           _pickedImage = image;
+          _webImage = bytes;
         });
       }
     } catch (e) {
@@ -74,29 +77,22 @@ class _ScreenUploadFileState extends ConsumerState<ScreenUploadfile> {
     }
   }
 
-  Future<void> _uploadInfo(String name, String grade, String type, XFile imageFile) async {
+  Future<void> _uploadInfo(
+    String courseName,
+    String glevel,
+    XFile imageFiles,
+  ) async {
     try {
-      final path = 'raw-uploads/${name}_grade${grade}/moduleFile.png';
+      final path = 'raw-uploads/${imageFiles.name}';
       final ref = FirebaseStorage.instance.ref().child(path);
 
-      File fileToUpload = File(imageFile.path);
-      Map<String, String> customMetadata = {};
+      File fileToUpload = File(imageFiles.path);
 
-      try {
-        final existingMetadata = await ref.getMetadata();
-        customMetadata = existingMetadata.customMetadata ?? <String, String>{};
-      } catch (e) {
-        AppLogger.error("No metadata");
-      }
-      
-      await ref.putFile(
-        fileToUpload,
-        SettableMetadata(customMetadata: customMetadata)
-      );
+      await ref.putFile(fileToUpload);
 
       if (mounted) {
         Navigator.of(context).pop();
-      } 
+      }
     } catch (e) {
       AppLogger.error(e.toString());
     }
@@ -169,26 +165,10 @@ class _ScreenUploadFileState extends ConsumerState<ScreenUploadfile> {
                         onSaved: (value) => _gradeLevel = value!,
                       ),
                       const SizedBox(height: 8),
-                      TextFormField(
-                        maxLength: 254,
-                        decoration: const InputDecoration(
-                          labelText: 'Source Type',
-                        ),
-                        validator: (value) {
-                          if (value == null ||
-                              value.isEmpty ||
-                              value.trim().length < 3 ||
-                              value.trim().length > 254) {
-                            return 'Must be between 3 and 254 characters';
-                          }
-                        },
-                        onSaved: (value) => _sourceType = value!,
-                      ),
-                      const SizedBox(height: 8),
                       GestureDetector(
                         onTap: _pickImage,
                         child: Container(
-                          height: 150,
+                          height: 100,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: Colors.grey[400]!),
@@ -197,20 +177,32 @@ class _ScreenUploadFileState extends ConsumerState<ScreenUploadfile> {
                               ? const Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.photo, size: 40, color: Colors.grey),
-                                    Text("Tap to select image", style: TextStyle(color: Colors.grey)),
+                                    Icon(
+                                      Icons.photo,
+                                      size: 20,
+                                      color: Colors.grey,
+                                    ),
+                                    Text(
+                                      "Tap to select image",
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
                                   ],
                                 )
                               : ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
-                                  child: Image.file(
-                                    File(_pickedImage!.path),
+                                  child: Image.memory(
+                                    _webImage!,
                                     fit: BoxFit.cover,
                                     width: double.infinity,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Center(
+                                        child: Text("Could not load preview to this image"),
+                                      );
+                                    },
                                   ),
                                 ),
                         ),
-                      ),    
+                      ),
                       const SizedBox(height: 18),
                       Row(
                         children: [
@@ -232,7 +224,26 @@ class _ScreenUploadFileState extends ConsumerState<ScreenUploadfile> {
                             alignment: Alignment.centerRight,
                             child: ElevatedButton.icon(
                               onPressed: () {
-                                _uploadInfo(_subjectName, _gradeLevel, _sourceType, _pickedImage as XFile);
+                                if (_formKey.currentState!.validate()) {
+                                  _formKey.currentState!.save();
+
+                                  if (_pickedImage == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Please select an image first',
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  _uploadInfo(
+                                    _subjectName,
+                                    _gradeLevel,
+                                    _pickedImage!,
+                                  );
+                                }
                               },
                               icon: const Icon(Icons.send),
                               label: const Text("Upload"),
