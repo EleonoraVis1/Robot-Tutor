@@ -26,6 +26,7 @@ class _ScreenAddStudentSupervisorState extends ConsumerState<ScreenAddStudentSup
   bool _isInit = true;
   final _formKey = GlobalKey<FormState>();
   var _userEmail = "";
+  var _knownAs = "";
   
 
   ////////////////////////////////////////////////////////////////
@@ -82,6 +83,7 @@ class _ScreenAddStudentSupervisorState extends ConsumerState<ScreenAddStudentSup
       'supervisorUid': supervisorUid,
       'supervisorFullName': supervisorFullName,
       'email': supervisorEmail,
+      'knownAs': _knownAs,
       'status': 'Pending',
       'createdAt': FieldValue.serverTimestamp(),
     });
@@ -148,6 +150,23 @@ class _ScreenAddStudentSupervisorState extends ConsumerState<ScreenAddStudentSup
                             return null;
                           },
                           onSaved: (value) => _userEmail = value!,
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          maxLength: 254,
+                          decoration: const InputDecoration(
+                            labelText: 'Know as? (Mother, Father, Teacher)'
+                          ),
+                          validator: (value) {
+                            if (value == null ||
+                                value.isEmpty ||
+                                value.trim().length < 3 ||
+                                value.trim().length > 254) {
+                              return 'Must be between 3 and 254 characters';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) => _knownAs = value!,
                         ),
                         const SizedBox(height: 18),
                         Row(

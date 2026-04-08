@@ -3,6 +3,7 @@ import 'dart:async';
 
 // Flutter external package imports
 import 'package:csc322_starter_app/main.dart';
+import 'package:csc322_starter_app/models/invite.dart';
 import 'package:csc322_starter_app/providers/provider_supervisors.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -71,6 +72,7 @@ class _ScreenStudentSupervisorsState extends ConsumerState<ScreenStudentSupervis
               final supervisor = supervisors[index];
               final name = supervisor['fullName'] ?? 'No Name';
               final email = supervisor['email'] ?? 'No Email';
+              final knownAs = supervisor['knownAs'] ?? 'N/A';
 
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 6),
@@ -101,6 +103,23 @@ class _ScreenStudentSupervisorsState extends ConsumerState<ScreenStudentSupervis
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                   subtitle: Text(email),
+                  trailing: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Known As:',
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                      Text(
+                        knownAs,
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               );
             },

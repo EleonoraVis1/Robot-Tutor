@@ -96,6 +96,7 @@ class _ScreenInvitesState extends ConsumerState<ScreenInvites> {
       'uid': supervisorUid,
       'fullName': invite.supervisorFullName,
       'email': invite.supervisorEmail,
+      'knownAs': invite.knownAs,
       'addedAt': FieldValue.serverTimestamp(),
     });
 

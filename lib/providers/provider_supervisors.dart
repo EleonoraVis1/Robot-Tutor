@@ -34,7 +34,8 @@ final studentSupervisorsProvider =
       return {
         'id': supervisorId,
         'fullName': data['fullName'] ?? 'No Name', 
-        'email': data['email'] ?? 'No Email',      
+        'email': data['email'] ?? 'No Email',     
+        'knownAs': data['knownAs'] ?? 'N/A', 
         'photoUrl': photoUrl,
       };
     });

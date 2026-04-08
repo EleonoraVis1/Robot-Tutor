@@ -37,6 +37,7 @@ final invitesProvider = StreamProvider<List<Invite>>((ref) {
       final supervisorFullName = data['supervisorFullName'] as String;
       final statusStr = data['status'] as String;
       final supervisorEmail = data['email'] as String;
+      final knownAs = data['knownAs'] as String;
 
       String? photoUrl;
       try {
@@ -54,6 +55,7 @@ final invitesProvider = StreamProvider<List<Invite>>((ref) {
           supervisorUid: supervisorUid,
           supervisorFullName: supervisorFullName,
           supervisorEmail: supervisorEmail,
+          knownAs: knownAs,
           status: Invite.statusFromString(statusStr),
           photoUrl: photoUrl,
         ),

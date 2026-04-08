@@ -7,6 +7,7 @@ class Invite {
   final String supervisorFullName;
   final String supervisorEmail;
   final InviteStatus status;
+  final String knownAs;
   final String? photoUrl; 
 
   const Invite({
@@ -16,6 +17,7 @@ class Invite {
     required this.supervisorFullName,
     required this.supervisorEmail,
     required this.status,
+    required this.knownAs,
     this.photoUrl,
   });
 

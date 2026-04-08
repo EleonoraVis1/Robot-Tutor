@@ -91,6 +91,8 @@ class WidgetAppDrawer extends StatelessWidget {
                   }
                 ),
               if (!isSupervisor)
+                Divider(),
+              if (!isSupervisor)
                 ListTile(
                   leading: Icon(Icons.person), 
                   title: Text('Supervisors'), 
@@ -99,8 +101,6 @@ class WidgetAppDrawer extends StatelessWidget {
                     context.push(ScreenStudentSupervisors.routeName);
                   }
                 ),
-              if (!isSupervisor)
-                Divider(),
               if (!isSupervisor)
                 ListTile(
                   leading: Icon(Icons.forward_to_inbox), 
