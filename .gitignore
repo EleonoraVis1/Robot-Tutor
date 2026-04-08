@@ -48,9 +48,19 @@ windows/flutter/generated_plugin_registrant.h
 windows/flutter/generated_plugins.cmake
 # Local API secrets
 secrets/gemini_api_key.txt
+secrets/openai_api_key.txt
+secrets/*.json
+secrets/*.txt
 
 
 serviceAccountKey.json
 *.json.key
 .env
-gomath_g4_ca.pdfsecrets/*.json
+gomath_g4_ca.pdf
+
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Local logs
+logs/
