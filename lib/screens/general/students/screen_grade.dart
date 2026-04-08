@@ -16,14 +16,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // StateFUL widget which manages state. Simply initializes the state object.
 //////////////////////////////////////////////////////////////////////////
 class ScreenGrade extends ConsumerStatefulWidget {
- // static const routeName = '/student/:studentUid/subject/:subjectId';
+  // static const routeName = '/student/:studentUid/subject/:subjectId';
 
   final String subjectId;
   final int gradeId;
   final String? studentUid;
 
-  const ScreenGrade({required this.subjectId, required this.gradeId, required this.studentUid, super.key});
-
+  const ScreenGrade({
+    required this.subjectId,
+    required this.gradeId,
+    required this.studentUid,
+    super.key,
+  });
 
   @override
   ConsumerState<ScreenGrade> createState() => _ScreenGradeState();
@@ -58,8 +62,16 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
   ////////////////////////////////////////////////////////////////
   Future<void> _init() async {}
 
-  Future<void> startModule(String studentId, String moduleId, String studentName) async {
-    final moduleRef = FirebaseFirestore.instance.collection('user_profiles').doc(studentId).collection('modules').doc(moduleId);
+  Future<void> startModule(
+    String studentId,
+    String moduleId,
+    String studentName,
+  ) async {
+    final moduleRef = FirebaseFirestore.instance
+        .collection('user_profiles')
+        .doc(studentId)
+        .collection('modules')
+        .doc(moduleId);
     final messagesRef = moduleRef.collection('messages');
 
     final moduleSnapshot = await moduleRef.get();
@@ -89,28 +101,36 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
   }
 
   Future<void> exitModule(String studentId) async {
-    final activeModuleRef = FirebaseFirestore.instance.collection('user_profiles').doc(studentId);
-    await activeModuleRef.set({'active_module_id': ''}, SetOptions(merge: true));
+    final activeModuleRef = FirebaseFirestore.instance
+        .collection('user_profiles')
+        .doc(studentId);
+    await activeModuleRef.set({
+      'active_module_id': '',
+    }, SetOptions(merge: true));
   }
 
   @override
   Widget build(BuildContext context) {
     final profileProvider = ref.watch(providerUserProfile);
-    final isSupervisor = profileProvider.dataLoaded && profileProvider.userType == UserType.SUPERVISOR;
+    final isSupervisor =
+        profileProvider.dataLoaded &&
+        profileProvider.userType == UserType.SUPERVISOR;
 
     final studentId = isSupervisor ? widget.studentUid : profileProvider.uid;
 
     final modulesAsync = studentId != null
-        ? ref.watch(modulesByGradeProvider((subjectId: widget.subjectId, gradeId: widget.gradeId)))
+        ? ref.watch(
+            modulesByGradeProvider((
+              subjectId: widget.subjectId,
+              gradeId: widget.gradeId,
+            )),
+          )
         : const AsyncValue.data([]);
 
     return modulesAsync.when(
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
-      error: (e, _) => Scaffold(
-        body: Center(child: Text('Error: $e')),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
       data: (modules) {
         Widget buildModuleCard(Module module, String status) {
           Color? badgeColor;
@@ -132,18 +152,33 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
           }
 
           return Card(
-            elevation: 3,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            elevation: 6,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(width: 2, color: Colors.black),
+            ),
             child: InkWell(
               borderRadius: BorderRadius.circular(20),
               onTap: () async {
                 try {
-                  if (profileProvider.dataLoaded && !isSupervisor && studentId != null) {
-                    await startModule(studentId, module.id, profileProvider.wholeName);
-                    await context.push('/subject/${widget.subjectId}/grade/${widget.gradeId}/module/${module.id}');
+                  if (profileProvider.dataLoaded &&
+                      !isSupervisor &&
+                      studentId != null) {
+                    await startModule(
+                      studentId,
+                      module.id,
+                      profileProvider.wholeName,
+                    );
+                    await context.push(
+                      '/subject/${widget.subjectId}/grade/${widget.gradeId}/module/${module.id}',
+                    );
                     await exitModule(studentId);
-                  } else if (profileProvider.dataLoaded && isSupervisor && studentId != null) {
-                    context.push('${ScreenHomeSupervisor.routeName}/student/$studentId/subject/${widget.subjectId}/grade/${widget.gradeId}/module/${module.id}');
+                  } else if (profileProvider.dataLoaded &&
+                      isSupervisor &&
+                      studentId != null) {
+                    context.push(
+                      '${ScreenHomeSupervisor.routeName}/student/$studentId/subject/${widget.subjectId}/grade/${widget.gradeId}/module/${module.id}',
+                    );
                   }
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -152,22 +187,71 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
                 }
               },
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                child: Row(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 16,
+                ),
+                child: Column(
                   children: [
-                    const Icon(Icons.view_module_outlined, color: Colors.blueGrey, size: 28),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Text(module.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.view_module_outlined,
+                          color: Colors.blueGrey[600],
+                          size: 28,
+                        ),
+                        const SizedBox(width: 16),
+
+                        Expanded(
+                          child: Text(
+                            module.title,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Grade ' + module.grade_level.toString(),
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: Colors.blueGrey,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
                     if (badgeText.isNotEmpty)
                       Container(
-                        margin: const EdgeInsets.only(right: 12),
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(color: badgeColor, borderRadius: BorderRadius.circular(12)),
-                        child: Text(badgeText, style: const TextStyle(fontSize: 10, color: Colors.white)),
+                        margin: const EdgeInsets.only(right: 230),
+                        alignment: Alignment.bottomLeft,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: badgeColor,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          badgeText,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                    const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black38),
                   ],
                 ),
               ),
@@ -176,7 +260,10 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
         }
 
         return Scaffold(
-          appBar: AppBar(title: Text('Grade ${widget.gradeId}'), centerTitle: true),
+          appBar: AppBar(
+            title: Text('Grade ${widget.gradeId}'),
+            centerTitle: true,
+          ),
           body: ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: modules.length,
@@ -186,7 +273,9 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
 
               String status = 'not_started';
               if (studentId != null) {
-                final studentModulesAsync = ref.watch(studentModulesProvider(studentId));
+                final studentModulesAsync = ref.watch(
+                  studentModulesProvider(studentId),
+                );
                 return studentModulesAsync.when(
                   loading: () => const SizedBox(),
                   error: (_, __) => const SizedBox(),
@@ -194,7 +283,9 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
                     final moduleData = studentModules[module.id];
                     if (moduleData != null) {
                       final quizStatus = moduleData['quiz_status'] ?? '';
-                      status = quizStatus == 'completed' ? 'completed' : 'started';
+                      status = quizStatus == 'completed'
+                          ? 'completed'
+                          : 'started';
                     }
                     return buildModuleCard(module, status);
                   },

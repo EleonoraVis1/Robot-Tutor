@@ -227,7 +227,7 @@ class _MyAppState extends State<MyApp> {
                     subjectId: subjectId,
                     studentUid: studentUid,
                   );
-                },
+                }, 
                 routes: [
                   // Grade layer
                   GoRoute(
