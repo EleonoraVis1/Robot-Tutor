@@ -21,7 +21,7 @@ import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_student_supervisors.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_subject.dart';
-import 'package:csc322_starter_app/screens/general/students/screen_test_bluetooth.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_bluetooth_pairing.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_uploadfile.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistory_supervisor.dart';
@@ -40,7 +40,6 @@ import 'screens/settings/screen_profile.dart';
 import 'providers/provider_user_profile.dart';
 import 'screens/settings/screen_settings.dart';
 import 'providers/provider_auth.dart';
-import 'util/file/util_file.dart';
 import 'firebase_options.dart';
 import 'theme/theme.dart';
 
@@ -67,9 +66,6 @@ Future<void> main() async {
 
   // Initialize Firebase with the default options
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  // Initialize the app directory
-  await UtilFile.init();
 
   // Get references to providers that will be needed in other providers
   final ProviderUserProfile userProfileProvider = providerContainer.read(
@@ -113,7 +109,7 @@ class _MyAppState extends State<MyApp> {
     routes: [
       GoRoute(
         path: '/test_bluetooth',
-        builder: (context, state) => ScreenTestBluetooth(),
+        builder: (context, state) => const ScreenBluetoothPairing(),
       ),
       GoRoute(
         path: ScreenLoginValidation.routeName,
