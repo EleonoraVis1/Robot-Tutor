@@ -7,6 +7,7 @@ Triggered by Eventarc when a PDF lands in raw-uploads/
 """
 import logging
 import os
+import re
 import sys
 import tempfile
 import time
@@ -42,6 +43,59 @@ def _get_blob_with_retry(bucket, object_path: str, attempts: int = 5, delay_seco
             time.sleep(delay_seconds)
 
     raise FileNotFoundError(f"GCS object not found after {attempts} attempts: {object_path}")
+
+
+def _slugify(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "_", value.lower()).strip("_")
+
+
+def _build_module_document(
+    *,
+    module_id: str,
+    title: str,
+    grade: str,
+    subject_name: str,
+    concept_doc: dict,
+    questions_doc: dict,
+    object_path: str,
+) -> dict:
+    instructional_content = concept_doc.get("instructional_content", {})
+    title = title or concept_doc.get("title") or Path(object_path).stem.replace("_", " ").title()
+
+    try:
+        grade_level = int(str(grade).strip())
+    except (TypeError, ValueError):
+        grade_level = 0
+
+    return {
+        "module_id": module_id,
+        "subject_id": "custom",
+        "uploaded_subject_name": subject_name,
+        "title": title,
+        "description": instructional_content.get("text", f"Custom uploaded lesson: {title}")[:500],
+        "grade_level": grade_level,
+        "standard_tags": concept_doc.get("standard_tags", []),
+        "session_mode": "teach_then_quiz",
+        "instructional_content": {
+            "text": instructional_content.get("text", ""),
+            "concepts": instructional_content.get("concepts", []),
+            "example_walkthrough": instructional_content.get("example_walkthrough", ""),
+        },
+        "prerequisites": [],
+        "source": "pipeline",
+        "created_at": datetime.now(timezone.utc),
+        "citation": concept_doc.get("citation", {}),
+        "quiz_questions": {
+            "guided": questions_doc.get("guided", []),
+            "independent": questions_doc.get("independent", []),
+            "word_problems": questions_doc.get("word_problems", []),
+        },
+        "_meta": {
+            "lesson_id": concept_doc.get("lesson_id", ""),
+            "object_path": object_path,
+            "generated_by": "cloudrun.pipeline_job",
+        },
+    }
 
 
 def main():
@@ -81,7 +135,7 @@ def main():
     blob = _get_blob_with_retry(bucket, object_path)
     meta = blob.metadata or {}
 
-    subject = meta.get("subject_name") or meta.get("subject") or "math"
+    subject = meta.get("subject_name") or meta.get("subject") or "Custom Upload"
     grade = meta.get("grade_level") or meta.get("grade") or "4"
     source_type = meta.get("source_type", "worksheet")
     chapter = meta.get("chapter", "0")
@@ -111,36 +165,25 @@ def main():
             log.info("Parsing PDF...")
             from lib.parser.parse_upload import process_upload
 
-            process_upload(
+            concept_doc, questions_doc = process_upload(
                 input_path=pdf_path,
                 out_dir=out_dir,
-                subject=subject,
-                grade=grade,
-                source_type=source_type,
             )
 
-            # Find the output lesson dir (parse_upload creates a slug subdir)
-            lesson_dirs = [d for d in out_dir.iterdir() if d.is_dir()]
-            if not lesson_dirs:
-                raise RuntimeError("parse_upload produced no output directory")
-            lesson_dir = lesson_dirs[0]
-
-            # --- 6. Merge ---
-            log.info("Merging YAML...")
-            from lib.parser.merge_lesson_yaml import merge_lesson_dir
-
-            merge_lesson_dir(lesson_dir)
-
-            # --- 7. Seed Firestore ---
-            module_path = lesson_dir / "module.yaml"
-            if not module_path.exists():
-                raise RuntimeError("module.yaml not created by merge step")
-
-            module = yaml.safe_load(module_path.read_text(encoding="utf-8"))
-            module_id = module.get("module_id", slug)
+            # --- 6. Seed Firestore ---
+            module_id = f"custom_{_slugify(concept_doc.get('lesson_id') or slug)}"
+            module = _build_module_document(
+                module_id=module_id,
+                title=concept_doc.get("title", ""),
+                grade=grade,
+                subject_name=subject,
+                concept_doc=concept_doc,
+                questions_doc=questions_doc,
+                object_path=object_path,
+            )
 
             log.info("Seeding Firestore: modules/%s", module_id)
-            db.collection("modules").document(module_id).set(module)
+            db.collection("modules").document(module_id).set(module, merge=True)
 
             # --- 8. Move GCS object to processed/ ---
             new_path = object_path.replace("raw-uploads/", "processed/", 1)
