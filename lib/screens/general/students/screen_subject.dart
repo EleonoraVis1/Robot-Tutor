@@ -125,21 +125,7 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
                 ),
               );
             },
-          ),
-          floatingActionButton: Row(
-            children: [
-            const Spacer(),
-            if (!isSupervisor)
-              FloatingActionButton(
-                tooltip: 'Upload Files',
-                heroTag: 'Upload-file-tag',
-                child: const Icon(Icons.upload_file_outlined),
-                onPressed: () {
-                  context.push('/uploadfile');
-                },
-              ),
-            ],
-          )          
+          )       
         );
       },
     );

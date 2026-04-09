@@ -197,10 +197,16 @@ class _ScreenBluetoothPairingState
               // Pairing visual + angle readouts
               if (challenge != null && current != null) ...[
                 Center(
-                  child: _buildPairingVisual(
-                    current: current,
-                    challenge: challenge,
-                    tolerance: _toleranceRadians,
+                  child: Card(
+                    color: Colors.grey.shade200,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: _buildPairingVisual(
+                        current: current,
+                        challenge: challenge,
+                        tolerance: _toleranceRadians,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -235,28 +241,35 @@ class _ScreenBluetoothPairingState
               // Pre-start UI
               if (!_started) ...[
                 if (kIsWeb) ...[
-                  const Spacer(),
-                  Icon(Icons.smart_toy_outlined,
-                      size: 80, color: theme.colorScheme.primary),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Ready to pair with your robot',
-                    style: theme.textTheme.titleLarge,
-                    textAlign: TextAlign.center,
+                  Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.smart_toy_outlined,
+                              size: 80, color: theme.colorScheme.primary),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Ready to pair with your robot',
+                            style: theme.textTheme.titleLarge,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Press Connect to open the device picker.',
+                            style: theme.textTheme.bodyMedium,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 32),
+                          FilledButton.icon(
+                            onPressed: _runWeb,
+                            icon: const Icon(Icons.bluetooth),
+                            label: const Text('Connect'),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Press Connect to open the device picker.',
-                    style: theme.textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 32),
-                  FilledButton.icon(
-                    onPressed: _runWeb,
-                    icon: const Icon(Icons.bluetooth),
-                    label: const Text('Connect'),
-                  ),
-                  const Spacer(),
                 ] else ...[
                   // Mobile: scan results list
                   if (_discovered.isEmpty) ...[

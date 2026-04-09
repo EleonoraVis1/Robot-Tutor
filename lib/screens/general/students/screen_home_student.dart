@@ -69,9 +69,23 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
   Widget build(BuildContext context) {
     final profileProvider = ref.watch(providerUserProfile);
 
-    return Scaffold( 
+    return Scaffold(
       appBar: widget.supervisorView ? WidgetPrimaryAppBar(title: const Text('Subjects')) : null,
-      body: _buildStudentView(profileProvider),      
+      body: _buildStudentView(profileProvider),
+      floatingActionButton: Row(
+        children: [
+          const Spacer(),
+          if (!widget.supervisorView)
+            FloatingActionButton(
+              tooltip: 'Upload Files',
+              heroTag: 'Upload-file-tag',
+              child: const Icon(Icons.upload_file_outlined),
+              onPressed: () {
+                context.push('/uploadfile');
+              },
+            ),
+        ],
+      ),
     );
   }
 

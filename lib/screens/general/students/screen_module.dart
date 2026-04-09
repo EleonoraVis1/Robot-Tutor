@@ -403,25 +403,6 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
                               ),
                             ),
                           ),
-                        if (_reviewIndex >= 0)
-                        Container(
-                          width: double.infinity,
-                          margin: const EdgeInsets.only(top: 30),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                if (_reviewIndex! < questions.length - 1) {
-                                  _reviewIndex = _reviewIndex! + 1;
-                                } else {
-                                  _reviewIndex = -1; 
-                                }
-                              });
-                            },
-                            child: Text(
-                              _reviewIndex! < questions.length - 1 ? 'Next' : 'Finish Review',
-                            ),
-                          ),
-                        ),
                       ],
                     );
                   },
