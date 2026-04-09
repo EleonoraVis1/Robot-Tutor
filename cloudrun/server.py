@@ -81,6 +81,9 @@ def handle_event():
         from cloudrun.pipeline_job import main
         main()
         return "OK", 200
+    except FileNotFoundError as e:
+        log.info("Skipping stale or missing object event: %s", e)
+        return "Skipped: object no longer exists", 200
     except SystemExit as e:
         code = e.code if hasattr(e, 'code') else 1
         return ("OK" if code == 0 else "Pipeline failed"), (200 if code == 0 else 500)
