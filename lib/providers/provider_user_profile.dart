@@ -13,6 +13,7 @@
 import 'dart:io';
 
 // Flutter external package imports
+import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 
@@ -129,10 +130,11 @@ class ProviderUserProfile extends ChangeNotifier {
     if (!status.isGranted) {
       await Permission.microphone.request();
     }
-
-    status = await Permission.storage.status;
-    if (!status.isGranted) {
-      await Permission.storage.request();
+    if (!kIsWeb) {
+      status = await Permission.storage.status;
+      if (!status.isGranted) {
+        await Permission.storage.request();
+      }
     }
   }
 

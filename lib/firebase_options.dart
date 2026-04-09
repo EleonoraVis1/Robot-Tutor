@@ -41,12 +41,12 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyA8Tz5sJNOkqIBs_c8NVDf0ftS29DlKO5Y',
-    appId: '1:835052484226:web:f02af749bd94b1b698669b',
-    messagingSenderId: '835052484226',
-    projectId: 'robot-tutor',
-    authDomain: 'robot-tutor.firebaseapp.com',
-    storageBucket: 'robot-tutor.firebasestorage.app',
+    apiKey: "AIzaSyA8Tz5sJNOkqIBs_c8NVDf0ftS29DlKO5Y",
+    authDomain: "robot-tutor.firebaseapp.com",
+    projectId: "robot-tutor",
+    storageBucket: "robot-tutor.firebasestorage.app",
+    messagingSenderId: "835052484226",
+    appId: "1:835052484226:web:f02af749bd94b1b698669b"
   );
 
   static const FirebaseOptions android = FirebaseOptions(
