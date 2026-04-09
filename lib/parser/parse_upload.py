@@ -115,6 +115,9 @@ DEFAULT_DPI = 200
 # At 200 DPI, ~1 page ≈ 750 tokens. Flash handles up to ~1M tokens but
 # we keep batches small for reliability and to reduce rate-limit impact.
 DEFAULT_BATCH_PAGES = 3
+DEFAULT_GEMINI_MAX_RETRIES = 8
+DEFAULT_GEMINI_RETRY_DELAY = 5.0
+DEFAULT_GEMINI_MAX_RETRY_DELAY = 120.0
 
 
 # ---------------------------------------------------------------------------
@@ -294,6 +297,21 @@ def filename_to_slug(filename: str) -> str:
     stem = Path(filename).stem
     slug = re.sub(r"[^a-z0-9]+", "_", stem.lower()).strip("_")
     return slug or "upload"
+
+
+def _get_retry_delay_seconds(resp, attempt: int, delay: float) -> float:
+    """Honor Retry-After when present, otherwise use exponential backoff."""
+    retry_after = resp.headers.get("Retry-After")
+    if retry_after:
+        try:
+            return max(float(retry_after), delay)
+        except ValueError:
+            pass
+
+    capped_delay = min(delay, DEFAULT_GEMINI_MAX_RETRY_DELAY)
+    if attempt >= 4:
+        capped_delay = min(capped_delay + 10.0, DEFAULT_GEMINI_MAX_RETRY_DELAY)
+    return capped_delay
 
 
 # ---------------------------------------------------------------------------
@@ -571,14 +589,20 @@ def _call_gemini_multiimage(
         "generationConfig": {"temperature": 0.2, "maxOutputTokens": 4096},
     }
 
-    max_retries = 3
-    delay = 5.0
+    max_retries = int(os.environ.get("GEMINI_MAX_RETRIES", DEFAULT_GEMINI_MAX_RETRIES))
+    delay = float(os.environ.get("GEMINI_RETRY_DELAY", DEFAULT_GEMINI_RETRY_DELAY))
     for attempt in range(1, max_retries + 1):
         resp = req.post(url, json=payload, timeout=120)
         if resp.status_code == 429:
-            log.warning("Rate limited (attempt %d/%d). Waiting %.0fs...", attempt, max_retries, delay)
-            time.sleep(delay)
-            delay *= 2
+            wait_seconds = _get_retry_delay_seconds(resp, attempt, delay)
+            log.warning(
+                "Rate limited (attempt %d/%d). Waiting %.0fs...",
+                attempt,
+                max_retries,
+                wait_seconds,
+            )
+            time.sleep(wait_seconds)
+            delay = min(wait_seconds * 2, DEFAULT_GEMINI_MAX_RETRY_DELAY)
             continue
         if resp.status_code != 200:
             raise RuntimeError(f"Gemini API error {resp.status_code}: {resp.text[:500]}")
