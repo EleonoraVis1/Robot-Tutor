@@ -29,6 +29,23 @@ log = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 DEFAULT_MODEL = "gemini-2.5-flash"          # Free tier: 15 req/min, 1M tok/day
 GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
+DEFAULT_GEMINI_MAX_RETRIES = 8
+DEFAULT_GEMINI_RETRY_DELAY = 5.0
+DEFAULT_GEMINI_MAX_RETRY_DELAY = 120.0
+
+
+def _get_retry_delay_seconds(resp, attempt: int, delay: float) -> float:
+    retry_after = resp.headers.get("Retry-After")
+    if retry_after:
+        try:
+            return max(float(retry_after), delay)
+        except ValueError:
+            pass
+
+    capped_delay = min(delay, DEFAULT_GEMINI_MAX_RETRY_DELAY)
+    if attempt >= 4:
+        capped_delay = min(capped_delay + 10.0, DEFAULT_GEMINI_MAX_RETRY_DELAY)
+    return capped_delay
 
 # ---------------------------------------------------------------------------
 # YAML schema v1.1 reminder injected into every prompt
@@ -222,18 +239,20 @@ def call_gemini(
         },
     }
 
-    delay = retry_delay
+    max_retries = int(os.environ.get("GEMINI_MAX_RETRIES", max_retries))
+    delay = float(os.environ.get("GEMINI_RETRY_DELAY", retry_delay))
     for attempt in range(1, max_retries + 1):
         try:
             resp = requests.post(url, json=payload, timeout=60)
 
             if resp.status_code == 429:
+                wait_seconds = _get_retry_delay_seconds(resp, attempt, delay)
                 log.warning(
                     "Rate limited (attempt %d/%d). Waiting %.0fs...",
-                    attempt, max_retries, delay,
+                    attempt, max_retries, wait_seconds,
                 )
-                time.sleep(delay)
-                delay *= 2
+                time.sleep(wait_seconds)
+                delay = min(wait_seconds * 2, DEFAULT_GEMINI_MAX_RETRY_DELAY)
                 continue
 
             if resp.status_code != 200:
@@ -267,7 +286,7 @@ def call_gemini(
             if attempt == max_retries:
                 raise RuntimeError(f"Network error after {max_retries} attempts: {exc}") from exc
             time.sleep(delay)
-            delay *= 2
+            delay = min(delay * 2, DEFAULT_GEMINI_MAX_RETRY_DELAY)
 
     raise RuntimeError(f"Gemini call failed after {max_retries} attempts.")
 
