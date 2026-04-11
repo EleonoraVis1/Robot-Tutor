@@ -178,10 +178,10 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
         child: const Icon(Icons.chat),
         onPressed: () {
           if (widget.studentUid == null) {
-            context.push('/subject/$subjectId/module/$moduleId/chat');
+            context.push('/subject/$subjectId/grade/${widget.grade}/module/$moduleId/chat');
           } else {
             context.push(
-              '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/$subjectId/module/$moduleId/chat',
+              '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/$subjectId/grade/${widget.grade}/module/$moduleId/chat',
             );
           }
         },
