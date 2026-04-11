@@ -9,8 +9,10 @@
 // Imports
 //////////////////////////////////////////////////////////////////////////
 // Flutter external package imports
+import 'package:csc322_starter_app/models/invite.dart';
 import 'package:csc322_starter_app/models/user_profile.dart';
 import 'package:csc322_starter_app/providers/provider_firestore.dart';
+import 'package:csc322_starter_app/providers/provides_invites.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_invites.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
@@ -39,6 +41,7 @@ class WidgetAppDrawer extends StatelessWidget {
   // Primary Flutter method overriden which describes the layout
   // and bindings for this widget.
   ////////////////////////////////////////////////////////////////
+  
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -48,6 +51,7 @@ class WidgetAppDrawer extends StatelessWidget {
           final ProviderUserProfile _providerUserProfile = ref.watch(providerUserProfile);
           final userProfile = ref.watch(providerUserProfile);
           final isSupervisor = userProfile.userType == UserType.SUPERVISOR;
+          final invitesAsync = ref.watch(invitesProvider);
 
           return Column(
             children: <Widget>[
@@ -103,13 +107,43 @@ class WidgetAppDrawer extends StatelessWidget {
                 ),
               if (!isSupervisor)
                 ListTile(
-                  leading: Icon(Icons.forward_to_inbox), 
-                  title: Text('Invites'), 
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    context.push(ScreenInvites.routeName);
-                  }
+                leading: const Icon(Icons.forward_to_inbox),
+                title: const Text('Invites'),
+                trailing: invitesAsync.when(
+                  loading: () => const SizedBox(), // or small spinner if you want
+                  error: (_, __) => const SizedBox(),
+                  data: (invites) {
+                    final pendingCount = invites
+                      .where((i) => i.status == InviteStatus.PENDING)
+                      .length;
+
+                    if (pendingCount == 0) return const SizedBox();
+
+                    final text = '$pendingCount';
+
+return Container(
+  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+  decoration: BoxDecoration(
+    color: Colors.red,
+    borderRadius: BorderRadius.circular(12), // pill shape
+  ),
+  child: Text(
+    text,
+    style: const TextStyle(
+      color: Colors.white,
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+    ),
+    textAlign: TextAlign.center,
+  ),
+);
+                  },
                 ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  context.push(ScreenInvites.routeName);
+                },
+              ),
               Divider(),
               // ListTile(
               //   leading: Icon(Icons.settings),
