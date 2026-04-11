@@ -2,6 +2,7 @@
 import 'dart:async';
 
 // Flutter external package imports
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/providers/provider_students.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
@@ -62,6 +63,61 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
     context.push(
       '${ScreenHomeSupervisor.routeName}/student/${studentId}',
     );
+  }
+
+  Future<void> _removeStudent(String studentId) async {
+    final supervisorUid = ref.read(providerUserProfile).uid;
+    final firestore = FirebaseFirestore.instance;
+
+    try {
+      final batch = firestore.batch();
+
+      final supervisorRef = firestore
+          .collection('user_profiles')
+          .doc(supervisorUid)
+          .collection('students')
+          .doc(studentId);
+
+      final studentRef = firestore
+          .collection('user_profiles')
+          .doc(studentId)
+          .collection('supervisors')
+          .doc(supervisorUid);
+
+      batch.delete(supervisorRef);
+      batch.delete(studentRef);
+
+      await batch.commit();
+    } catch (e) {
+      debugPrint('Error removing student: $e');
+    }
+  }
+
+  Future<void> _confirmRemoveStudent(String studentId, String name) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Remove Student'),
+        content: Text('Are you sure you want to remove $name?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text(
+              'Remove',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      await _removeStudent(studentId);
+    }
   }
 
   @override
@@ -140,7 +196,17 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
                       ),
                       child: ListTile(
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        leading: StudentAvatar(student: student),
+                        leading: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            GestureDetector(
+                              onTap: () => _confirmRemoveStudent(student.id, student.fullName),
+                              child: const Icon(Icons.close, color: Colors.red),
+                            ),
+                            const SizedBox(width: 10),
+                            StudentAvatar(student: student),
+                          ],
+                        ),
                         title: Text(
                           student.fullName,
                           style: const TextStyle(fontWeight: FontWeight.w600),
