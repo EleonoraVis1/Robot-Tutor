@@ -11,10 +11,12 @@
 // Dart imports
 
 // Flutter external package imports
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csc322_starter_app/models/user_profile.dart';
 import 'package:csc322_starter_app/providers/provider_firestore.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -76,6 +78,8 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
     if (userProfile.uid.isNotEmpty && !isSupervisor) {
       await firestore.setActiveUser(userProfile.uid);
     }
+
+    await _initFCM();
   }
 
   ////////////////////////////////////////////////////////////////
@@ -91,6 +95,32 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
     // Now initialized; run super method
     _isInit = false;
     super.didChangeDependencies();
+  }
+
+  Future<void> _initFCM() async {
+    final messaging = FirebaseMessaging.instance;
+    final firestore = FirebaseFirestore.instance;
+    final userProfile = ref.read(providerUserProfile);
+
+    await messaging.requestPermission();
+
+    final token = await messaging.getToken();
+
+    if (token != null && userProfile.uid.isNotEmpty) {
+      await firestore.collection('user_profiles')
+          .doc(userProfile.uid)
+          .update({
+        'fcmToken': token,
+      });
+    }
+
+    messaging.onTokenRefresh.listen((newToken) async {
+      if (userProfile.uid.isNotEmpty) {
+        await firestore.collection('user_profiles')
+            .doc(userProfile.uid)
+            .set({'fcmToken': token}, SetOptions(merge: true));
+        }
+    });
   }
 
   ////////////////////////////////////////////////////////////////

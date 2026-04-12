@@ -27,6 +27,7 @@ import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent
 import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistory_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_notifications_supervisor.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -58,6 +59,10 @@ final providerAuth = ChangeNotifierProvider<ProviderAuth>(
   (ref) => ProviderAuth(),
 );
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  debugPrint(" Background message: ${message.notification?.title}");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // MAIN entry point to start app.
 //////////////////////////////////////////////////////////////////////////
@@ -78,6 +83,7 @@ Future<void> main() async {
   await userProfileProvider.initProviders(authProvider);
   authProvider.initProviders(userProfileProvider);
 
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   // Run the app
   runApp(
     UncontrolledProviderScope(
