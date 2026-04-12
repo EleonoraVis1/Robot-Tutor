@@ -51,21 +51,42 @@ class _ScreenInvitesState extends ConsumerState<ScreenInvites> {
   Future<void> _init() async {}
 
   Future<void> _declineInvite(Invite invite) async {
-    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final firestore = FirebaseFirestore.instance;
+    final studentUid = FirebaseAuth.instance.currentUser!.uid;
+    final userProfile = ref.read(providerUserProfile);
 
-    await FirebaseFirestore.instance
+    final batch = firestore.batch();
+
+    final inviteRef = firestore
         .collection('user_profiles')
-        .doc(uid)
+        .doc(studentUid)
         .collection('invites')
-        .doc(invite.id)
-        .delete();
+        .doc(invite.id);
+
+    final notificationRef = firestore
+        .collection('user_profiles')
+        .doc(invite.supervisorUid)
+        .collection('notifications')
+        .doc();
+
+    batch.delete(inviteRef);
+
+    batch.set(notificationRef, {
+      'studentId': studentUid,
+      'studentName': '${userProfile.firstName} ${userProfile.lastName}',
+      'status': 'Declined',
+      'timestamp': FieldValue.serverTimestamp(),
+      'read': false,
+    });
+
+    await batch.commit();
   }
 
   Future<void> _acceptInvite(Invite invite) async {
     final firestore = FirebaseFirestore.instance;
     final studentUid = FirebaseAuth.instance.currentUser!.uid;
     final supervisorUid = invite.supervisorUid;
-    final userProfile = ref.watch(providerUserProfile);
+    final userProfile = ref.read(providerUserProfile);
 
     final batch = firestore.batch();
 
@@ -87,10 +108,11 @@ class _ScreenInvitesState extends ConsumerState<ScreenInvites> {
         .collection('students')
         .doc(studentUid);
 
-    batch.update(inviteRef, {
-      'status': 'Accepted',
-      'respondedAt': FieldValue.serverTimestamp(),
-    });
+    final notificationRef = firestore
+        .collection('user_profiles')
+        .doc(supervisorUid)
+        .collection('notifications')
+        .doc();
 
     batch.set(studentSupervisorRef, {
       'uid': supervisorUid,
@@ -102,12 +124,21 @@ class _ScreenInvitesState extends ConsumerState<ScreenInvites> {
 
     batch.set(supervisorStudentRef, {
       'uid': studentUid,
-      'fullName': userProfile.firstName + " " + userProfile.lastName,
+      'fullName': '${userProfile.firstName} ${userProfile.lastName}',
       'email': userProfile.email,
       'addedAt': FieldValue.serverTimestamp(),
     });
 
+    batch.set(notificationRef, {
+      'studentId': studentUid,
+      'studentName': '${userProfile.firstName} ${userProfile.lastName}',
+      'status': 'Accepted',
+      'timestamp': FieldValue.serverTimestamp(),
+      'read': false,
+    });
+
     batch.delete(inviteRef);
+
     await batch.commit();
   }
 

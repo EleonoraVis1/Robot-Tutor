@@ -60,3 +60,32 @@ final studentsProvider = StreamProvider<List<Student>>((ref) {
     },
   );
 });
+
+final notificationsProvider =
+    StreamProvider<List<Map<String, dynamic>>>((ref) {
+
+  final authAsync = ref.watch(authStateProvider);
+
+  return authAsync.when(
+    loading: () => const Stream.empty(),
+    error: (_, __) => const Stream.empty(),
+    data: (user) {
+      if (user == null) return const Stream.empty();
+
+      return FirebaseFirestore.instance
+          .collection('user_profiles')
+          .doc(user.uid)
+          .collection('notifications')
+          .orderBy('timestamp', descending: true)
+          .snapshots()
+          .map((snapshot) {
+            return snapshot.docs.map((doc) {
+              return {
+                'id': doc.id,
+                ...doc.data(),
+              };
+            }).toList();
+          });
+    },
+  );
+});

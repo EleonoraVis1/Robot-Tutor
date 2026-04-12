@@ -26,6 +26,7 @@ import 'package:csc322_starter_app/screens/general/students/screen_uploadfile.da
 import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistory_supervisor.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_notifications_supervisor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -122,6 +123,10 @@ class _MyAppState extends State<MyApp> {
       GoRoute(
         path: ScreenProfile.routeName,
         builder: (context, state) => const ScreenProfile(),
+      ),
+      GoRoute(
+        path: ScreenNotifications.routeName,
+        builder: (context, state) => const ScreenNotifications(),
       ),
       GoRoute(
         path: ScreenProfileSetup.routeName,

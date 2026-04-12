@@ -12,11 +12,13 @@
 import 'package:csc322_starter_app/models/invite.dart';
 import 'package:csc322_starter_app/models/user_profile.dart';
 import 'package:csc322_starter_app/providers/provider_firestore.dart';
+import 'package:csc322_starter_app/providers/provider_students.dart';
 import 'package:csc322_starter_app/providers/provides_invites.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_invites.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_student_supervisors.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_notifications_supervisor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
@@ -52,6 +54,7 @@ class WidgetAppDrawer extends StatelessWidget {
           final userProfile = ref.watch(providerUserProfile);
           final isSupervisor = userProfile.userType == UserType.SUPERVISOR;
           final invitesAsync = ref.watch(invitesProvider);
+          final notificationsAsync = ref.watch(notificationsProvider);
 
           return Column(
             children: <Widget>[
@@ -85,6 +88,41 @@ class WidgetAppDrawer extends StatelessWidget {
                   context.push(ScreenProfile.routeName);
                 },
               ),
+              if (isSupervisor)
+                ListTile(
+                  leading: const Icon(Icons.notifications),
+                  title: const Text('Notifications'),
+                  trailing: notificationsAsync.when(
+                    loading: () => const SizedBox(),
+                    error: (_, __) => const SizedBox(),
+                    data: (notifications) {
+                      final unreadCount =
+                          notifications.where((n) => n['read'] == false).length;
+
+                      if (unreadCount == 0) return const SizedBox();
+
+                      return Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          '$unreadCount',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    context.push(ScreenNotifications.routeName);
+                  },
+                ),
               if (!isSupervisor)
                 ListTile(
                   leading: Icon(Icons.bolt_outlined), 
@@ -110,7 +148,7 @@ class WidgetAppDrawer extends StatelessWidget {
                 leading: const Icon(Icons.forward_to_inbox),
                 title: const Text('Invites'),
                 trailing: invitesAsync.when(
-                  loading: () => const SizedBox(), // or small spinner if you want
+                  loading: () => const SizedBox(), 
                   error: (_, __) => const SizedBox(),
                   data: (invites) {
                     final pendingCount = invites
@@ -121,22 +159,22 @@ class WidgetAppDrawer extends StatelessWidget {
 
                     final text = '$pendingCount';
 
-return Container(
-  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-  decoration: BoxDecoration(
-    color: Colors.red,
-    borderRadius: BorderRadius.circular(12), // pill shape
-  ),
-  child: Text(
-    text,
-    style: const TextStyle(
-      color: Colors.white,
-      fontSize: 12,
-      fontWeight: FontWeight.bold,
-    ),
-    textAlign: TextAlign.center,
-  ),
-);
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(12), 
+                      ),
+                      child: Text(
+                        text,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    );
                   },
                 ),
                 onTap: () {
