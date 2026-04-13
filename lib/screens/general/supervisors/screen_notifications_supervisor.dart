@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class ScreenNotifications extends ConsumerWidget {
   static const routeName = '/notifications';
@@ -51,7 +52,10 @@ class ScreenNotifications extends ConsumerWidget {
                   '${n['studentName']} ${n['status'].toLowerCase()} your invite',
                 ),
                 subtitle: Text(
-                  n['timestamp']?.toDate().toString() ?? '',
+                  n['timestamp'] != null
+                      ? DateFormat('yyyy-MM-dd HH:mm:ss')
+                          .format(n['timestamp'].toDate())
+                      : '',
                 ),
                 tileColor: isRead ? null : Colors.blue.withOpacity(0.05),
                 onTap: () {
