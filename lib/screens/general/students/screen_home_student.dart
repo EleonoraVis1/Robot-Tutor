@@ -131,7 +131,12 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
           if (!(widget.supervisorView))
             ElevatedButton(
               onPressed: () => context.push('/test_bluetooth'),
-              child: const Text('Connect'),
+              child: const Text(
+                'Connect',
+                style: TextStyle(
+                  fontSize: 16
+                ),
+              ),
             ),
         ],
       ),
