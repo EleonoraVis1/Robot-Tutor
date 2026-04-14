@@ -52,7 +52,7 @@ class _ScreenBaymindStudentState extends ConsumerState<ScreenBayminStudent> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Choose Your Robot Persona"),
+        title: const Text("Robot Persona"),
         centerTitle: true,
       ),
       body: personaAsync.when(
@@ -61,10 +61,26 @@ class _ScreenBaymindStudentState extends ConsumerState<ScreenBayminStudent> {
         data: (currentPersona) {
           return Column(
             children: [
-              const SizedBox(height: 40),
-
+              const SizedBox(height: 25),
+              const Text(
+                "Choose Your Learning Persona",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                "Select the persona for your learning style",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14
+                ),
+              ),
+              const SizedBox(height: 25),
               Expanded(
-                
                   child: GridView.builder(
                     padding: const EdgeInsets.all(20),
                     
