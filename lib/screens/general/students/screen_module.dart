@@ -167,8 +167,12 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
           error: (_, __) => const Text('Module'),
           data: (modules) {
             final module = modules.firstWhere((m) => m.id == moduleId);
-            return Text('Module: ${module.title}');
+            return Text('${module.title}');
           },
+        ),
+        titleTextStyle: TextStyle(
+          fontSize: 20,
+          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black
         ),
         centerTitle: true,
       ),
