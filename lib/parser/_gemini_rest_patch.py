@@ -57,8 +57,8 @@ def gemini_text_call(
     api_key: Optional[str] = None,
     temperature: float = 0.2,
     max_tokens: int = 4096,
-    max_retries: int = 5,
-    retry_delay: float = 15.0,
+    max_retries: int = 3,
+    retry_delay: float = 5.0,
 ) -> str:
     """
     Call Gemini REST API with a text prompt. Returns response text.

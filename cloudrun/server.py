@@ -79,8 +79,8 @@ def handle_event():
         import sys
         sys.path.insert(0, "/app")
         from cloudrun.pipeline_job import main
-        main()
-        return "OK", 200
+        code = main()
+        return ("OK" if code == 0 else "Pipeline failed"), (200 if code == 0 else 500)
     except FileNotFoundError as e:
         log.info("Skipping stale or missing object event: %s", e)
         return "Skipped: object no longer exists", 200

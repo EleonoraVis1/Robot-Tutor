@@ -5,7 +5,7 @@ BAY-min user upload parser — Sprint 5-6 pipeline.
 
 Handles PDFs, scanned documents, and worksheet photos uploaded by teachers
 or students. Uses pdf2image to render pages as PNG images, then sends them
-to Gemini Vision (gemini-2.5-flash) for YAML extraction.
+to Gemini Vision (gemini-2.5-flash-lite) for YAML extraction.
 
 Why image-based:
   - Eliminates pdfplumber's tripled-char artifacts from overlapping bold fonts
@@ -115,8 +115,8 @@ DEFAULT_DPI = 200
 # At 200 DPI, ~1 page ≈ 750 tokens. Flash handles up to ~1M tokens but
 # we keep batches small for reliability and to reduce rate-limit impact.
 DEFAULT_BATCH_PAGES = 3
-DEFAULT_GEMINI_MAX_RETRIES = 8
-DEFAULT_GEMINI_RETRY_DELAY = 5.0
+DEFAULT_GEMINI_MAX_RETRIES = 5
+DEFAULT_GEMINI_RETRY_DELAY = 10.0
 DEFAULT_GEMINI_MAX_RETRY_DELAY = 120.0
 
 
@@ -314,6 +314,86 @@ def _get_retry_delay_seconds(resp, attempt: int, delay: float) -> float:
     return capped_delay
 
 
+def _is_quota_exhausted_response(resp) -> bool:
+    """Return True only for obvious Gemini quota exhaustion responses."""
+    if getattr(resp, "status_code", None) != 429:
+        return False
+
+    body_text = ""
+    try:
+        body_text = (resp.text or "")[:2000]
+    except Exception:
+        body_text = ""
+
+    body_lower = body_text.lower()
+    if "generate_content_free_tier_requests" in body_lower:
+        return True
+    if "check your plan and billing details" in body_lower:
+        return True
+    if "resource_exhausted" in body_lower and "quota exceeded" in body_lower:
+        return True
+
+    try:
+        error = (resp.json() or {}).get("error", {})
+    except ValueError:
+        return False
+
+    status = str(error.get("status", "")).upper()
+    message = str(error.get("message", "")).lower()
+    if status == "RESOURCE_EXHAUSTED":
+        return (
+            "quota exceeded" in message
+            or "generate_content_free_tier_requests" in message
+            or "check your plan and billing details" in message
+        )
+    return False
+
+
+def _clean_gemini_yaml_response(text: str) -> str:
+    """Normalize Gemini YAML output by removing stray markdown fence lines."""
+    clean = strip_yaml_fences(text)
+    clean = re.sub(r"(?m)^\s*```(?:yaml)?\s*$", "", clean, flags=re.IGNORECASE)
+    lines = clean.splitlines()
+    expected_top_level_keys = (
+        "lesson_id",
+        "title",
+        "cite_only",
+        "citation",
+        "standard_tags",
+        "instructional_content",
+        "guided",
+        "independent",
+        "word_problems",
+    )
+
+    start_idx = 0
+    for idx, line in enumerate(lines):
+        if re.match(rf"^\s*(?:{'|'.join(expected_top_level_keys)})\s*:", line):
+            start_idx = idx
+            break
+
+    lines = lines[start_idx:]
+
+    end_idx = len(lines)
+    for idx, line in enumerate(lines):
+        if re.match(r"^\s*questions\.yaml\s*:\s*$", line, flags=re.IGNORECASE):
+            end_idx = idx
+            break
+    lines = lines[:end_idx]
+
+    normalized_lines = []
+    for line in lines:
+        normalized = re.sub(
+            rf"^\s+((?:{'|'.join(expected_top_level_keys)})\s*:)",
+            r"\1",
+            line,
+        )
+        normalized_lines.append(normalized)
+
+    clean = "\n".join(normalized_lines)
+    return clean.strip()
+
+
 # ---------------------------------------------------------------------------
 # Core pipeline
 # ---------------------------------------------------------------------------
@@ -328,7 +408,7 @@ def process_upload(
     concept_only: bool = False,
     save_pages: bool = False,
     api_key: Optional[str] = None,
-    model: str = "gemini-2.5-flash",
+    model: str = "gemini-2.5-flash-lite",
     max_pages: Optional[int] = None,
 ) -> tuple[dict, dict]:
     """
@@ -439,7 +519,7 @@ def process_upload(
         )
 
         try:
-            clean = strip_yaml_fences(text_result)
+            clean = _clean_gemini_yaml_response(text_result)
             doc = yaml.safe_load(clean)
             if not isinstance(doc, dict):
                 raise ValueError(f"Expected dict, got {type(doc)}")
@@ -450,7 +530,7 @@ def process_upload(
             log.info("    OK — lesson_id: %s", doc.get("lesson_id"))
         except yaml.YAMLError as exc:
             log.error("    YAML parse error in batch %d: %s", batch_idx, exc)
-            log.debug("    Raw response: %s", text_result[:500])
+            log.error("    Cleaned response snippet: %r", clean[:1200])
             raise RuntimeError(f"Gemini returned invalid YAML (concept batch {batch_idx})") from exc
 
         if batch_idx < len(batches):
@@ -485,7 +565,7 @@ def process_upload(
             )
 
             try:
-                clean = strip_yaml_fences(text_result)
+                clean = _clean_gemini_yaml_response(text_result)
                 doc = yaml.safe_load(clean)
                 if not isinstance(doc, dict):
                     raise ValueError(f"Expected dict, got {type(doc)}")
@@ -499,6 +579,7 @@ def process_upload(
                 log.info("    OK — %dg + %di questions", guided_count, indep_count)
             except yaml.YAMLError as exc:
                 log.error("    YAML parse error in batch %d: %s", batch_idx, exc)
+                log.error("    Cleaned response snippet: %r", clean[:1200])
                 raise RuntimeError(
                     f"Gemini returned invalid YAML (questions batch {batch_idx})"
                 ) from exc
@@ -561,6 +642,7 @@ def _call_gemini_multiimage(
     Call Gemini REST API with multiple images in a single request.
     The REST API supports multiple inline_data parts in one content block.
     """
+    import random
     import requests as req
     import os
 
@@ -593,10 +675,18 @@ def _call_gemini_multiimage(
     delay = float(os.environ.get("GEMINI_RETRY_DELAY", DEFAULT_GEMINI_RETRY_DELAY))
     for attempt in range(1, max_retries + 1):
         resp = req.post(url, json=payload, timeout=120)
-        if resp.status_code == 429:
+        if resp.status_code == 429 and _is_quota_exhausted_response(resp):
+            raise RuntimeError(f"Gemini quota exhausted {resp.status_code}: {resp.text[:500]}")
+        if resp.status_code in (429, 503):
+            if attempt == max_retries:
+                raise RuntimeError(f"Gemini API error {resp.status_code}: {resp.text[:500]}")
             wait_seconds = _get_retry_delay_seconds(resp, attempt, delay)
+            wait_seconds = min(
+                wait_seconds + random.uniform(0.0, 1.0),
+                DEFAULT_GEMINI_MAX_RETRY_DELAY,
+            )
             log.warning(
-                "Rate limited (attempt %d/%d). Waiting %.0fs...",
+                "Gemini overloaded (attempt %d/%d). Waiting %.1fs...",
                 attempt,
                 max_retries,
                 wait_seconds,
@@ -668,8 +758,8 @@ Examples (Windows PowerShell):
                         help="Limit pages processed (useful for testing)")
     parser.add_argument("--api-key", type=str, default=None,
                         help="Gemini API key (default: $env:GEMINI_API_KEY)")
-    parser.add_argument("--model", type=str, default="gemini-2.5-flash",
-                        help="Gemini model name (default: gemini-2.5-flash)")
+    parser.add_argument("--model", type=str, default="gemini-2.5-flash-lite",
+                        help="Gemini model name (default: gemini-2.5-flash-lite)")
     parser.add_argument("--verbose", "-v", action="store_true",
                         help="Enable debug logging")
 

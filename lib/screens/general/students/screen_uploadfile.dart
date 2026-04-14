@@ -27,6 +27,8 @@ class _ScreenUploadFileState extends ConsumerState<ScreenUploadfile> {
   final _formKey = GlobalKey<FormState>();
   var _subjectName = "";
   var _gradeLevel = "";
+  var _chapter = "";
+  var _lesson = "";
 
   PlatformFile? _selectedPdf;
   bool _isUploading = false;
@@ -98,6 +100,8 @@ class _ScreenUploadFileState extends ConsumerState<ScreenUploadfile> {
   Future<void> _uploadInfo(
     String courseName,
     String glevel,
+    String chapter,
+    String lesson,
     PlatformFile pdfFile,
   ) async {
     final Uint8List? bytes = pdfFile.bytes;
@@ -124,7 +128,13 @@ class _ScreenUploadFileState extends ConsumerState<ScreenUploadfile> {
           contentType: 'application/pdf',
           customMetadata: <String, String>{
             'subject_name': courseName.trim(),
+            'subject': courseName.trim(),
             'grade_level': glevel.trim(),
+            'grade': glevel.trim(),
+            'chapter': chapter.trim(),
+            'unit': chapter.trim(),
+            'lesson': lesson.trim(),
+            'source_type': 'worksheet',
             'original_file_name': pdfFile.name,
           },
         ),
@@ -231,6 +241,44 @@ class _ScreenUploadFileState extends ConsumerState<ScreenUploadfile> {
                         },
                         keyboardType: const TextInputType.numberWithOptions(),
                         onSaved: (value) => _gradeLevel = value!,
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        maxLength: 2,
+                        decoration: const InputDecoration(
+                          labelText: 'Chapter',
+                          helperText: 'Unit will be set to the same value',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Enter a chapter number';
+                          }
+                          final chapter = int.tryParse(value.trim());
+                          if (chapter == null || chapter < 0) {
+                            return 'Must be a valid chapter number';
+                          }
+                          return null;
+                        },
+                        keyboardType: const TextInputType.numberWithOptions(),
+                        onSaved: (value) => _chapter = value!,
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        maxLength: 20,
+                        decoration: const InputDecoration(
+                          labelText: 'Lesson',
+                          helperText: 'Use a number or label like Practice',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Enter a lesson number or label';
+                          }
+                          if (value.trim().length > 20) {
+                            return 'Keep lesson under 20 characters';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) => _lesson = value!,
                       ),
                       const SizedBox(height: 8),
                       GestureDetector(
@@ -340,6 +388,8 @@ class _ScreenUploadFileState extends ConsumerState<ScreenUploadfile> {
                                         _uploadInfo(
                                           _subjectName,
                                           _gradeLevel,
+                                          _chapter,
+                                          _lesson,
                                           _selectedPdf!,
                                         );
                                       }
