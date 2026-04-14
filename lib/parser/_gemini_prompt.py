@@ -156,10 +156,17 @@ Rules:
 - For worksheets: extract the concept being practiced, not the practice problems.
 - If the content is not math-related, set cite_only: true and explain in the
   text field what the document appears to be about.
-- Set chapter: 0 and lesson_id: "upload_<filename_slug>" for user uploads.
+- Use the supplied upload metadata when it is present for subject, grade, chapter,
+  lesson, and lesson_id. Only infer missing metadata from the document itself.
 - pages: "uploaded document"
 
 Document filename: {filename}
+Upload metadata:
+  subject: {subject}
+  grade: {grade}
+  chapter: {chapter}
+  lesson: {lesson}
+  lesson_id: {lesson_id}
 """.strip()
 
 UPLOAD_QUESTIONS_PROMPT = """You are a curriculum parser for an elementary school tutoring robot (BAY-min).
@@ -172,9 +179,16 @@ Rules (same as standard pipeline, plus):
 - For handwritten notes: generate questions that test the concepts written.
 - Aim for 2 guided, 2 independent, 1 word_problem minimum (scale up if content
   is rich enough for more).
-- Use lesson_id: "upload_<filename_slug>".
+- Use the supplied upload metadata when it is present for subject, grade, chapter,
+  lesson, and lesson_id. Only infer missing metadata from the document itself.
 
 Document filename: {filename}
+Upload metadata:
+  subject: {subject}
+  grade: {grade}
+  chapter: {chapter}
+  lesson: {lesson}
+  lesson_id: {lesson_id}
 """.strip()
 
 
@@ -336,15 +350,41 @@ def build_questions_prompt(
     )
 
 
-def build_upload_concept_prompt(filename: str) -> str:
+def build_upload_concept_prompt(
+    filename: str,
+    *,
+    subject: str = "unknown",
+    grade: str = "unknown",
+    chapter: str = "unknown",
+    lesson: str = "unknown",
+    lesson_id: str = "upload_document",
+) -> str:
     return UPLOAD_CONCEPT_PROMPT.format(
         schema_reminder=_SCHEMA_REMINDER,
         filename=filename,
+        subject=subject,
+        grade=grade,
+        chapter=chapter,
+        lesson=lesson,
+        lesson_id=lesson_id,
     )
 
 
-def build_upload_questions_prompt(filename: str) -> str:
+def build_upload_questions_prompt(
+    filename: str,
+    *,
+    subject: str = "unknown",
+    grade: str = "unknown",
+    chapter: str = "unknown",
+    lesson: str = "unknown",
+    lesson_id: str = "upload_document",
+) -> str:
     return UPLOAD_QUESTIONS_PROMPT.format(
         schema_reminder=_SCHEMA_REMINDER,
         filename=filename,
+        subject=subject,
+        grade=grade,
+        chapter=chapter,
+        lesson=lesson,
+        lesson_id=lesson_id,
     )

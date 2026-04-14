@@ -299,6 +299,21 @@ def filename_to_slug(filename: str) -> str:
     return slug or "upload"
 
 
+def canonical_upload_lesson_id(
+    *,
+    filename: str,
+    subject: Optional[str] = None,
+    grade: Optional[str] = None,
+    chapter: Optional[str] = None,
+    lesson: Optional[str] = None,
+) -> str:
+    subject_slug = filename_to_slug(subject or "")
+    lesson_text = str(lesson).strip() if lesson is not None else ""
+    if subject_slug and str(grade).strip().isdigit() and str(chapter).strip().isdigit() and lesson_text.isdigit():
+        return f"{subject_slug}_g{int(str(grade).strip())}_ch{int(str(chapter).strip())}_l{int(lesson_text)}"
+    return f"upload_{filename_to_slug(filename)}"
+
+
 def _get_retry_delay_seconds(resp, attempt: int, delay: float) -> float:
     """Honor Retry-After when present, otherwise use exponential backoff."""
     retry_after = resp.headers.get("Retry-After")
@@ -410,6 +425,10 @@ def process_upload(
     api_key: Optional[str] = None,
     model: str = "gemini-2.5-flash-lite",
     max_pages: Optional[int] = None,
+    upload_subject: Optional[str] = None,
+    upload_grade: Optional[str] = None,
+    upload_chapter: Optional[str] = None,
+    upload_lesson: Optional[str] = None,
 ) -> tuple[dict, dict]:
     """
     Full upload processing pipeline: file → YAML concept + questions.
@@ -490,6 +509,13 @@ def process_upload(
     # otherwise split into batches and merge results.
     batches = batch_images(pages, batch_pages)
     filename = input_path.name
+    lesson_id_hint = canonical_upload_lesson_id(
+        filename=filename,
+        subject=upload_subject,
+        grade=upload_grade,
+        chapter=upload_chapter,
+        lesson=upload_lesson,
+    )
 
     # ----- Step 4: Concept extraction -----
     log.info("--- Concept extraction (%d batch(es)) ---", len(batches))
@@ -500,7 +526,14 @@ def process_upload(
 
         # Build multi-image payload: first image triggers Vision mode
         # Additional images included as separate inline_data parts
-        prompt = build_upload_concept_prompt(filename)
+        prompt = build_upload_concept_prompt(
+            filename,
+            subject=str(upload_subject or "unknown"),
+            grade=str(upload_grade or "unknown"),
+            chapter=str(upload_chapter or "unknown"),
+            lesson=str(upload_lesson or "unknown"),
+            lesson_id=lesson_id_hint,
+        )
 
         # For multi-page batches, we send the first image to the standard
         # call_gemini() and include subsequent images in the prompt text
@@ -525,7 +558,7 @@ def process_upload(
                 raise ValueError(f"Expected dict, got {type(doc)}")
             # Set lesson_id from slug if Gemini didn't
             if not doc.get("lesson_id"):
-                doc["lesson_id"] = f"upload_{slug}"
+                doc["lesson_id"] = lesson_id_hint
             concept_docs.append(doc)
             log.info("    OK — lesson_id: %s", doc.get("lesson_id"))
         except yaml.YAMLError as exc:
@@ -548,7 +581,14 @@ def process_upload(
         for batch_idx, batch in enumerate(batches, 1):
             log.info("  Batch %d/%d (%d page(s))...", batch_idx, len(batches), len(batch))
 
-            prompt = build_upload_questions_prompt(filename)
+            prompt = build_upload_questions_prompt(
+                filename,
+                subject=str(upload_subject or "unknown"),
+                grade=str(upload_grade or "unknown"),
+                chapter=str(upload_chapter or "unknown"),
+                lesson=str(upload_lesson or "unknown"),
+                lesson_id=lesson_id_hint,
+            )
             primary_image_b64 = image_to_b64(batch[0])
             additional_b64s = [image_to_b64(p) for p in batch[1:]]
 
@@ -570,7 +610,7 @@ def process_upload(
                 if not isinstance(doc, dict):
                     raise ValueError(f"Expected dict, got {type(doc)}")
                 if not doc.get("lesson_id"):
-                    doc["lesson_id"] = f"upload_{slug}"
+                    doc["lesson_id"] = lesson_id_hint
                 if not doc.get("title"):
                     doc["title"] = concept_doc.get("title", filename)
                 question_docs.append(doc)

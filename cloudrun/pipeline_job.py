@@ -389,6 +389,10 @@ def main() -> int:
             concept_doc, questions_doc = process_upload(
                 input_path=pdf_path,
                 out_dir=out_dir,
+                upload_subject=subject,
+                upload_grade=str(grade),
+                upload_chapter=str(chapter),
+                upload_lesson=str(lesson),
             )
 
             # --- 6. Seed Firestore ---
