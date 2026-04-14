@@ -208,8 +208,16 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ElevatedButton.icon(
-                          icon: const Icon(Icons.quiz),
-                          label: const Text('Retake Quiz'),
+                          icon: const Icon(
+                            Icons.quiz,
+                            size: 16,
+                          ),
+                          label: const Text(
+                            'Retake Quiz',
+                            style: TextStyle(
+                              fontSize: 16
+                            ),
+                          ),
                           onPressed: () {
                             context.push('/subject/$subjectId/grade/${widget.grade}/module/$moduleId/quiz');
                             _reviewIndex = 0;
