@@ -124,7 +124,20 @@ class _ScreenHomeSupervisorState extends ConsumerState<ScreenHomeSupervisor> {
   Widget build(BuildContext context) {
     final profileProvider = ref.watch(providerUserProfile);
     return Scaffold(
-      body: _buildSupervisorView(profileProvider), 
+      body: _buildSupervisorView(profileProvider),
+      floatingActionButton: Row(
+        children: [
+          const Spacer(),
+          FloatingActionButton(
+            tooltip: 'Upload Files',
+            heroTag: 'Upload-file-tag',
+            child: const Icon(Icons.upload_file_outlined),
+            onPressed: () {
+              context.push('/uploadfile');
+            },
+          ),
+        ],
+      ),
     );
   }
 
