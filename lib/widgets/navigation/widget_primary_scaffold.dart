@@ -15,6 +15,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csc322_starter_app/models/user_profile.dart';
 import 'package:csc322_starter_app/providers/provider_firestore.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_bluetooth_pairing.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -152,7 +153,7 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   ////////////////////////////////////////////////////////////////
   Widget _getScreenToDisplay(int currentTabIndex, bool isSupervisor, String uid) {
     if (currentTabIndex == BottomNavSelection.HOME_SCREEN.index)
-      return isSupervisor ? ScreenHomeSupervisor() : ScreenHomeStudent(supervisorView: false, studentUid: uid,);
+      return isSupervisor ? ScreenHomeSupervisor() : ScreenBluetoothPairing();
     else
       return ScreenHomeStudent(supervisorView: false, studentUid: uid,);
   }
@@ -194,11 +195,11 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
 
     // Return the scaffold
     return Scaffold(
-      appBar: WidgetPrimaryAppBar(
+      appBar: isSupervisor ? WidgetPrimaryAppBar(
         // Add a plus icon followed by the 3-dots vertical icon on the right
         actionButtons: _getAppBarActions(currentTabIndex),
         title: _getAppBarTitle(currentTabIndex, isSupervisor)
-      ),
+      ) : null,
       drawer: WidgetAppDrawer(),
       body: _getScreenToDisplay(currentTabIndex, isSupervisor, uid),
     );

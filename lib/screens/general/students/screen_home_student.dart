@@ -7,6 +7,7 @@ import 'package:csc322_starter_app/providers/provider_subjects.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:csc322_starter_app/widgets/general/subject_card.dart';
+import 'package:csc322_starter_app/widgets/navigation/widget_app_drawer.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +71,8 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
     final profileProvider = ref.watch(providerUserProfile);
 
     return Scaffold(
-      appBar: widget.supervisorView ? WidgetPrimaryAppBar(title: const Text('Subjects')) : null,
+      appBar: WidgetPrimaryAppBar(title: const Text('Subjects')),
+      drawer: WidgetAppDrawer(),
       body: _buildStudentView(profileProvider),
       floatingActionButton: Row(
         children: [

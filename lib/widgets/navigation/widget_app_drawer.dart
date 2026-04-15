@@ -14,7 +14,9 @@ import 'package:csc322_starter_app/models/user_profile.dart';
 import 'package:csc322_starter_app/providers/provider_firestore.dart';
 import 'package:csc322_starter_app/providers/provider_students.dart';
 import 'package:csc322_starter_app/providers/provides_invites.dart';
+import 'package:csc322_starter_app/screens/auth/screen_login_validation.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_home_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_invites.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_student_supervisors.dart';
@@ -78,7 +80,7 @@ class WidgetAppDrawer extends StatelessWidget {
               ListTile(
                 leading: Icon(Icons.home), 
                 title: Text('Home'), 
-                onTap: () => Navigator.of(context).pop()
+                onTap: () => isSupervisor ? Navigator.of(context).pop() : context.push(ScreenHomeStudent.routeName)
               ),
               ListTile(
                 leading: Icon(Icons.person),
@@ -200,6 +202,8 @@ class WidgetAppDrawer extends StatelessWidget {
                     await ref.read(providerFirestoreService).clearActiveUser();
                   }
                   _providerAuth.clearAuthedUserDetailsAndSignout();
+                  //Navigator.of(context).pop();
+                  context.push(ScreenLoginValidation.routeName);
                 },
               ),
             ],

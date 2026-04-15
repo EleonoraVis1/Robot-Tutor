@@ -3,13 +3,16 @@ import 'dart:math';
 
 import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/providers/provider_bluetooth.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_home_student.dart';
 import 'package:csc322_starter_app/services/ble_service.dart';
 import 'package:csc322_starter_app/services/ble_service_base.dart';
 import 'package:csc322_starter_app/services/web_ble_service.dart';
+import 'package:csc322_starter_app/widgets/navigation/widget_app_drawer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 const _toleranceRadians = 15 * pi / 180; // 15 degrees
@@ -126,7 +129,9 @@ class _ScreenBluetoothPairingState
       setState(() => _paired = true);
       _set('Connected!');
       await Future.delayed(const Duration(milliseconds: 1500));
-      if (mounted) Navigator.of(context).pop();
+      if (mounted) {
+        context.push(ScreenHomeStudent.routeName);
+      }
     });
   }
 
@@ -182,6 +187,7 @@ class _ScreenBluetoothPairingState
         title: const Text('Connect to Robot'),
         centerTitle: true,
       ),
+      drawer: WidgetAppDrawer(),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
