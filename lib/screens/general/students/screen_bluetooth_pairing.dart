@@ -16,6 +16,8 @@ import 'package:permission_handler/permission_handler.dart';
 const _toleranceRadians = 15 * pi / 180; // 15 degrees
 
 class ScreenBluetoothPairing extends ConsumerStatefulWidget {
+  static const routeName = '/connect';
+
   const ScreenBluetoothPairing({super.key});
 
   @override
@@ -175,6 +177,22 @@ class _ScreenBluetoothPairingState
     final theme = Theme.of(context);
     final challenge = _challenge;
     final current = _current;
+
+    ref.listen<BleConnectionState>(bleConnectionProvider, (prev, next) {
+      if ((prev?.connected ?? false) && !next.connected && mounted) {
+        _antennaSub?.cancel();
+        _ackSub?.cancel();
+        setState(() {
+          _started = false;
+          _status = 'Connection lost. Please try again.';
+          _challenge = null;
+          _current = null;
+          _matched = false;
+          _paired = false;
+        });
+        if (!kIsWeb) _startMobileScan();
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(

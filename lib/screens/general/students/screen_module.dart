@@ -424,13 +424,15 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
       elevation: 4,
       borderRadius: BorderRadius.circular(16),
       child: Container(
-        width: MediaQuery.of(ctx).size.width * 0.85,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        height: 64,
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
         decoration: BoxDecoration(
           color: Theme.of(ctx).colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             IconButton(
               tooltip: ble.micMuted ? 'Unmute microphone' : 'Mute microphone',
@@ -440,7 +442,8 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
               ),
               onPressed: () => notifier.setMicMuted(!ble.micMuted),
             ),
-            Expanded(
+            SizedBox(
+              width: 120,
               child: Slider(
                 value: ble.volume / 100,
                 onChangeEnd: (v) => notifier.setVolume((v * 100).round()),

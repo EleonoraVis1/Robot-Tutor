@@ -39,6 +39,7 @@ class BleConnectionState {
 class BleConnectionNotifier extends StateNotifier<BleConnectionState> {
   final Ref _ref;
   final BleServiceBase _service;
+  StreamSubscription<void>? _disconnectSub;
 
   BleConnectionNotifier(this._ref)
       : _service = kIsWeb ? WebBleService() : BleService(),
@@ -58,15 +59,33 @@ class BleConnectionNotifier extends StateNotifier<BleConnectionState> {
   }
 
   Future<void> connect(dynamic device, String name, String id) async {
+    _disconnectSub?.cancel();
     await _service.connect(device);
     await _ref.read(connectedDeviceProvider.notifier).saveDevice(name, id);
     state = state.copyWith(connected: true, deviceName: name);
+    _disconnectSub = _service.disconnectStream.listen((_) => _onUnexpectedDisconnect());
+  }
+
+  void _onUnexpectedDisconnect() {
+    _disconnectSub?.cancel();
+    _disconnectSub = null;
+    _ref.read(connectedDeviceProvider.notifier).removeDevice();
+    state = state.copyWith(connected: false, deviceName: null);
   }
 
   Future<void> disconnect() async {
+    _disconnectSub?.cancel();
+    _disconnectSub = null;
     await _service.disconnect();
     await _ref.read(connectedDeviceProvider.notifier).removeDevice();
     state = state.copyWith(connected: false, deviceName: null);
+  }
+
+  @override
+  void dispose() {
+    _disconnectSub?.cancel();
+    _service.dispose();
+    super.dispose();
   }
 
   Future<void> setVolume(int v) async {

@@ -6,6 +6,7 @@ abstract class BleServiceBase {
   Stream<AntennaData> get challengeStream;
   Stream<AntennaData> get antennaStream;
   Stream<void> get ackStream;
+  Stream<void> get disconnectStream;
 
   Future<void> connect(dynamic device);
   Future<void> sendReady();

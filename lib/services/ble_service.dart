@@ -14,13 +14,18 @@ class BleService extends BleServiceBase {
   BluetoothCharacteristic? _challengeChar;
   BluetoothCharacteristic? _antennaChar;
 
-  final _challengeController = StreamController<AntennaData>.broadcast();
-  final _antennaController   = StreamController<AntennaData>.broadcast();
-  final _ackController       = StreamController<void>.broadcast();
+  final _challengeController   = StreamController<AntennaData>.broadcast();
+  final _antennaController     = StreamController<AntennaData>.broadcast();
+  final _ackController         = StreamController<void>.broadcast();
+  final _disconnectController  = StreamController<void>.broadcast();
 
-  @override Stream<AntennaData> get challengeStream => _challengeController.stream;
-  @override Stream<AntennaData> get antennaStream   => _antennaController.stream;
-  @override Stream<void>        get ackStream       => _ackController.stream;
+  bool _intentionalDisconnect = false;
+  StreamSubscription<BluetoothConnectionState>? _connectionStateSub;
+
+  @override Stream<AntennaData> get challengeStream   => _challengeController.stream;
+  @override Stream<AntennaData> get antennaStream     => _antennaController.stream;
+  @override Stream<void>        get ackStream         => _ackController.stream;
+  @override Stream<void>        get disconnectStream  => _disconnectController.stream;
 
   /// Starts a scan filtered to the pairing service UUID.
   /// Returns the [Stream] of scan results for the caller to display.
@@ -40,6 +45,8 @@ class BleService extends BleServiceBase {
 
   @override
   Future<void> connect(dynamic device) async {
+    _intentionalDisconnect = false;
+    _connectionStateSub?.cancel();
     _device = device as BluetoothDevice;
     await _device!.connect(license: License.free);
 
@@ -65,6 +72,12 @@ class BleService extends BleServiceBase {
     _mainChar!.onValueReceived.listen((b) {
       final text = String.fromCharCodes(b).trim();
       if (text == 'ACK') _ackController.add(null);
+    });
+
+    _connectionStateSub = _device!.connectionState.listen((s) {
+      if (s == BluetoothConnectionState.disconnected && !_intentionalDisconnect) {
+        _disconnectController.add(null);
+      }
     });
   }
 
@@ -98,14 +111,19 @@ class BleService extends BleServiceBase {
 
   @override
   Future<void> disconnect() async {
+    _intentionalDisconnect = true;
+    _connectionStateSub?.cancel();
+    _connectionStateSub = null;
     await _device?.disconnect();
   }
 
   @override
   void dispose() {
+    _connectionStateSub?.cancel();
     _challengeController.close();
     _antennaController.close();
     _ackController.close();
+    _disconnectController.close();
   }
 
   AntennaData _unpack(List<int> bytes) {

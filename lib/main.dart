@@ -115,7 +115,7 @@ class _MyAppState extends State<MyApp> {
     initialLocation: ScreenLoginValidation.routeName,
     routes: [
       GoRoute(
-        path: '/test_bluetooth',
+        path: ScreenBluetoothPairing.routeName,
         builder: (context, state) => const ScreenBluetoothPairing(),
       ),
       GoRoute(
