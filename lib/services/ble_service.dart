@@ -79,6 +79,24 @@ class BleService extends BleServiceBase {
   }
 
   @override
+  Future<void> sendCommand(String cmd) async {
+    await _mainChar!.write(cmd.codeUnits, withoutResponse: false);
+  }
+
+  @override
+  Future<void> sendData(String text) async {
+    const chunkSize = 20;
+    final bytes = text.codeUnits;
+    for (var i = 0; i < bytes.length; i += chunkSize) {
+      final chunk = bytes.sublist(i, (i + chunkSize).clamp(0, bytes.length));
+      await _mainChar!.write(chunk, withoutResponse: false);
+      if (i + chunkSize < bytes.length) {
+        await Future.delayed(const Duration(milliseconds: 50));
+      }
+    }
+  }
+
+  @override
   Future<void> disconnect() async {
     await _device?.disconnect();
   }

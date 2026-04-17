@@ -102,6 +102,41 @@ class WebBleService extends BleServiceBase {
   }
 
   @override
+  Future<void> sendCommand(String cmd) async {
+    bool sent = false;
+    while (!sent) {
+      try {
+        await _mainChar!.writeValueWithResponse(Uint8List.fromList(cmd.codeUnits));
+        sent = true;
+      } catch (_) {
+        await Future.delayed(const Duration(seconds: 1));
+      }
+    }
+  }
+
+  @override
+  Future<void> sendData(String text) async {
+    const chunkSize = 20;
+    final bytes = Uint8List.fromList(text.codeUnits);
+    for (var i = 0; i < bytes.length; i += chunkSize) {
+      final end = (i + chunkSize).clamp(0, bytes.length);
+      final chunk = bytes.sublist(i, end);
+      bool sent = false;
+      while (!sent) {
+        try {
+          await _mainChar!.writeValueWithResponse(chunk);
+          sent = true;
+        } catch (_) {
+          await Future.delayed(const Duration(seconds: 1));
+        }
+      }
+      if (end < bytes.length) {
+        await Future.delayed(const Duration(milliseconds: 50));
+      }
+    }
+  }
+
+  @override
   Future<void> disconnect() async {
     _device?.disconnect();
   }

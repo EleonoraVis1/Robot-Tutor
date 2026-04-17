@@ -2,11 +2,9 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:csc322_starter_app/main.dart';
-import 'package:csc322_starter_app/providers/provider_bluetooth.dart';
+import 'package:csc322_starter_app/providers/provider_ble_connection.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_home_student.dart';
 import 'package:csc322_starter_app/services/ble_service.dart';
-import 'package:csc322_starter_app/services/ble_service_base.dart';
-import 'package:csc322_starter_app/services/web_ble_service.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_app_drawer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +25,6 @@ class ScreenBluetoothPairing extends ConsumerStatefulWidget {
 
 class _ScreenBluetoothPairingState
     extends ConsumerState<ScreenBluetoothPairing> {
-  late final BleServiceBase _ble;
-
   // Mobile scan results
   List<ScanResult> _discovered = [];
   StreamSubscription? _scanSub;
@@ -51,7 +47,6 @@ class _ScreenBluetoothPairingState
   @override
   void initState() {
     super.initState();
-    _ble = kIsWeb ? WebBleService() : BleService();
     if (!kIsWeb) _startMobileScan();
   }
 
@@ -74,7 +69,7 @@ class _ScreenBluetoothPairingState
   Future<void> _runWeb() async {
     _set('Opening device picker...');
     setState(() => _started = true);
-    final device = await (_ble as WebBleService).scan();
+    final device = await ref.read(bleConnectionProvider.notifier).scanWeb();
     if (device == null) {
       _set('No device selected.');
       setState(() => _started = false);
@@ -102,8 +97,11 @@ class _ScreenBluetoothPairingState
     _set('Connecting...');
     setState(() => _started = true);
 
+    final ble = ref.read(bleConnectionProvider.notifier);
+
     try {
-      await _ble.connect(device);
+      await ble.connect(
+          device, _connectedDeviceName ?? 'Robot', _connectedDeviceId ?? '');
     } catch (e) {
       _set('Connection failed. Please try again.');
       setState(() => _started = false);
@@ -112,20 +110,17 @@ class _ScreenBluetoothPairingState
 
     await Future.delayed(const Duration(milliseconds: 500));
     _set('Sending READY...');
-    await _ble.sendReady();
+    await ble.sendReady();
     _set('Waiting for challenge...');
 
-    _challenge = await _ble.challengeStream.first;
+    _challenge = await ble.challengeStream.first;
     _uid = ref.read(providerUserProfile).uid;
     setState(() {});
     _set('Match the antenna positions.');
 
-    _antennaSub = _ble.antennaStream.listen(_onAntenna);
+    _antennaSub = ble.antennaStream.listen(_onAntenna);
 
-    _ackSub = _ble.ackStream.listen((_) async {
-      final notifier = ref.read(connectedDeviceProvider.notifier);
-      await notifier.saveDevice(
-          _connectedDeviceName ?? 'Robot', _connectedDeviceId ?? '');
+    _ackSub = ble.ackStream.listen((_) async {
       setState(() => _paired = true);
       _set('Connected!');
       await Future.delayed(const Duration(milliseconds: 1500));
@@ -158,7 +153,7 @@ class _ScreenBluetoothPairingState
   }
 
   Future<void> _sendUid() async {
-    await _ble.sendUid(_uid ?? 'unknown');
+    await ref.read(bleConnectionProvider.notifier).sendUid(_uid ?? 'unknown');
     _set('Verifying...');
   }
 
@@ -170,7 +165,6 @@ class _ScreenBluetoothPairingState
     _antennaSub?.cancel();
     _ackSub?.cancel();
     _scanSub?.cancel();
-    _ble.dispose();
     super.dispose();
   }
 

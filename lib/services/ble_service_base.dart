@@ -10,6 +10,8 @@ abstract class BleServiceBase {
   Future<void> connect(dynamic device);
   Future<void> sendReady();
   Future<void> sendUid(String uid);
+  Future<void> sendCommand(String cmd);
+  Future<void> sendData(String text);
   Future<void> disconnect();
   void dispose();
 }
