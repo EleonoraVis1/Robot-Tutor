@@ -198,11 +198,7 @@ class WidgetAppDrawer extends StatelessWidget {
                 leading: Icon(Icons.exit_to_app),
                 title: Text('Logout'),
                 onTap: () async {
-                  if (!isSupervisor) {
-                    await ref.read(providerFirestoreService).clearActiveUser();
-                  }
                   _providerAuth.clearAuthedUserDetailsAndSignout();
-                  //Navigator.of(context).pop();
                   context.push(ScreenLoginValidation.routeName);
                 },
               ),

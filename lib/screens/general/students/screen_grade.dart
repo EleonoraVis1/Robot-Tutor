@@ -109,6 +109,24 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
     }, SetOptions(merge: true));
   }
 
+  int extractChapter(String id) {
+    final match = RegExp(r'ch(\d+)').firstMatch(id);
+    return match != null ? int.parse(match.group(1)!) : 0;
+  }
+
+  int extractLesson(String id) {
+    final match = RegExp(r'les(\d+)').firstMatch(id);
+    return match != null ? int.parse(match.group(1)!) : 0;
+  }
+
+  bool isPracticeModule(String id) {
+    final match = RegExp(r'les([^_]+)').firstMatch(id);
+    if (match == null) return false;
+
+    final lessonPart = match.group(1)!;
+    return lessonPart.toLowerCase().startsWith('practice');
+  }
+
   @override
   Widget build(BuildContext context) {
     final profileProvider = ref.watch(providerUserProfile);
@@ -126,12 +144,24 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
             )),
           )
         : const AsyncValue.data([]);
+    
 
     return modulesAsync.when(
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
       data: (modules) {
+        final Map<int, List<Module>> groupedByChapter = {};
+
+        for (final module in modules) {
+          final chapter = extractChapter(module.id);
+
+          groupedByChapter.putIfAbsent(chapter, () => []);
+          groupedByChapter[chapter]!.add(module);
+        }
+
+        final sortedChapters = groupedByChapter.keys.toList()..sort();
+
         Widget buildModuleCard(Module module, String status) {
           Color? badgeColor;
           String badgeText = '';
@@ -264,36 +294,63 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
             title: Text('Grade ${widget.gradeId}'),
             centerTitle: true,
           ),
-          body: ListView.separated(
+          body: ListView(
             padding: const EdgeInsets.all(16),
-            itemCount: modules.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (_, i) {
-              final module = modules[i];
+            children: sortedChapters.map((chapter) {
+              final chapterModules = groupedByChapter[chapter]!;
 
-              String status = 'not_started';
-              if (studentId != null) {
-                final studentModulesAsync = ref.watch(
-                  studentModulesProvider(studentId),
-                );
-                return studentModulesAsync.when(
-                  loading: () => const SizedBox(),
-                  error: (_, __) => const SizedBox(),
-                  data: (studentModules) {
-                    final moduleData = studentModules[module.id];
-                    if (moduleData != null) {
-                      final quizStatus = moduleData['quiz_status'] ?? '';
-                      status = quizStatus == 'completed'
-                          ? 'completed'
-                          : 'started';
+              chapterModules.sort((a, b) {
+                final aPractice = isPracticeModule(a.id);
+                final bPractice = isPracticeModule(b.id);
+
+                if (aPractice && !bPractice) return 1;
+                if (!aPractice && bPractice) return -1;
+
+                return extractLesson(a.id).compareTo(extractLesson(b.id));
+              });
+
+              return Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: ExpansionTile(
+                  title: Text(
+                    'Chapter $chapter',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  children: chapterModules.map((module) {
+                    String status = 'not_started';
+
+                    if (studentId != null) {
+                      final studentModulesAsync = ref.watch(studentModulesProvider(studentId));
+
+                      return studentModulesAsync.when(
+                        loading: () => const SizedBox(),
+                        error: (_, __) => const SizedBox(),
+                        data: (studentModules) {
+                          final moduleData = studentModules[module.id];
+
+                          if (moduleData != null) {
+                            final quizStatus = moduleData['quiz_status'] ?? '';
+                            status = quizStatus == 'completed'
+                                ? 'completed'
+                                : 'started';
+                          }
+
+                          return buildModuleCard(module, status); // 👈 SAME UI
+                        },
+                      );
                     }
-                    return buildModuleCard(module, status);
-                  },
-                );
-              }
 
-              return buildModuleCard(module, status);
-            },
+                    return buildModuleCard(module, status);
+                  }).toList(),
+                ),
+              );
+            }).toList(),
           ),
         );
       },

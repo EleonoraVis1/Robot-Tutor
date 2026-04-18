@@ -13,7 +13,6 @@ final modulesProvider = StreamProvider<List<Module>>((ref) {
         return snapshot.docs.map((doc) {
           final data = doc.data();
           final id = doc.id; 
-
           final grade = _extractGradeFromId(id);
 
           return Module(
