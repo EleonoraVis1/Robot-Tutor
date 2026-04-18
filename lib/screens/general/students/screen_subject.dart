@@ -92,7 +92,13 @@ class _ScreenSubjectState extends ConsumerState<ScreenSubject> {
 
               return Card(
                 elevation: 3,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    width: 2,
+                    color: Colors.black
+                  )
+                ),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(20),
                   onTap: () {

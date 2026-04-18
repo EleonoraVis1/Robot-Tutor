@@ -310,9 +310,13 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
               });
 
               return Card(
-                elevation: 4,
+                elevation: 8,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(
+                    width: 2,
+                    color: Colors.black
+                  ),
                 ),
                 child: ExpansionTile(
                   title: Text(
