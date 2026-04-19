@@ -278,13 +278,23 @@ class _ScreenBluetoothPairingState
                   ),
                 ] else ...[
                   // Mobile: scan results list
-                  if (_discovered.isEmpty) ...[
-                    const SizedBox(height: 32),
-                    const CircularProgressIndicator(),
-                    const SizedBox(height: 16),
-                    Text('Scanning for robots...',
-                        style: theme.textTheme.bodyMedium),
-                  ] else ...[
+                  if (_discovered.isEmpty)
+                    Expanded(
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(height: 32),
+                            const CircularProgressIndicator(),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Scanning for robots...',
+                              style: theme.textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ) else ...[
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text('Available Robots',

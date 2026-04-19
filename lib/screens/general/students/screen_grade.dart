@@ -7,6 +7,7 @@ import 'package:csc322_starter_app/models/module.dart';
 import 'package:csc322_starter_app/models/user_profile.dart';
 import 'package:csc322_starter_app/providers/provider_subjects.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
+import 'package:csc322_starter_app/widgets/general/shake_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +17,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // StateFUL widget which manages state. Simply initializes the state object.
 //////////////////////////////////////////////////////////////////////////
 class ScreenGrade extends ConsumerStatefulWidget {
-  // static const routeName = '/student/:studentUid/subject/:subjectId';
 
   final String subjectId;
   final int gradeId;
@@ -39,6 +39,7 @@ class ScreenGrade extends ConsumerStatefulWidget {
 class _ScreenGradeState extends ConsumerState<ScreenGrade> {
   // The "instance variables" managed in this state
   bool _isInit = true;
+  String? _shakingModuleId;
 
   ////////////////////////////////////////////////////////////////
   // Runs the following code once upon initialization
@@ -84,7 +85,7 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
 
     if (isFirstStart) {
       data['startedAt'] = FieldValue.serverTimestamp();
-      data['quiz_status'] = 'inaccessible';
+      data['quiz_status'] = 'started';
       data['example_question_num'] = -1;
     }
 
@@ -122,9 +123,42 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
   bool isPracticeModule(String id) {
     final match = RegExp(r'les([^_]+)').firstMatch(id);
     if (match == null) return false;
-
     final lessonPart = match.group(1)!;
     return lessonPart.toLowerCase().startsWith('practice');
+  }
+
+  bool isModuleCompleted(Map<String, dynamic> studentModules, String moduleId) {
+    final data = studentModules[moduleId];
+    return data?['quiz_status'] == 'completed';
+  }
+
+  bool isModuleUnlocked({
+    required List<Module> chapterModules,
+    required Map<String, dynamic> studentModules,
+    required Module module,
+  }) {    
+
+    final index = chapterModules.indexWhere((m) => m.id == module.id);
+    if (index == 0) return true;
+    final previousModule = chapterModules[index - 1];
+
+    return isModuleCompleted(studentModules, previousModule.id);
+  }
+
+  List<Module> sortModules(List<Module> modules) {
+    final sorted = List<Module>.from(modules);
+
+    sorted.sort((a, b) {
+      final aPractice = isPracticeModule(a.id);
+      final bPractice = isPracticeModule(b.id);
+
+      if (aPractice && !bPractice) return 1;
+      if (!aPractice && bPractice) return -1;
+
+      return extractLesson(a.id).compareTo(extractLesson(b.id));
+    });
+
+    return sorted;
   }
 
   @override
@@ -134,7 +168,8 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
         profileProvider.dataLoaded &&
         profileProvider.userType == UserType.SUPERVISOR;
 
-    final studentId = isSupervisor ? widget.studentUid : profileProvider.uid;
+    final studentId =
+        isSupervisor ? widget.studentUid : profileProvider.uid;
 
     final modulesAsync = studentId != null
         ? ref.watch(
@@ -144,25 +179,29 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
             )),
           )
         : const AsyncValue.data([]);
-    
 
     return modulesAsync.when(
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
+      error: (e, _) =>
+          Scaffold(body: Center(child: Text('Error: $e'))),
+
       data: (modules) {
+        final studentModulesAsync = studentId != null
+            ? ref.watch(studentModulesProvider(studentId))
+            : const AsyncValue.data({});
+
         final Map<int, List<Module>> groupedByChapter = {};
 
         for (final module in modules) {
           final chapter = extractChapter(module.id);
-
           groupedByChapter.putIfAbsent(chapter, () => []);
           groupedByChapter[chapter]!.add(module);
         }
 
         final sortedChapters = groupedByChapter.keys.toList()..sort();
 
-        Widget buildModuleCard(Module module, String status) {
+        Widget buildModuleCard(Module module, String status, {bool isLocked = false}) {
           Color? badgeColor;
           String badgeText = '';
 
@@ -185,37 +224,58 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
             elevation: 6,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
-              side: BorderSide(width: 2, color: Colors.black),
+              side: const BorderSide(width: 2, color: Colors.black),
             ),
             child: InkWell(
               borderRadius: BorderRadius.circular(20),
-              onTap: () async {
-                try {
-                  if (profileProvider.dataLoaded &&
-                      !isSupervisor &&
-                      studentId != null) {
-                    await startModule(
-                      studentId,
-                      module.id,
-                      profileProvider.wholeName,
-                    );
-                    await context.push(
-                      '/subject/${widget.subjectId}/grade/${widget.gradeId}/module/${module.id}',
-                    );
-                    await exitModule(studentId);
-                  } else if (profileProvider.dataLoaded &&
-                      isSupervisor &&
-                      studentId != null) {
-                    context.push(
-                      '${ScreenHomeSupervisor.routeName}/student/$studentId/subject/${widget.subjectId}/grade/${widget.gradeId}/module/${module.id}',
-                    );
-                  }
-                } catch (e) {
+              onTap: isLocked
+              ? () {
+                  setState(() {
+                    _shakingModuleId = module.id;
+                  });
+                  final message = isSupervisor
+                      ? 'This module is locked for this student. They must complete previous modules first.'
+                      : 'This module is locked. Complete previous modules first.';
+                  Future.delayed(const Duration(milliseconds: 500), () {
+                    if (mounted) {
+                      setState(() {
+                        _shakingModuleId = null;
+                      });
+                    }
+                  });
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Failed to start module')),
+                    SnackBar(content: Text(message)),
                   );
                 }
-              },
+              : () async {
+                  try {
+                    if (profileProvider.dataLoaded &&
+                        !isSupervisor &&
+                        studentId != null) {
+                      await startModule(
+                        studentId,
+                        module.id,
+                        profileProvider.wholeName,
+                      );
+
+                      await context.push(
+                        '/subject/${widget.subjectId}/grade/${widget.gradeId}/module/${module.id}',
+                      );
+
+                      await exitModule(studentId);
+                    } else if (profileProvider.dataLoaded &&
+                        isSupervisor &&
+                        studentId != null) {
+                      context.push(
+                        '${ScreenHomeSupervisor.routeName}/student/$studentId/subject/${widget.subjectId}/grade/${widget.gradeId}/module/${module.id}',
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Failed to start module')),
+                    );
+                  }
+                },
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 14,
@@ -227,11 +287,10 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
                       children: [
                         Icon(
                           Icons.view_module_outlined,
-                          color: Colors.blueGrey[600],
+                          color: isLocked ? Colors.grey : Colors.blueGrey[600],
                           size: 28,
                         ),
                         const SizedBox(width: 16),
-
                         Expanded(
                           child: Text(
                             module.title,
@@ -248,15 +307,15 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Grade ' + module.grade_level.toString(),
+                          'Grade ${module.grade_level}',
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const Icon(
-                          Icons.arrow_forward_ios,
-                          size: 16,
+                        Icon(
+                          isLocked ? Icons.lock : Icons.arrow_forward_ios,
+                          size: isLocked ? 26 : 16,
                           color: Colors.blueGrey,
                         ),
                       ],
@@ -289,69 +348,81 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
           );
         }
 
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('Grade ${widget.gradeId}'),
-            centerTitle: true,
-          ),
-          body: ListView(
-            padding: const EdgeInsets.all(16),
-            children: sortedChapters.map((chapter) {
-              final chapterModules = groupedByChapter[chapter]!;
+        return studentModulesAsync.when(
+          loading: () =>
+              const Scaffold(body: Center(child: CircularProgressIndicator())),
+          error: (_, __) =>
+              const Scaffold(body: Center(child: Text("Error loading progress"))),
 
-              chapterModules.sort((a, b) {
-                final aPractice = isPracticeModule(a.id);
-                final bPractice = isPracticeModule(b.id);
+          data: (rawStudentModules) {
+            final Map<String, dynamic> studentModules =
+                Map<String, dynamic>.from(rawStudentModules);
 
-                if (aPractice && !bPractice) return 1;
-                if (!aPractice && bPractice) return -1;
+            return Scaffold(
+              appBar: AppBar(
+                title: Text('Grade ${widget.gradeId}'),
+                centerTitle: true,
+              ),
+              body: ListView(
+                padding: const EdgeInsets.all(16),
+                children: sortedChapters.map((chapter) {
+                  final chapterModules = groupedByChapter[chapter]!;
+                  final sortedChapterModules = sortModules(chapterModules);
 
-                return extractLesson(a.id).compareTo(extractLesson(b.id));
-              });
-
-              return Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: ExpansionTile(
-                  title: Text(
-                    'Chapter $chapter',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                  return Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                  ),
-                  children: chapterModules.map((module) {
-                    String status = 'not_started';
+                    child: ExpansionTile(
+                      title: Text(
+                        'Chapter $chapter',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
 
-                    if (studentId != null) {
-                      final studentModulesAsync = ref.watch(studentModulesProvider(studentId));
+                      children: sortedChapterModules.map((module) {
+                        final moduleData =
+                            studentModules[module.id] as Map<String, dynamic>?;
 
-                      return studentModulesAsync.when(
-                        loading: () => const SizedBox(),
-                        error: (_, __) => const SizedBox(),
-                        data: (studentModules) {
-                          final moduleData = studentModules[module.id];
+                        String status = 'not_started';
 
-                          if (moduleData != null) {
-                            final quizStatus = moduleData['quiz_status'] ?? '';
-                            status = quizStatus == 'completed'
-                                ? 'completed'
-                                : 'started';
+                        if (moduleData != null) {
+                          final quizStatus = moduleData['quiz_status'];
+
+                          if (quizStatus == 'completed') {
+                            status = 'completed';
+                          } else if (quizStatus == 'started') {
+                            status = 'started';
                           }
+                        }
 
-                          return buildModuleCard(module, status); // 👈 SAME UI
-                        },
-                      );
-                    }
+                        final unlocked = isModuleUnlocked(
+                          chapterModules: sortedChapterModules,
+                          studentModules: studentModules,
+                          module: module,
+                        );
 
-                    return buildModuleCard(module, status);
-                  }).toList(),
-                ),
-              );
-            }).toList(),
-          ),
+                        return Opacity(
+                          opacity: unlocked ? 1.0 : 0.4,
+                          child: ShakeWidget(
+                            shake: _shakingModuleId == module.id,
+                            child: buildModuleCard(
+                              module,
+                              status,
+                              isLocked: !unlocked,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  );
+                }).toList(),
+              ),
+            );
+          },
         );
       },
     );
