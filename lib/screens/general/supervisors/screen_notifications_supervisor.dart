@@ -41,15 +41,41 @@ class ScreenNotifications extends ConsumerWidget {
 
               return ListTile(
                 leading: Icon(
-                  n['status'] == 'Accepted'
-                      ? Icons.check_circle
-                      : Icons.cancel,
-                  color: n['status'] == 'Accepted'
-                      ? Colors.green
-                      : Colors.red,
+                  n['type'] == 'quiz'
+                      ? Icons.quiz
+                      : (n['status'] == 'Accepted'
+                          ? Icons.check_circle
+                          : Icons.cancel),
+                  color: n['type'] == 'quiz'
+                      ? Colors.blue
+                      : (n['status'] == 'Accepted'
+                          ? Colors.green
+                          : Colors.red),
                 ),
-                title: Text(
-                  '${n['studentName']} ${n['status'].toLowerCase()} your invite',
+                title: Builder(
+                  builder: (_) {
+                    final type = n['type'];
+
+                    if (type == 'quiz') {
+                      final student = n['studentName'] ?? 'Student';
+                      final status = n['status'] ?? '';
+                      final subject = n['subject'] ?? '';
+                      final grade = n['grade'] != null ? 'Grade ${n['grade']}' : '';
+                      final chapter = n['chapter'] != null ? 'Chapter ${n['chapter']}' : '';
+                      final module = n['moduleId'] ?? '';
+
+                      final action =
+                          status == 'retook' ? 'retook' : 'completed';
+
+                      return Text(
+                        '$student $action $grade $subject – $chapter: $module',
+                      );
+                    }
+
+                    return Text(
+                      '${n['studentName']} ${n['status'].toLowerCase()} your invite',
+                    );
+                  },
                 ),
                 subtitle: Text(
                   n['timestamp'] != null

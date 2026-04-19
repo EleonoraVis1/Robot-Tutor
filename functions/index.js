@@ -85,11 +85,33 @@ exports.sendSupervisorNotification = onDocumentCreated(
       return;
     }
 
+    let body = "";
+
+    if (notif.type === "quiz") {
+      const action =
+        notif.status === "retook"
+          ? "retook"
+          : "completed";
+
+      const subject = notif.subject || "Subject";
+      const grade = notif.grade ? `Grade ${notif.grade}` : "";
+      const chapter = notif.chapter ? `Chapter ${notif.chapter}` : "";
+      const module = notif.moduleTitle || notif.moduleId || "";
+
+      body = `${notif.studentName} ${action} ${grade} ${subject} – ${chapter}: ${module}`;
+    }
+
+    else {
+      const action = (notif.status || "").toLowerCase();
+
+      body = `${notif.studentName} ${action} your invite`;
+    }
+
     const payload = {
       token: supervisorData.fcmToken,
       notification: {
-        title: "Student Response",
-        body: `${notif.studentName} ${notif.status.toLowerCase()} your invite`,
+        title: "Student Update",
+        body: body,
       },
     };
 

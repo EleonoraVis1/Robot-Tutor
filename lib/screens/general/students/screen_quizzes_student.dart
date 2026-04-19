@@ -63,6 +63,11 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
   int _score = 0;
   int? _selected;
 
+  int extractChapterFromId(String id) {
+    final match = RegExp(r'ch(\d+)').firstMatch(id);
+    return match != null ? int.parse(match.group(1)!) : 0;
+  }
+
   Future<void> _saveAndShowResult(
     BuildContext context,
     String subjectId,
@@ -75,6 +80,12 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
       moduleId: moduleId,
       score: _score,
       totalQuestions: total,
+    );
+    await _notifySupervisors(
+      uid: uid,
+      subjectId: subjectId,
+      moduleId: moduleId,
+      grade: widget.grade, 
     );
     final moduleRef = FirebaseFirestore.instance
           .collection('user_profiles')
@@ -103,6 +114,76 @@ class _ScreenQuizState extends ConsumerState<ScreenQuiz> {
         ],
       ),
     );
+  }
+
+  Future<void> _notifySupervisors({
+    required String uid,
+    required String subjectId,
+    required String moduleId,
+    required int grade,
+  }) async {
+    final firestore = FirebaseFirestore.instance;
+
+    final userDoc =
+        await firestore.collection('user_profiles').doc(uid).get();
+
+    final userData = userDoc.data();
+    final firstName = userData?['first_name'] ?? 'Name';
+    final lastName = userData?['last_name'] ?? 'Lastname';
+    final studentName = firstName + ' ' + lastName;
+
+    final moduleDoc = await firestore
+        .collection('modules')
+        .doc(moduleId)
+        .get();
+
+    final moduleTitle = moduleDoc.data()?['title'] ?? moduleId;
+    String capitalize(String s) =>
+        s.isNotEmpty ? s[0].toUpperCase() + s.substring(1) : s;
+
+    final subjectName = capitalize(subjectId);
+    final chapter = extractChapterFromId(moduleId);
+
+    final supervisorsSnap = await firestore
+        .collection('user_profiles')
+        .doc(uid)
+        .collection('supervisors')
+        .get();
+
+    if (supervisorsSnap.docs.isEmpty) return;
+
+    final moduleRef = firestore
+        .collection('user_profiles')
+        .doc(uid)
+        .collection('modules')
+        .doc(moduleId);
+
+    final moduleSnap = await moduleRef.get();
+    final wasCompleted =
+        moduleSnap.data()?['quiz_status'] == 'completed';
+
+    final actionText = wasCompleted ? 'retook' : 'completed';
+
+    for (final doc in supervisorsSnap.docs) {
+      final supervisorId = doc.id;
+
+      await firestore
+          .collection('user_profiles')
+          .doc(supervisorId)
+          .collection('notifications')
+          .add({
+        'type': 'quiz',
+        'studentId': uid,
+        'studentName': studentName,
+        'subjectId': subjectName,
+        'grade': grade, 
+        'chapter': chapter, 
+        'moduleId': moduleTitle,
+        'status': actionText,
+        'read': false,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    }
   }
  
   @override
