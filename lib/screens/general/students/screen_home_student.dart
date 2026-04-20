@@ -74,6 +74,21 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
       appBar: WidgetPrimaryAppBar(title: const Text('Subjects')),
       drawer: WidgetAppDrawer(),
       body: _buildStudentView(profileProvider),
+      floatingActionButton: widget.supervisorView
+          ? null
+          : Row(
+              children: [
+                const Spacer(),
+                FloatingActionButton(
+                  tooltip: 'Upload Files',
+                  heroTag: 'Upload-file-tag',
+                  child: const Icon(Icons.upload_file_outlined),
+                  onPressed: () {
+                    context.push('/uploadfile');
+                  },
+                ),
+              ],
+            ),
     );
   }
 
