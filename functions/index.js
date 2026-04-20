@@ -93,7 +93,7 @@ exports.sendSupervisorNotification = onDocumentCreated(
           ? "retook"
           : "completed";
 
-      const subject = notif.subject || "Subject";
+      const subject = notif.subjectId || "Subject";
       const grade = notif.grade ? `Grade ${notif.grade}` : "";
       const chapter = notif.chapter ? `Chapter ${notif.chapter}` : "";
       const module = notif.moduleTitle || notif.moduleId || "";

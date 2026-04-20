@@ -76,10 +76,6 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
     final userProfile = ref.read(providerUserProfile);
     final isSupervisor = userProfile.userType == UserType.SUPERVISOR;
 
-    if (userProfile.uid.isNotEmpty && !isSupervisor) {
-      await firestore.setActiveUser(userProfile.uid);
-    }
-
     await _initFCM();
   }
 

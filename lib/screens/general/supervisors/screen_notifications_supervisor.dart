@@ -59,7 +59,7 @@ class ScreenNotifications extends ConsumerWidget {
                     if (type == 'quiz') {
                       final student = n['studentName'] ?? 'Student';
                       final status = n['status'] ?? '';
-                      final subject = n['subject'] ?? '';
+                      final subject = n['subjectId'] ?? '';
                       final grade = n['grade'] != null ? 'Grade ${n['grade']}' : '';
                       final chapter = n['chapter'] != null ? 'Chapter ${n['chapter']}' : '';
                       final module = n['moduleId'] ?? '';
