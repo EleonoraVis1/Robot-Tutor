@@ -42,6 +42,8 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
   bool _isLastQuestionAnswered = false;
   int _reviewIndex = -1;
   bool _completed = false;
+  BleConnectionNotifier? _bleNotifier;
+  double? _pendingVolume;
 
   ////////////////////////////////////////////////////////////////
   // Runs the following code once upon initialization
@@ -62,17 +64,15 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final profile = ref.read(providerUserProfile);
       if (profile.dataLoaded && profile.userType != UserType.SUPERVISOR) {
-        ref.read(bleConnectionProvider.notifier).sendModuleSelect(widget.moduleId);
+        _bleNotifier = ref.read(bleConnectionProvider.notifier);
+        _bleNotifier!.sendModuleSelect(widget.moduleId);
       }
     });
   }
 
   @override
   void dispose() {
-    final profile = ref.read(providerUserProfile);
-    if (profile.userType != UserType.SUPERVISOR) {
-      ref.read(bleConnectionProvider.notifier).sendModuleDeselect();
-    }
+    _bleNotifier?.sendModuleDeselect();
     super.dispose();
   }
 
@@ -445,9 +445,12 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
             SizedBox(
               width: 120,
               child: Slider(
-                value: ble.volume / 100,
-                onChangeEnd: (v) => notifier.setVolume((v * 100).round()),
-                onChanged: (_) {},
+                value: _pendingVolume ?? ble.volume / 100,
+                onChanged: (v) => setState(() => _pendingVolume = v),
+                onChangeEnd: (v) {
+                  notifier.setVolume((v * 100).round());
+                  setState(() => _pendingVolume = null);
+                },
               ),
             ),
             Text(
