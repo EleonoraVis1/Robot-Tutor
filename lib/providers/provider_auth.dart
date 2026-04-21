@@ -15,6 +15,7 @@ import 'dart:async';
 // Flutter external package imports
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 // App relative file imports
@@ -475,9 +476,12 @@ class ProviderAuth extends ChangeNotifier {
     // Wipe data stored in providers
     await _providerUserProfile.wipeAndCancelDbStream();
 
-    // Terminate the current instance of Firestore and clear any persistant state (cache) being stored locally
-    await FirebaseFirestore.instance.terminate();
-    await FirebaseFirestore.instance.clearPersistence();
+    // On web, terminate() kills the gRPC channel permanently and causes
+    // "client already terminated" errors on next login — skip it there.
+    if (!kIsWeb) {
+      await FirebaseFirestore.instance.terminate();
+      await FirebaseFirestore.instance.clearPersistence();
+    }
   }
 
   ///////////////////////////////////////////////////////////////////

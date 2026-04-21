@@ -101,15 +101,6 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
     }
   }
 
-  Future<void> exitModule(String studentId) async {
-    final activeModuleRef = FirebaseFirestore.instance
-        .collection('user_profiles')
-        .doc(studentId);
-    await activeModuleRef.set({
-      'active_module_id': '',
-    }, SetOptions(merge: true));
-  }
-
   int extractChapter(String id) {
     final match = RegExp(r'ch(\d+)').firstMatch(id);
     return match != null ? int.parse(match.group(1)!) : 0;
@@ -262,8 +253,7 @@ class _ScreenGradeState extends ConsumerState<ScreenGrade> {
                         '/subject/${widget.subjectId}/grade/${widget.gradeId}/module/${module.id}',
                       );
 
-                      await exitModule(studentId);
-                    } else if (profileProvider.dataLoaded &&
+                      } else if (profileProvider.dataLoaded &&
                         isSupervisor &&
                         studentId != null) {
                       context.push(

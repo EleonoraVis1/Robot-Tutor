@@ -14,13 +14,18 @@ class WebBleService extends BleServiceBase {
   BluetoothCharacteristic? _challengeChar;
   BluetoothCharacteristic? _antennaChar;
 
-  final _challengeController = StreamController<AntennaData>.broadcast();
-  final _antennaController   = StreamController<AntennaData>.broadcast();
-  final _ackController       = StreamController<void>.broadcast();
+  final _challengeController  = StreamController<AntennaData>.broadcast();
+  final _antennaController    = StreamController<AntennaData>.broadcast();
+  final _ackController        = StreamController<void>.broadcast();
+  final _disconnectController = StreamController<void>.broadcast();
 
-  @override Stream<AntennaData> get challengeStream => _challengeController.stream;
-  @override Stream<AntennaData> get antennaStream   => _antennaController.stream;
-  @override Stream<void>        get ackStream       => _ackController.stream;
+  bool _intentionalDisconnect = false;
+  StreamSubscription<bool>? _connectedSub;
+
+  @override Stream<AntennaData> get challengeStream   => _challengeController.stream;
+  @override Stream<AntennaData> get antennaStream     => _antennaController.stream;
+  @override Stream<void>        get ackStream         => _ackController.stream;
+  @override Stream<void>        get disconnectStream  => _disconnectController.stream;
 
   /// Shows the browser's native BLE device picker. Returns the selected device
   /// or null if the user cancelled or Web Bluetooth is not supported.
@@ -40,6 +45,8 @@ class WebBleService extends BleServiceBase {
 
   @override
   Future<void> connect(dynamic device) async {
+    _intentionalDisconnect = false;
+    _connectedSub?.cancel();
     _device = device as BluetoothDevice;
     await _device!.connect();
 
@@ -63,6 +70,12 @@ class WebBleService extends BleServiceBase {
       final list = Uint8List.view(bytes.buffer, bytes.offsetInBytes, bytes.lengthInBytes);
       final text = String.fromCharCodes(list).trim();
       if (text == 'ACK') _ackController.add(null);
+    });
+
+    _connectedSub = _device!.connected.listen((isConnected) {
+      if (!isConnected && !_intentionalDisconnect) {
+        _disconnectController.add(null);
+      }
     });
   }
 
@@ -102,15 +115,55 @@ class WebBleService extends BleServiceBase {
   }
 
   @override
+  Future<void> sendCommand(String cmd) async {
+    bool sent = false;
+    while (!sent) {
+      try {
+        await _mainChar!.writeValueWithResponse(Uint8List.fromList(cmd.codeUnits));
+        sent = true;
+      } catch (_) {
+        await Future.delayed(const Duration(seconds: 1));
+      }
+    }
+  }
+
+  @override
+  Future<void> sendData(String text) async {
+    const chunkSize = 20;
+    final bytes = Uint8List.fromList(text.codeUnits);
+    for (var i = 0; i < bytes.length; i += chunkSize) {
+      final end = (i + chunkSize).clamp(0, bytes.length);
+      final chunk = bytes.sublist(i, end);
+      bool sent = false;
+      while (!sent) {
+        try {
+          await _mainChar!.writeValueWithResponse(chunk);
+          sent = true;
+        } catch (_) {
+          await Future.delayed(const Duration(seconds: 1));
+        }
+      }
+      if (end < bytes.length) {
+        await Future.delayed(const Duration(milliseconds: 50));
+      }
+    }
+  }
+
+  @override
   Future<void> disconnect() async {
+    _intentionalDisconnect = true;
+    _connectedSub?.cancel();
+    _connectedSub = null;
     _device?.disconnect();
   }
 
   @override
   void dispose() {
+    _connectedSub?.cancel();
     _challengeController.close();
     _antennaController.close();
     _ackController.close();
+    _disconnectController.close();
   }
 
   AntennaData _unpack(ByteData bytes) {

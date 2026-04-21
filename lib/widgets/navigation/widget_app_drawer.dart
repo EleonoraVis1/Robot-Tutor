@@ -11,14 +11,12 @@
 // Flutter external package imports
 import 'package:csc322_starter_app/models/invite.dart';
 import 'package:csc322_starter_app/models/user_profile.dart';
-import 'package:csc322_starter_app/providers/provider_firestore.dart';
 import 'package:csc322_starter_app/providers/provider_students.dart';
 import 'package:csc322_starter_app/providers/provides_invites.dart';
 import 'package:csc322_starter_app/screens/auth/screen_login_validation.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_home_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_invites.dart';
-import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_student_supervisors.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_notifications_supervisor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,10 +24,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 
 // App relative file imports
-import '../../widgets/navigation/widget_primary_scaffold.dart';
 import '../../screens/settings/screen_profile.dart';
 import '../../providers/provider_user_profile.dart';
-import '../../screens/settings/screen_settings.dart';
 import '../general/widget_profile_avatar.dart';
 import '../../providers/provider_auth.dart';
 import '../../main.dart';
@@ -195,7 +191,7 @@ class WidgetAppDrawer extends StatelessWidget {
               //   },
               // ),
               ListTile(
-                leading: Icon(Icons.exit_to_app),
+                leading: Icon(Icons.logout),
                 title: Text('Logout'),
                 onTap: () async {
                   _providerAuth.clearAuthedUserDetailsAndSignout();

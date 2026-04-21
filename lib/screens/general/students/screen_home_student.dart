@@ -3,8 +3,10 @@ import 'dart:async';
 
 // Flutter external package imports
 import 'package:csc322_starter_app/main.dart';
+import 'package:csc322_starter_app/providers/provider_ble_connection.dart';
 import 'package:csc322_starter_app/providers/provider_subjects.dart';
 import 'package:csc322_starter_app/providers/provider_user_profile.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_bluetooth_pairing.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:csc322_starter_app/widgets/general/subject_card.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_app_drawer.dart';
@@ -69,6 +71,14 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
   @override
   Widget build(BuildContext context) {
     final profileProvider = ref.watch(providerUserProfile);
+
+    if (!widget.supervisorView) {
+      ref.listen<BleConnectionState>(bleConnectionProvider, (prev, next) {
+        if ((prev?.connected ?? false) && !next.connected && mounted) {
+          context.go(ScreenBluetoothPairing.routeName);
+        }
+      });
+    }
 
     return Scaffold(
       appBar: WidgetPrimaryAppBar(title: const Text('Subjects')),
@@ -147,7 +157,7 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
           const SizedBox(height: 16),
           if (!(widget.supervisorView))
             ElevatedButton(
-              onPressed: () => context.push('/test_bluetooth'),
+              onPressed: () => context.push(ScreenBluetoothPairing.routeName),
               child: const Text(
                 'Connect',
                 style: TextStyle(

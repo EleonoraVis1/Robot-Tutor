@@ -13,12 +13,9 @@
 // Flutter external package imports
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csc322_starter_app/models/user_profile.dart';
-import 'package:csc322_starter_app/providers/provider_firestore.dart';
-import 'package:csc322_starter_app/providers/provider_user_profile.dart';
 import 'package:csc322_starter_app/screens/general/students/screen_bluetooth_pairing.dart';
 import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter/cupertino.dart';
@@ -71,11 +68,6 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   // this page
   ////////////////////////////////////////////////////////////////////////
   _init() async {
-    // Get providers
-    final firestore = ref.read(providerFirestoreService);
-    final userProfile = ref.read(providerUserProfile);
-    final isSupervisor = userProfile.userType == UserType.SUPERVISOR;
-
     await _initFCM();
   }
 

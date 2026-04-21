@@ -14,13 +14,18 @@ class BleService extends BleServiceBase {
   BluetoothCharacteristic? _challengeChar;
   BluetoothCharacteristic? _antennaChar;
 
-  final _challengeController = StreamController<AntennaData>.broadcast();
-  final _antennaController   = StreamController<AntennaData>.broadcast();
-  final _ackController       = StreamController<void>.broadcast();
+  final _challengeController   = StreamController<AntennaData>.broadcast();
+  final _antennaController     = StreamController<AntennaData>.broadcast();
+  final _ackController         = StreamController<void>.broadcast();
+  final _disconnectController  = StreamController<void>.broadcast();
 
-  @override Stream<AntennaData> get challengeStream => _challengeController.stream;
-  @override Stream<AntennaData> get antennaStream   => _antennaController.stream;
-  @override Stream<void>        get ackStream       => _ackController.stream;
+  bool _intentionalDisconnect = false;
+  StreamSubscription<BluetoothConnectionState>? _connectionStateSub;
+
+  @override Stream<AntennaData> get challengeStream   => _challengeController.stream;
+  @override Stream<AntennaData> get antennaStream     => _antennaController.stream;
+  @override Stream<void>        get ackStream         => _ackController.stream;
+  @override Stream<void>        get disconnectStream  => _disconnectController.stream;
 
   /// Starts a scan filtered to the pairing service UUID.
   /// Returns the [Stream] of scan results for the caller to display.
@@ -40,6 +45,8 @@ class BleService extends BleServiceBase {
 
   @override
   Future<void> connect(dynamic device) async {
+    _intentionalDisconnect = false;
+    _connectionStateSub?.cancel();
     _device = device as BluetoothDevice;
     await _device!.connect(license: License.free);
 
@@ -66,6 +73,12 @@ class BleService extends BleServiceBase {
       final text = String.fromCharCodes(b).trim();
       if (text == 'ACK') _ackController.add(null);
     });
+
+    _connectionStateSub = _device!.connectionState.listen((s) {
+      if (s == BluetoothConnectionState.disconnected && !_intentionalDisconnect) {
+        _disconnectController.add(null);
+      }
+    });
   }
 
   @override
@@ -79,15 +92,38 @@ class BleService extends BleServiceBase {
   }
 
   @override
+  Future<void> sendCommand(String cmd) async {
+    await _mainChar!.write(cmd.codeUnits, withoutResponse: false);
+  }
+
+  @override
+  Future<void> sendData(String text) async {
+    const chunkSize = 20;
+    final bytes = text.codeUnits;
+    for (var i = 0; i < bytes.length; i += chunkSize) {
+      final chunk = bytes.sublist(i, (i + chunkSize).clamp(0, bytes.length));
+      await _mainChar!.write(chunk, withoutResponse: false);
+      if (i + chunkSize < bytes.length) {
+        await Future.delayed(const Duration(milliseconds: 50));
+      }
+    }
+  }
+
+  @override
   Future<void> disconnect() async {
+    _intentionalDisconnect = true;
+    _connectionStateSub?.cancel();
+    _connectionStateSub = null;
     await _device?.disconnect();
   }
 
   @override
   void dispose() {
+    _connectionStateSub?.cancel();
     _challengeController.close();
     _antennaController.close();
     _ackController.close();
+    _disconnectController.close();
   }
 
   AntennaData _unpack(List<int> bytes) {

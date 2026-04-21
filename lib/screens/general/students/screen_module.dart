@@ -2,9 +2,9 @@
 import 'dart:async';
 
 // Flutter external package imports
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csc322_starter_app/main.dart';
 import 'package:csc322_starter_app/models/user_profile.dart';
+import 'package:csc322_starter_app/providers/provider_ble_connection.dart';
 import 'package:csc322_starter_app/providers/provider_module_result.dart';
 import 'package:csc322_starter_app/providers/provider_quiz.dart';
 import 'package:csc322_starter_app/providers/provider_subjects.dart';
@@ -42,6 +42,8 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
   bool _isLastQuestionAnswered = false;
   int _reviewIndex = -1;
   bool _completed = false;
+  BleConnectionNotifier? _bleNotifier;
+  double? _pendingVolume;
 
   ////////////////////////////////////////////////////////////////
   // Runs the following code once upon initialization
@@ -60,25 +62,18 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final profileProvider = ref.read(providerUserProfile);
-
-      if (profileProvider.dataLoaded &&
-          profileProvider.userType != UserType.SUPERVISOR) {
-        startModule(profileProvider.uid, widget.moduleId);
+      final profile = ref.read(providerUserProfile);
+      if (profile.dataLoaded && profile.userType != UserType.SUPERVISOR) {
+        _bleNotifier = ref.read(bleConnectionProvider.notifier);
+        _bleNotifier!.sendModuleSelect(widget.moduleId);
       }
     });
   }
 
-  Future<void> startModule(String studentId, String moduleId) async {
-    final ref = FirebaseFirestore.instance
-        .collection('user_profiles')
-        .doc(studentId);
-
-    final doc = await ref.get();
-
-    if (doc.data()?['active_module_id'] != moduleId) {
-      await ref.set({'active_module_id': moduleId}, SetOptions(merge: true));
-    }
+  @override
+  void dispose() {
+    _bleNotifier?.sendModuleDeselect();
+    super.dispose();
   }
 
   ////////////////////////////////////////////////////////////////
@@ -176,20 +171,27 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
         ),
         centerTitle: true,
       ),
-      floatingActionButton: FloatingActionButton(
-        tooltip: 'Chat history',
-        heroTag: 'Chat-history-tag',
-        child: const Icon(Icons.chat),
-        onPressed: () {
-          if (widget.studentUid == null) {
-            context.push('/subject/$subjectId/grade/${widget.grade}/module/$moduleId/chat');
-          } else {
-            context.push(
-              '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/$subjectId/grade/${widget.grade}/module/$moduleId/chat',
-            );
-          }
+      floatingActionButton: Consumer(
+        builder: (ctx, ref, _) {
+          final ble = ref.watch(bleConnectionProvider);
+          if (ble.connected) return _buildRobotControls(ctx, ble, ref);
+          return FloatingActionButton(
+            tooltip: 'Robot controls',
+            heroTag: 'robot-controls',
+            child: const Icon(Icons.chat),
+            onPressed: () {
+              if (widget.studentUid == null) {
+                context.push('/subject/$subjectId/grade/${widget.grade}/module/$moduleId/chat');
+              } else {
+                context.push(
+                  '${ScreenHomeSupervisor.routeName}/student/${widget.studentUid}/subject/$subjectId/grade/${widget.grade}/module/$moduleId/chat',
+                );
+              }
+            },
+          );
         },
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -421,6 +423,54 @@ class _ScreenModuleState extends ConsumerState<ScreenModule> {
                 );
               },
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRobotControls(
+      BuildContext ctx, BleConnectionState ble, WidgetRef ref) {
+    final notifier = ref.read(bleConnectionProvider.notifier);
+    return Material(
+      elevation: 4,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        height: 64,
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+        decoration: BoxDecoration(
+          color: Theme.of(ctx).colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            IconButton(
+              tooltip: ble.micMuted ? 'Unmute microphone' : 'Mute microphone',
+              icon: Icon(
+                ble.micMuted ? Icons.mic_off : Icons.mic,
+                color: ble.micMuted ? Theme.of(ctx).colorScheme.error : null,
+              ),
+              onPressed: () => notifier.setMicMuted(!ble.micMuted),
+            ),
+            SizedBox(
+              width: 120,
+              child: Slider(
+                value: _pendingVolume ?? ble.volume / 100,
+                onChanged: (v) => setState(() => _pendingVolume = v),
+                onChangeEnd: (v) {
+                  notifier.setVolume((v * 100).round());
+                  setState(() => _pendingVolume = null);
+                },
+              ),
+            ),
+            Text(
+              '${ble.volume}%',
+              style: Theme.of(ctx).textTheme.bodySmall,
+            ),
+            const SizedBox(width: 8),
+            const Icon(Icons.volume_up, size: 20),
           ],
         ),
       ),
