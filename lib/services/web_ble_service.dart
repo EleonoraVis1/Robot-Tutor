@@ -121,7 +121,8 @@ class WebBleService extends BleServiceBase {
       try {
         await _mainChar!.writeValueWithResponse(Uint8List.fromList(cmd.codeUnits));
         sent = true;
-      } catch (_) {
+      } catch (error) {
+        print('Error sending command: $error');
         await Future.delayed(const Duration(seconds: 1));
       }
     }

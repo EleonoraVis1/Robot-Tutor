@@ -28,6 +28,7 @@ import '../../screens/settings/screen_profile.dart';
 import '../../providers/provider_user_profile.dart';
 import '../general/widget_profile_avatar.dart';
 import '../../providers/provider_auth.dart';
+import '../../providers/provider_ble_connection.dart';
 import '../../main.dart';
 
 enum BottomNavSelection { HOME_SCREEN, PROFILE_SCREEN, SETTINGS_SCREEN }
@@ -194,6 +195,7 @@ class WidgetAppDrawer extends StatelessWidget {
                 leading: Icon(Icons.logout),
                 title: Text('Logout'),
                 onTap: () async {
+                  await ref.read(bleConnectionProvider.notifier).disconnect();
                   _providerAuth.clearAuthedUserDetailsAndSignout();
                   context.push(ScreenLoginValidation.routeName);
                 },

@@ -156,14 +156,19 @@ class _ScreenHomeStudentState extends ConsumerState<ScreenHomeStudent> {
           ),
           const SizedBox(height: 16),
           if (!(widget.supervisorView))
-            ElevatedButton(
-              onPressed: () => context.push(ScreenBluetoothPairing.routeName),
-              child: const Text(
-                'Connect',
-                style: TextStyle(
-                  fontSize: 16
-                ),
-              ),
+            Consumer(
+              builder: (ctx, ref, _) {
+                final ble = ref.watch(bleConnectionProvider);
+                return ElevatedButton(
+                  onPressed: ble.connected
+                      ? () => ref.read(bleConnectionProvider.notifier).disconnect()
+                      : () => context.push(ScreenBluetoothPairing.routeName),
+                  child: Text(
+                    ble.connected ? 'Disconnect' : 'Connect',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                );
+              },
             ),
         ],
       ),
