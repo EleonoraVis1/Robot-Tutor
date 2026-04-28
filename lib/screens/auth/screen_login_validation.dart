@@ -13,6 +13,7 @@
 import 'dart:async';
 
 // Flutter external package imports
+import 'package:csc322_starter_app/screens/auth/screen_role.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +25,6 @@ import '../../providers/provider_user_profile.dart';
 import '../../providers/provider_auth.dart';
 import '../../models/user_profile.dart';
 import 'screen_unverified_email.dart';
-import 'screen_profile_setup.dart';
 import 'screen_splash.dart';
 import 'screen_auth.dart';
 import '../../main.dart';
@@ -129,7 +129,7 @@ class _ScreenLoginValidationState extends ConsumerState<ScreenLoginValidation> {
         );
       } else if (_providerUserProfile.accountCreationStep ==
           AccountCreationStep.ACC_STEP_ONBOARDING_PROFILE_CONTACT_INFO) {
-        return const ScreenProfileSetup(isAuth: true);
+        return ScreenRole();
       } else {
         return const WidgetPrimaryScaffold();
       }

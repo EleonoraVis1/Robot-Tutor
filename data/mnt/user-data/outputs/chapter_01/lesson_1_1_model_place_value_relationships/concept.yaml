@@ -1,0 +1,80 @@
+# =============================================================================
+# GO Math Grade 4 — Chapter 1, Lesson 1.1
+# concept.yaml — concepts and worked examples only
+# Firestore path: subjects/math/grades/4/lessons/math_g4_ch1_l1
+# Schema version: 1.1
+# EGR302 Reachy Mini (BAY-min) Tutoring Robot — Data Pipeline
+# Role owner: Haneul (module/question design & data handling)
+# =============================================================================
+
+lesson_id: "math_g4_ch1_l1"
+subject: math
+grade: 4
+unit: 1
+chapter: 1
+lesson: 1
+title: "Model Place Value Relationships"
+essential_question: "How can you describe the value of a digit?"
+standards: ["4.NBT.1"]
+mathematical_practices: ["MP.4", "MP.6", "MP.7"]
+
+citation:
+  textbook: "GO Math Grade 4 California (Houghton Mifflin Harcourt)"
+  chapter: 1
+  lesson: 1
+  pages: [5, 6, 7, 8]
+
+has_visual: true
+visual_handling: cite_only
+visual_description: >
+  Base-ten block diagrams showing cube (1), long (10), flat (100),
+  large cube (1,000), and a question-mark placeholder for 10,000.
+  Place-value table comparing 2,304 and 16,135 with flat/long block
+  models for the digit 3 in each number.
+
+concepts:
+  - id: c1
+    term: "place value"
+    definition: >
+      The value of a digit based on its position in a number.
+      Each place is 10 times the value of the place to its right.
+    example: "In 894,613 the digit 9 is in the ten-thousands place, so its value is 90,000."
+
+  - id: c2
+    term: "base-ten relationship"
+    definition: >
+      10 ones = 1 ten; 10 tens = 1 hundred; 10 hundreds = 1 thousand;
+      10 thousands = 1 ten thousand; and so on.
+    example: "10 flats (hundreds) make 1 large cube (1,000)."
+
+  - id: c3
+    term: "place-value chart"
+    definition: >
+      A table that organises digits into columns labelled by place
+      (Millions | Hundreds / Tens / Ones | Thousands | Ones period).
+    example: "894,613 → 8 hundred-thousands, 9 ten-thousands, 4 thousands, 6 hundreds, 1 ten, 3 ones."
+
+worked_examples:
+  - id: we1
+    title: "Find the value of the digit 9 in 894,613"
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: "Place-value chart with 894,613 filled in (p. 6)."
+    steps:
+      - "Write 894,613 in a place-value chart."
+      - "Locate the digit 9 — it is in the ten-thousands column."
+      - "The value of 9 in the ten-thousands place = 9 × 10,000 = 90,000."
+    answer: "90,000"
+    citation_page: 6
+
+  - id: we2
+    title: "Compare the values of the underlined digit 3 in 2,304 and 16,135"
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: "Two place-value charts and base-ten block models for 3 hundreds vs. 3 tens (p. 6)."
+    steps:
+      - "In 2,304 the digit 3 is in the hundreds place → value = 300."
+      - "In 16,135 the digit 3 is in the tens place → value = 30."
+      - "300 ÷ 30 = 10, so the value of 3 in 2,304 is 10 times the value of 3 in 16,135."
+    answer: "10 times greater"
+    citation_page: 6

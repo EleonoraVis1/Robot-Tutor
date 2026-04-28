@@ -12,8 +12,6 @@
 // Flutter external package imports
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-import 'package:csc322_starter_app/widgets/general/widget_annotated_loading.dart';
 
 // App relative file imports
 import '../../providers/provider_auth.dart';

@@ -214,13 +214,15 @@ class PopupDialogue {
       context: context,
       title: title,
       content: Column(
+        spacing: 4,
         mainAxisSize: MainAxisSize.min,
         children: [
+          const SizedBox(height: 5),
           if (description != null) Text(description),
           Padding(
             padding: const EdgeInsets.only(
               top: 0,
-              bottom: 15.0,
+              bottom: 5.0,
             ),
             child: TextFormField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -241,9 +243,17 @@ class PopupDialogue {
               controller: field1TextController,
             ),
           ),
+          const SizedBox(height: 5),
           ElevatedButton(
             onPressed: () => callback(field1TextController.text),
-            child: Text(buttonText ?? "Submit"),
+            child: Text(
+              buttonText ?? "Submit",
+              style: TextStyle(fontSize: 14),
+            ),
+            style: ElevatedButton.styleFrom(
+              fixedSize: Size(160, 15),
+              backgroundColor: Colors.green
+            ),
           ),
         ],
       ),

@@ -63,7 +63,6 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
-  UserType _userType = UserType.STUDENT;
   
 
   ////////////////////////////////////////////////////////////////
@@ -80,8 +79,6 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
         _firstNameController.text = _providerUserProfile.firstName;
         _lastNameController.text = _providerUserProfile.lastName;
       }
-
-      _userType = _providerUserProfile.userType;
 
       // Now initialized; run super method
       _isInit = false;
@@ -188,7 +185,6 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
       // Update profile information and write to database
       _providerUserProfile.firstName = _firstNameController.text.trim();
       _providerUserProfile.lastName = _lastNameController.text.trim();
-      _providerUserProfile.userType = _userType;
       _providerUserProfile.accountCreationStep = AccountCreationStep.ACC_STEP_ONBOARDING_COMPLETE;
       _providerUserProfile.writeUserProfileToDb();
 
@@ -196,6 +192,8 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
       if (!widget.isAuth) {
         Snackbar.show(SnackbarDisplayType.SB_SUCCESS, "Profile Updated", context);
         context.pop();
+      } else {
+        context.go("/");
       }
     }
   }
@@ -313,21 +311,11 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                 mainAxisAlignment: widget.isAuth ? MainAxisAlignment.center : MainAxisAlignment.start,
                 children: [
                   ///////////////////////////////////////////////////////////////////////
-                  // Logo
-                  ///////////////////////////////////////////////////////////////////////
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(vertical: 5),
-                  //   child: Image.asset(
-                  //     'images/logo.png',
-                  //     height: MediaQuery.of(context).size.width * .5,
-                  //   ),
-                  // ),
-                  ///////////////////////////////////////////////////////////////////////
                   // Profile Avatar
                   ///////////////////////////////////////////////////////////////////////
                   Center(
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 30, top: 20),
+                      padding: const EdgeInsets.only(bottom: 50, top: 95),
                       child: GestureDetector(
                         onTap: () => setEditVisibile(),
                         child: Stack(
@@ -335,7 +323,7 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                             Padding(
                               padding: const EdgeInsets.all(5.0),
                               child: ProfileAvatar(
-                                radius: 100,
+                                radius: 85,
                                 userImage: pickedImage == null
                                     ? _providerUserProfile.userImage
                                     : Image.file(pickedImage!).image,
@@ -364,7 +352,7 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                       alignment: WrapAlignment.center,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(0.0),
+                          padding: const EdgeInsets.all(5.0),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -375,7 +363,7 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(Icons.image_outlined, color: Colors.white, size: 20),
-                                SizedBox(width: 5),
+                                SizedBox(width: 4),
                                 Text("Gallery", style: TextStyle(fontSize: 15)),
                               ],
                             ),
@@ -441,8 +429,9 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                   ///////////////////////////////////////////////////////////////////////
                   // First Name Text Field
                   ///////////////////////////////////////////////////////////////////////
+                  const SizedBox(height: 10),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                     child: TextFormField(
                       controller: _firstNameController,
                       autofillHints: const [AutofillHints.givenName],
@@ -462,8 +451,9 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                   ///////////////////////////////////////////////////////////////////////
                   // Last Name Text Field
                   ///////////////////////////////////////////////////////////////////////
+                  const SizedBox(height: 15),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                     child: TextFormField(
                       controller: _lastNameController,
                       autofillHints: const [AutofillHints.familyName],
@@ -480,36 +470,23 @@ class _ScreenProfileSetupState extends ConsumerState<ScreenProfileSetup> {
                       decoration: InputDecoration(labelText: 'Last Name'),
                     ),
                   ),
-                  if(_providerUserProfile.accountCreationStep != AccountCreationStep.ACC_STEP_ONBOARDING_COMPLETE)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: CheckboxListTile(
-                        title: const Text("Is Supervisor?"),
-                        value: _userType == UserType.SUPERVISOR,
-                        onChanged: (value) {
-                          setState(() {
-                            if (value == true)
-                            _userType = UserType.SUPERVISOR;
-                            else
-                            _userType = UserType.STUDENT;
-                          });
-                        },
-                        controlAffinity: ListTileControlAffinity.leading,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
                   ///////////////////////////////////////////////////////////////////////
                   /// Continue Button and Cancel Button
                   ///////////////////////////////////////////////////////////////////////
+                  const SizedBox(height: 15),
                   Column(
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 0),
                         child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            fixedSize: Size(165, 15)
+                          ),
                           onPressed: () {
                             _trySubmit();
                           },
-                          child: widget.isAuth ? const Text("Submit") : const Text("Update"),
+                          child: widget.isAuth ? const Text("Submit Profile", style: TextStyle(fontSize: 18)) : const Text("Update Profile", style: TextStyle(fontSize: 18)),
                         ),
                       ),
                       if (widget.isAuth)

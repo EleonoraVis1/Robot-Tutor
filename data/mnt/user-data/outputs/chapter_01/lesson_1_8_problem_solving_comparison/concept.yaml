@@ -1,0 +1,78 @@
+# =============================================================================
+# GO Math Grade 4 — Chapter 1, Lesson 1.8
+# concept.yaml — concepts and worked examples only
+# Firestore path: subjects/math/grades/4/lessons/math_g4_ch1_l8
+# Schema version: 1.1
+# EGR302 Reachy Mini (BAY-min) Tutoring Robot — Data Pipeline
+# Role owner: Haneul (module/question design & data handling)
+# =============================================================================
+
+lesson_id: "math_g4_ch1_l8"
+subject: math
+grade: 4
+unit: 1
+chapter: 1
+lesson: 8
+title: "Problem Solving — Comparison Problems with Addition and Subtraction"
+essential_question: >
+  How can you use the strategy draw a diagram to solve comparison
+  problems with addition and subtraction?
+standards: ["4.NBT.4"]
+mathematical_practices: ["MP.3", "MP.4", "MP.5", "MP.8"]
+
+citation:
+  textbook: "GO Math Grade 4 California (Houghton Mifflin Harcourt)"
+  chapter: 1
+  lesson: 8
+  pages: [35, 36, 37, 38]
+
+has_visual: true
+visual_handling: cite_only
+visual_description: >
+  Bar model diagrams (tape diagrams) used to model comparison problems
+  throughout the lesson (pp. 35–37).
+
+concepts:
+  - id: c1
+    term: "bar model (tape diagram)"
+    definition: >
+      A visual strategy for representing part-whole or comparison
+      relationships in a word problem; used to choose the correct
+      operation (addition or subtraction).
+    example: >
+      Two bars — one labelled 18,925 (larger amount) and one 17,350
+      (smaller amount) — show the unknown difference □.
+
+  - id: c2
+    term: "comparison problem"
+    definition: >
+      A problem that asks how much more or how much less one quantity
+      is compared to another, or asks for the larger/smaller quantity
+      given the other and the difference.
+
+worked_examples:
+  - id: we1
+    title: "Hot-air balloon festival: How many more attended on day 2 (18,925) than day 1 (17,350)?"
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: "Bar model with 18,925 and 17,350 bars, difference □ (p. 35)."
+    steps:
+      - "Read: larger = 18,925; smaller = 17,350; find difference."
+      - "Draw bar model: large bar 18,925, smaller bar 17,350, unknown □ to the right."
+      - "Write equation: 18,925 − 17,350 = □"
+      - "Solve: 18,925 − 17,350 = 1,575."
+    answer: "1,575 more people on day 2."
+    citation_page: 35
+
+  - id: we2
+    title: "Balloon traveled 5,110 ft on trip 1 and 850 more on trip 2. How far on trip 2?"
+    has_visual: true
+    visual_handling: cite_only
+    visual_description: "Bar model for addition comparison (p. 36)."
+    steps:
+      - "Read: trip 1 = 5,110 ft; trip 2 is 850 more."
+      - "Draw bar model showing trip 1 bar and an additional □ = 850."
+      - "Equation: 5,110 + 850 = □"
+      - "Solve: 5,960 feet."
+    answer: "5,960 feet"
+    citation_page: 36

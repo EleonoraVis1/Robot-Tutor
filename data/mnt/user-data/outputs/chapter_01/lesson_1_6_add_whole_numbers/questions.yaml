@@ -1,0 +1,192 @@
+# =============================================================================
+# GO Math Grade 4 — Chapter 1, Lesson 1.6
+# questions.yaml — guided, independent, and word_problems only
+# Firestore path: subjects/math/grades/4/lessons/math_g4_ch1_l6
+# Schema version: 1.1
+# EGR302 Reachy Mini (BAY-min) Tutoring Robot — Data Pipeline
+# Role owner: Haneul (module/question design & data handling)
+# =============================================================================
+
+# PENDING DECISION: Josh/Kip to confirm whether questions should be
+# a subcollection (lessons/{lesson_id}/questions/{question_id}) in Firestore
+# or remain as an array inside the lesson document.
+# This affects ingestion script design — resolve before seeding.
+
+lesson_id: "math_g4_ch1_l6"
+subject: math
+grade: 4
+unit: 1
+chapter: 1
+lesson: 6
+title: "Add Whole Numbers"
+standards: ["4.NBT.4", "4.OA.3", "4.NBT.3"]
+
+citation:
+  textbook: "GO Math Grade 4 California (Houghton Mifflin Harcourt)"
+  chapter: 1
+  lesson: 6
+  pages: [27, 28, 29, 30]
+
+questions:
+  guided:
+    - id: q_g1
+      type: addition
+      # Textbook instructs students to use the place-value grid — implicit visual dependency flagged.
+      has_visual: true
+      visual_handling: cite_only
+      visual_description: "Place-value addition grid on p. 28."
+      prompt: "Use the grid to find 738,901 + 162,389."
+      answer: "901,290"
+      options:
+        - "900,290"
+        - "901,290"
+        - "911,290"
+      correct_answer: "901,290"
+      citation_page: 28
+
+    - id: q_g2
+      type: addition_with_estimate
+      has_visual: false
+      prompt: "Estimate, then find: 72,931 + 18,563"
+      answer: "Estimate ≈ 91,000–92,000; Exact: 91,494"
+      options:
+        - "90,494"
+        - "91,494"
+        - "91,404"
+      correct_answer: "91,494"
+      citation_page: 29
+
+    - id: q_g3
+      type: addition_with_estimate
+      has_visual: false
+      prompt: "Estimate, then find: 432,068 + 239,576"
+      answer: "Estimate ≈ 670,000; Exact: 671,644"
+      options:
+        - "671,544"
+        - "671,644"
+        - "661,644"
+      correct_answer: "671,644"
+      citation_page: 29
+
+    - id: q_g4
+      type: addition_with_estimate
+      has_visual: false
+      prompt: "Estimate, then find: 64,505 + 38,972"
+      answer: "Estimate ≈ 103,000; Exact: 103,477"
+      options:
+        - "102,477"
+        - "103,477"
+        - "103,376"
+      correct_answer: "103,477"
+      citation_page: 29
+
+  independent:
+    - id: q_i1
+      type: addition_with_estimate
+      has_visual: false
+      prompt: "839,136 + 120,193"
+      answer: "Estimate ≈ 960,000; Exact: 959,329"
+      options:
+        - "959,229"
+        - "959,329"
+        - "969,329"
+      correct_answer: "959,329"
+      citation_page: 29
+
+    - id: q_i2
+      type: addition_with_estimate
+      has_visual: false
+      prompt: "186,231 + 88,941"
+      answer: "Estimate ≈ 275,000; Exact: 275,172"
+      options:
+        - "274,172"
+        - "275,172"
+        - "275,072"
+      correct_answer: "275,172"
+      citation_page: 29
+
+    - id: q_i3
+      type: addition_with_estimate
+      has_visual: false
+      prompt: "744,201 + 168,900"
+      answer: "Estimate ≈ 913,000; Exact: 913,101"
+      options:
+        - "912,101"
+        - "913,101"
+        - "913,001"
+      correct_answer: "913,101"
+      citation_page: 29
+
+    - id: q_i4
+      type: algebra_property
+      has_visual: false
+      prompt: "Find the missing number: (4,580 + 5,008) + 2,351 = 4,580 + (___ + 2,351)"
+      answer: "5,008 — Associative Property"
+      options:
+        - "5,008; Associative Property"
+        - "2,351; Associative Property"
+        - "5,008; Commutative Property"
+      correct_answer: "5,008; Associative Property"
+      citation_page: 29
+
+    - id: q_i5
+      type: algebra_property
+      has_visual: false
+      prompt: "7,801 + ___ = 4,890 + 7,801"
+      answer: "4,890 — Commutative Property"
+      options:
+        - "4,890; Commutative Property"
+        - "7,801; Commutative Property"
+        - "4,890; Associative Property"
+      correct_answer: "4,890; Commutative Property"
+      citation_page: 29
+
+  word_problems:
+    - id: q_w1
+      type: word_problem
+      difficulty: think_smarter
+      has_visual: false
+      prompt: >
+        Use the Major Cities of Alaska table (Anchorage 286,174;
+        Fairbanks 35,252; Juneau 30,796).
+        What is the combined population? Estimate to verify.
+      answer: "Exact: 352,222; Estimate ≈ 350,000 (reasonable)."
+      options:
+        - "351,222"
+        - "352,222"
+        - "352,122"
+      correct_answer: "352,222"
+      citation_page: 30
+
+    - id: q_w2
+      type: word_problem
+      difficulty: deeper
+      has_visual: false
+      prompt: >
+        Kaylie has 164 stamps. Nellie has 229 more stamps than Kaylie.
+        How many stamps do Kaylie and Nellie have altogether?
+      answer: "Nellie: 164 + 229 = 393; Together: 164 + 393 = 557 stamps."
+      options:
+        - "393 stamps"
+        - "557 stamps"
+        - "721 stamps"
+      correct_answer: "557 stamps"
+      citation_page: 30
+
+    - id: q_w3
+      type: word_problem
+      difficulty: think_smarter
+      has_visual: false
+      prompt: >
+        Alaska's Glacier Bay National Park had 431,986 visitors one year.
+        The next year had 22,351 more visitors. How many total visitors
+        over both years?
+      answer: >
+        Year 2: 431,986 + 22,351 = 454,337.
+        Two-year total: 431,986 + 454,337 = 886,323 visitors.
+      options:
+        - "454,337"
+        - "864,337"
+        - "886,323"
+      correct_answer: "886,323"
+      citation_page: 30

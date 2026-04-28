@@ -12,7 +12,22 @@
 // Dart imports
 
 // Flutter external package imports
-import 'package:csc322_starter_app/screens/general/screen_home_supervisor.dart';
+import 'package:csc322_starter_app/screens/auth/screen_profile_setup.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_baymin_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_chathistory_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_grade.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_invites.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_module.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_quizzes_student.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_student_supervisors.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_subject.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_bluetooth_pairing.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_uploadfile.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_addstudent_supervisor.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_chathistory_supervisor.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_notifications_supervisor.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -20,15 +35,13 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 
 // App relative file imports
-import 'screens/general/screen_alternate.dart';
-import 'screens/general/screen_home_student.dart';
+import 'screens/general/students/screen_home_student.dart';
 import 'widgets/navigation/widget_primary_scaffold.dart';
 import 'screens/auth/screen_login_validation.dart';
-import 'screens/settings/screen_profile_edit.dart';
+import 'screens/settings/screen_profile.dart';
 import 'providers/provider_user_profile.dart';
 import 'screens/settings/screen_settings.dart';
 import 'providers/provider_auth.dart';
-import 'util/file/util_file.dart';
 import 'firebase_options.dart';
 import 'theme/theme.dart';
 
@@ -46,6 +59,10 @@ final providerAuth = ChangeNotifierProvider<ProviderAuth>(
   (ref) => ProviderAuth(),
 );
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  debugPrint(" Background message: ${message.notification?.title}");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // MAIN entry point to start app.
 //////////////////////////////////////////////////////////////////////////
@@ -55,9 +72,6 @@ Future<void> main() async {
 
   // Initialize Firebase with the default options
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  // Initialize the app directory
-  await UtilFile.init();
 
   // Get references to providers that will be needed in other providers
   final ProviderUserProfile userProfileProvider = providerContainer.read(
@@ -69,9 +83,13 @@ Future<void> main() async {
   await userProfileProvider.initProviders(authProvider);
   authProvider.initProviders(userProfileProvider);
 
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   // Run the app
   runApp(
-    UncontrolledProviderScope(container: providerContainer, child: MyApp()),
+    UncontrolledProviderScope(
+      container: providerContainer,
+      child:  MyApp(),
+    ),
   );
 }
 
@@ -91,11 +109,15 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   // The "instance variables" managed in this state
   // NONE
-
   // Router
+
   final GoRouter _router = GoRouter(
     initialLocation: ScreenLoginValidation.routeName,
     routes: [
+      GoRoute(
+        path: ScreenBluetoothPairing.routeName,
+        builder: (context, state) => const ScreenBluetoothPairing(),
+      ),
       GoRoute(
         path: ScreenLoginValidation.routeName,
         builder: (context, state) => const ScreenLoginValidation(),
@@ -105,27 +127,170 @@ class _MyAppState extends State<MyApp> {
         builder: (context, state) => ScreenSettings(),
       ),
       GoRoute(
-        path: ScreenProfileEdit.routeName,
-        builder: (context, state) => const ScreenProfileEdit(),
+        path: ScreenProfile.routeName,
+        builder: (context, state) => const ScreenProfile(),
+      ),
+      GoRoute(
+        path: ScreenNotifications.routeName,
+        builder: (context, state) => const ScreenNotifications(),
+      ),
+      GoRoute(
+        path: ScreenProfileSetup.routeName,
+        builder: (context, state) => const ScreenProfileSetup(isAuth: false),
       ),
       GoRoute(
         path: WidgetPrimaryScaffold.routeName,
         builder: (BuildContext context, GoRouterState state) =>
-            const WidgetPrimaryScaffold(),
+          const WidgetPrimaryScaffold(),
       ),
+      GoRoute(
+        path: ScreenStudentSupervisors.routeName,
+        builder: (context, state) => ScreenStudentSupervisors(),
+      ),
+      // Student home flow
       GoRoute(
         path: ScreenHomeStudent.routeName,
-        builder: (BuildContext context, GoRouterState state) => ScreenHomeStudent(),
+        builder: (context, state) => ScreenHomeStudent(supervisorView: false, studentUid: null),
       ),
+      GoRoute(
+        path: '/subject/:subjectId',
+        builder: (context, state) {
+          final subjectId = state.pathParameters['subjectId']!;
+          return ScreenSubject(subjectId: subjectId, studentUid: null);
+        },
+        routes: [
+          // Grade layer
+          GoRoute(
+            path: 'grade/:gradeId',
+            builder: (context, state) {
+              final subjectId = state.pathParameters['subjectId']!;
+              final gradeId = int.parse(state.pathParameters['gradeId']!); // integer
+              return ScreenGrade(subjectId: subjectId, gradeId: gradeId, studentUid: null);
+            },
+            routes: [
+              // Module layer
+              GoRoute(
+                path: 'module/:moduleId',
+                builder: (context, state) {
+                  final subjectId = state.pathParameters['subjectId']!;
+                  final gradeId = int.parse(state.pathParameters['gradeId']!);
+                  final moduleId = state.pathParameters['moduleId']!;
+                  return ScreenModule(
+                    subjectId: subjectId,
+                    grade: gradeId,
+                    moduleId: moduleId,
+                    studentUid: null,
+                  );
+                },
+                routes: [
+                  GoRoute(
+                    path: 'quiz',
+                    builder: (context, state) {
+                      final subjectId = state.pathParameters['subjectId']!;
+                      final gradeId = int.parse(state.pathParameters['gradeId']!);
+                      final moduleId = state.pathParameters['moduleId']!;
+                      return ScreenQuiz(
+                        subjectId: subjectId,
+                        grade: gradeId,
+                        moduleId: moduleId,
+                        studentUid: null,
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    path: 'chat',
+                    builder: (context, state) {
+                      final moduleId = state.pathParameters['moduleId']!;
+                      return ScreenChathistoryStudent(moduleId: moduleId);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+      // Supervisor home
       GoRoute(
         path: ScreenHomeSupervisor.routeName,
-        builder: (BuildContext context, GoRouterState state) => ScreenHomeSupervisor(),
+        builder: (context, state) => ScreenHomeSupervisor(),
+        routes: [
+          GoRoute(
+            path: 'student/:studentUid',
+            builder: (context, state) {
+              final studentUid = state.pathParameters['studentUid']!;
+              return ScreenHomeStudent(
+                supervisorView: true,
+                studentUid: studentUid,
+              );
+            },
+            routes: [
+              GoRoute(
+                path: 'subject/:subjectId',
+                builder: (context, state) {
+                  final studentUid = state.pathParameters['studentUid']!;
+                  final subjectId = state.pathParameters['subjectId']!;
+                  return ScreenSubject(
+                    subjectId: subjectId,
+                    studentUid: studentUid,
+                  );
+                }, 
+                routes: [
+                  // Grade layer
+                  GoRoute(
+                    path: 'grade/:gradeId',
+                    builder: (context, state) {
+                      final studentUid = state.pathParameters['studentUid']!;
+                      final subjectId = state.pathParameters['subjectId']!;
+                      final gradeId = int.parse(state.pathParameters['gradeId']!);
+                      return ScreenGrade(
+                        subjectId: subjectId,
+                        gradeId: gradeId,
+                        studentUid: studentUid,
+                      );
+                    },
+                    routes: [
+                      // Module layer
+                      GoRoute(
+                        path: 'module/:moduleId',
+                        builder: (context, state) {
+                          final studentUid = state.pathParameters['studentUid']!;
+                          final subjectId = state.pathParameters['subjectId']!;
+                          final gradeId = int.parse(state.pathParameters['gradeId']!);
+                          final moduleId = state.pathParameters['moduleId']!;
+                          return ScreenModule(
+                            studentUid: studentUid,
+                            subjectId: subjectId,
+                            grade: gradeId,
+                            moduleId: moduleId,
+                          );
+                        },
+                        routes: [
+                          GoRoute(
+                            path: 'chat',
+                            builder: (context, state) {
+                              final studentUid = state.pathParameters['studentUid']!;
+                              final moduleId = state.pathParameters['moduleId']!;
+                              return ScreenChathistorySupervisor(
+                                studentUid: studentUid,
+                                moduleId: moduleId,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
       ),
-      GoRoute(
-        path: ScreenAlternate.routeName,
-        builder: (BuildContext context, GoRouterState state) =>
-            ScreenAlternate(),
-      ),
+      GoRoute( path: ScreenInvites.routeName, builder: (context, state) => ScreenInvites(), ),
+      GoRoute( path: ScreenBayminStudent.routeName, builder: (context, state) => ScreenBayminStudent(), ),
+      GoRoute( path: ScreenAddStudentSupervisor.routeName, builder: (context, state) => ScreenAddStudentSupervisor(), ),
+      GoRoute( path: ScreenUploadfile.routeName, builder: (context, state) => ScreenUploadfile(), )
     ],
   );
 
@@ -141,10 +306,10 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: _router,
-      title: 'CSC 322 Starter Project',
+      title: 'BAY-min tutor',
       theme: lightTheme,
       darkTheme: darkTheme,
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
     );
   }

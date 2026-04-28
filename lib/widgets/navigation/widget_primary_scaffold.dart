@@ -11,17 +11,18 @@
 // Dart imports
 
 // Flutter external package imports
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csc322_starter_app/models/user_profile.dart';
-import 'package:csc322_starter_app/screens/general/screen_home_supervisor.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:csc322_starter_app/screens/general/students/screen_bluetooth_pairing.dart';
+import 'package:csc322_starter_app/screens/general/supervisors/screen_home_supervisor.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // App relative file imports
-import '../../screens/general/screen_alternate.dart';
-import '../../screens/general/screen_home_student.dart';
+import '../../screens/general/students/screen_home_student.dart';
 import 'widget_primary_app_bar.dart';
 import 'widget_app_drawer.dart';
 import '../../main.dart';
@@ -67,7 +68,7 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   // this page
   ////////////////////////////////////////////////////////////////////////
   _init() async {
-    // Get providers
+    await _initFCM();
   }
 
   ////////////////////////////////////////////////////////////////
@@ -83,6 +84,32 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
     // Now initialized; run super method
     _isInit = false;
     super.didChangeDependencies();
+  }
+
+  Future<void> _initFCM() async {
+    final messaging = FirebaseMessaging.instance;
+    final firestore = FirebaseFirestore.instance;
+    final userProfile = ref.read(providerUserProfile);
+
+    await messaging.requestPermission();
+
+    final token = await messaging.getToken();
+
+    if (token != null && userProfile.uid.isNotEmpty) {
+      await firestore.collection('user_profiles')
+          .doc(userProfile.uid)
+          .update({
+        'fcmToken': token,
+      });
+    }
+
+    messaging.onTokenRefresh.listen((newToken) async {
+      if (userProfile.uid.isNotEmpty) {
+        await firestore.collection('user_profiles')
+            .doc(userProfile.uid)
+            .set({'fcmToken': token}, SetOptions(merge: true));
+        }
+    });
   }
 
   ////////////////////////////////////////////////////////////////
@@ -112,24 +139,22 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   // Takes in the current tab index and returns the appropriate
   // screen to display.
   ////////////////////////////////////////////////////////////////
-  Widget _getScreenToDisplay(int currentTabIndex, bool isSupervisor) {
+  Widget _getScreenToDisplay(int currentTabIndex, bool isSupervisor, String uid) {
     if (currentTabIndex == BottomNavSelection.HOME_SCREEN.index)
-      return isSupervisor ? ScreenHomeSupervisor() : ScreenHomeStudent();
-    else if (currentTabIndex == BottomNavSelection.ALTERNATE_SCREEN.index)
-      return ScreenAlternate();
+      return isSupervisor ? ScreenHomeSupervisor() : ScreenBluetoothPairing();
     else
-      return ScreenHomeStudent();
+      return ScreenHomeStudent(supervisorView: false, studentUid: uid,);
   }
 
   ////////////////////////////////////////////////////////////////
   // Takes in the current tab index and returns the appropriate
   // app bar widget to display.
   ////////////////////////////////////////////////////////////////
-  Widget _getAppBarTitle(int currentTabIndex) {
-    if (currentTabIndex == BottomNavSelection.HOME_SCREEN.index)
-      return Text("Home");
+  Widget _getAppBarTitle(int currentTabIndex, bool isSupervisor) {
+    if (!isSupervisor)
+      return Text("📋 Student Portal");
     else
-      return Text("Alternate");
+      return Text("🛡️ Supervisor Portal");
   }
 
   ////////////////////////////////////////////////////////////////
@@ -154,35 +179,17 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
     final currentTabIndex = ref.watch(providerPrimaryBottomNavTabIndex);
     final userProfile = ref.watch(providerUserProfile);
     final isSupervisor = userProfile.userType == UserType.SUPERVISOR;
-
+    final uid = userProfile.uid;
 
     // Return the scaffold
     return Scaffold(
-      appBar: WidgetPrimaryAppBar(
+      appBar: isSupervisor ? WidgetPrimaryAppBar(
         // Add a plus icon followed by the 3-dots vertical icon on the right
         actionButtons: _getAppBarActions(currentTabIndex),
-        title: _getAppBarTitle(currentTabIndex),
-      ),
+        title: _getAppBarTitle(currentTabIndex, isSupervisor)
+      ) : null,
       drawer: WidgetAppDrawer(),
-      body: _getScreenToDisplay(currentTabIndex, isSupervisor),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentTabIndex,
-        onTap: (index) {
-          ref.read(providerPrimaryBottomNavTabIndex.notifier).state = index;
-        },
-        items: [
-          BottomNavigationBarItem(
-            label: "Home",
-            activeIcon: Icon(FontAwesomeIcons.house),
-            icon: Icon(FontAwesomeIcons.house),
-          ),
-          BottomNavigationBarItem(
-            label: "Alternate",
-            activeIcon: Icon(FontAwesomeIcons.building),
-            icon: Icon(FontAwesomeIcons.building),
-          ),
-        ],
-      ),
+      body: _getScreenToDisplay(currentTabIndex, isSupervisor, uid),
     );
   }
 }

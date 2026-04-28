@@ -1,25 +1,16 @@
-// -----------------------------------------------------------------------
-// Filename: screen_settings.dart
-// Original Author: Wyatt Bodle
-// Creation Date: 6/06/2024
-// Copyright: (c) 2024 CSC322
-// Description: This file contains the screen for optional settings.
-
 //////////////////////////////////////////////////////////////////////////
 // Imports
 //////////////////////////////////////////////////////////////////////////
 // Flutter external package imports
+import 'package:csc322_starter_app/models/user_profile.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter/widgets.dart';
 import 'package:csc322_starter_app/widgets/navigation/widget_primary_app_bar.dart';
 
 // App relative file imports
 import '../../providers/provider_user_profile.dart';
-import '../../util/message_display/popup_dialogue.dart';
 import '../../util/message_display/snackbar.dart';
-import '../../util/logging/app_logger.dart';
 import '../../main.dart';
 
 //////////////////////////////////////////////////////////////////
@@ -42,31 +33,20 @@ class _ScreenSettingsState extends ConsumerState<ScreenSettings> {
   // The "instance variables" managed in this state
   var _isInit = true;
   late ProviderUserProfile _providerUserProfile;
+  late UserType _userType;
 
-  ////////////////////////////////////////////////////////////////
-  // Runs the following code once upon initialization
-  ////////////////////////////////////////////////////////////////
   @override
   void didChangeDependencies() {
-    // If first time running this code, update provider settings
-    if (_isInit) {
-      _init();
+    super.didChangeDependencies();
 
-      // Now initialized; run super method
+    if (_isInit) {
+      _providerUserProfile = ref.watch(providerUserProfile);
+      _userType = _providerUserProfile.userType;
+      _init();
       _isInit = false;
-      super.didChangeDependencies();
     }
   }
-  ////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////
-  /// Helper Methods (for state object)
-  ////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////
 
-  ////////////////////////////////////////////////////////////////
-  // Gets the current state of the providers for consumption on
-  // this page
-  ////////////////////////////////////////////////////////////////
   Future<void> _init() async {
     // Get providers
     _providerUserProfile = ref.watch(providerUserProfile);
@@ -99,11 +79,19 @@ class _ScreenSettingsState extends ConsumerState<ScreenSettings> {
     FocusScope.of(context).unfocus();
 
     //Save the data to the provider
-    _providerUserProfile.writeUserProfileToDb();
+    _providerUserProfile.userType = _userType;
 
     Snackbar.show(SnackbarDisplayType.SB_SUCCESS, 'Save Sucessful', context);
     context.pop();
   }
+
+  // void _setRole() {
+  //   if (_userType == UserType.STUDENT) {
+  //     _userType = UserType.SUPERVISOR;
+  //   } else {
+  //     _userType = UserType.STUDENT;
+  //   }
+  // }
 
   //////////////////////////////////////////////////////////////////////////
   // Primary Flutter method overriden which describes the layout
@@ -112,28 +100,52 @@ class _ScreenSettingsState extends ConsumerState<ScreenSettings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: WidgetPrimaryAppBar(title: const Text('Settings')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: () => PopupDialogue.showOkay("This pop-up just popped up!", context),
-              child: Text('Show Okay Popup'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => PopupDialogue.showCustomOkay(
-                "Obvious Message",
-                context,
-                content: const Text("This pop-up just popped up!"),
+            if (_userType == UserType.STUDENT)
+              ElevatedButton(
+                onPressed: null, // _setRole,
+                child: Text(
+                  'Swap to Supervisor (DEMO ONLY)',
+                  style: TextStyle(
+                    fontSize: 14
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  fixedSize: Size(275, 15)
+                ),
               ),
-              child: Text('Show Custom Okay Popup'),
-            ),
+            if (_userType == UserType.SUPERVISOR)
+              ElevatedButton(
+                onPressed: null, // _setRole,
+                child: Text(
+                  'Swap to Student (DEMO ONLY)',
+                  style: TextStyle(
+                    fontSize: 14
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  fixedSize: Size(275, 15)
+                ),
+              ),
             const SizedBox(height: 20),
             Center(
-              child: ElevatedButton(onPressed: _trySubmit, child: const Text('Save')),
+              child: ElevatedButton(
+                onPressed: _trySubmit,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  fixedSize: Size(80, 15)
+                ), 
+                child: const Text(
+                  'Save',
+                  style: TextStyle(
+                    fontSize: 14
+                  ),
+                )
+              ),
             ),
           ],
         ),

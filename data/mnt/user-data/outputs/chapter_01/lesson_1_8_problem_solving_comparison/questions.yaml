@@ -1,0 +1,163 @@
+# =============================================================================
+# GO Math Grade 4 — Chapter 1, Lesson 1.8
+# questions.yaml — guided and independent only
+# Firestore path: subjects/math/grades/4/lessons/math_g4_ch1_l8
+# Schema version: 1.1
+# EGR302 Reachy Mini (BAY-min) Tutoring Robot — Data Pipeline
+# Role owner: Haneul (module/question design & data handling)
+# =============================================================================
+
+# PENDING DECISION: Josh/Kip to confirm whether questions should be
+# a subcollection (lessons/{lesson_id}/questions/{question_id}) in Firestore
+# or remain as an array inside the lesson document.
+# This affects ingestion script design — resolve before seeding.
+
+lesson_id: "math_g4_ch1_l8"
+subject: math
+grade: 4
+unit: 1
+chapter: 1
+lesson: 8
+title: "Problem Solving — Comparison Problems with Addition and Subtraction"
+standards: ["4.NBT.4"]
+
+citation:
+  textbook: "GO Math Grade 4 California (Houghton Mifflin Harcourt)"
+  chapter: 1
+  lesson: 8
+  pages: [35, 36, 37, 38]
+
+questions:
+  guided:
+    - id: q_g1
+      type: word_problem_diagram
+      # Textbook instructs students to draw a bar model — implicit visual dependency flagged.
+      has_visual: true
+      visual_handling: cite_only
+      visual_description: "Blank bar-model template on p. 37."
+      prompt: >
+        A world record balloon altitude of 64,997 ft was set in 1988.
+        In 2005 a new record of 68,986 ft was set.
+        How many feet higher was the 2005 record?
+      answer: "68,986 − 64,997 = 3,989 feet higher."
+      options:
+        - "1,014 feet"
+        - "3,989 feet"
+        - "4,011 feet"
+      correct_answer: "3,989 feet"
+      citation_page: 37
+
+    - id: q_g2
+      type: word_problem
+      has_visual: false
+      prompt: >
+        What if a new record of 70,000 ft was set? How many feet higher
+        than the 2005 record of 68,986 ft?
+      answer: "70,000 − 68,986 = 1,014 feet higher."
+      options:
+        - "1,140 feet"
+        - "986 feet"
+        - "1,014 feet"
+      correct_answer: "1,014 feet"
+      citation_page: 37
+
+    - id: q_g3
+      type: word_problem
+      has_visual: false
+      prompt: >
+        Ticket sales last year: $109,076. This year: $125,805.
+        How much more were ticket sales this year?
+      answer: "$125,805 − $109,076 = $16,729 more."
+      options:
+        - "$16,729"
+        - "$16,629"
+        - "$17,729"
+      correct_answer: "$16,729"
+      citation_page: 37
+
+    - id: q_g4
+      type: word_problem
+      has_visual: false
+      prompt: >
+        A musician's album sold 234,499 copies week 1 and 432,112 copies
+        week 2. How many more copies sold in week 2?
+      answer: "432,112 − 234,499 = 197,613 more copies."
+      options:
+        - "197,513 copies"
+        - "198,613 copies"
+        - "197,613 copies"
+      correct_answer: "197,613 copies"
+      citation_page: 37
+
+  independent:
+    - id: q_i1
+      type: word_problem
+      difficulty: mathematical_practice
+      # Textbook references the Steve Fossett Balloon Flights data table — implicit visual dependency flagged.
+      has_visual: true
+      visual_handling: cite_only
+      visual_description: "Steve Fossett Balloon Flights table on p. 38 (Jan 1998: 5,803 mi; Aug 1998: 14,235 mi; 2002: 20,482 mi)."
+      prompt: >
+        Use the Steve Fossett Balloon Flights table.
+        How many more miles did he fly in 2002 (20,482) than August 1998 (14,235)?
+      answer: "20,482 − 14,235 = 6,247 more miles."
+      options:
+        - "6,347 miles"
+        - "6,247 miles"
+        - "5,247 miles"
+      correct_answer: "6,247 miles"
+      citation_page: 38
+
+    - id: q_i2
+      type: word_problem
+      difficulty: deeper
+      has_visual: true
+      visual_handling: cite_only
+      visual_description: "Steve Fossett Balloon Flights table on p. 38."
+      prompt: >
+        Is the combined distance for January 1998 (5,803) and August 1998 (14,235)
+        more or less than the 2002 flight (20,482)? Explain.
+      answer: >
+        Combined 1998: 5,803 + 14,235 = 20,038.
+        20,038 < 20,482, so the combined 1998 distance is less.
+      options:
+        - "more"
+        - "equal"
+        - "less"
+      correct_answer: "less"
+      citation_page: 38
+
+    - id: q_i3
+      type: word_problem
+      difficulty: think_smarter
+      has_visual: false
+      prompt: >
+        There were 665 balloon pilots and 1,550 more ground crew than pilots.
+        How many pilots and ground crew total?
+      answer: >
+        Ground crew: 665 + 1,550 = 2,215.
+        Total: 665 + 2,215 = 2,880.
+      options:
+        - "2,215"
+        - "2,780"
+        - "2,880"
+      correct_answer: "2,880"
+      citation_page: 38
+
+    - id: q_i4
+      type: word_problem
+      difficulty: think_smarter_plus
+      has_visual: false
+      prompt: >
+        Year 1 Becky drove 14,378 miles. Year 2 she drove 422 fewer miles.
+        She bought the car with 16 miles on it.
+        How many miles were on the car at the end of year 2?
+      answer: >
+        Year 2 miles: 14,378 − 422 = 13,956.
+        Odometer at end of year 2: 16 + 14,378 + 13,956 = 28,350 miles.
+      options:
+        - "28,250 miles"
+        - "28,350 miles"
+        - "28,772 miles"
+      correct_answer: "28,350 miles"
+      citation_page: 38

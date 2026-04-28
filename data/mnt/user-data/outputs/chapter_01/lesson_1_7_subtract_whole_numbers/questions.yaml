@@ -1,0 +1,195 @@
+# =============================================================================
+# GO Math Grade 4 — Chapter 1, Lesson 1.7
+# questions.yaml — guided, independent, and word_problems only
+# Firestore path: subjects/math/grades/4/lessons/math_g4_ch1_l7
+# Schema version: 1.1
+# EGR302 Reachy Mini (BAY-min) Tutoring Robot — Data Pipeline
+# Role owner: Haneul (module/question design & data handling)
+# =============================================================================
+
+# PENDING DECISION: Josh/Kip to confirm whether questions should be
+# a subcollection (lessons/{lesson_id}/questions/{question_id}) in Firestore
+# or remain as an array inside the lesson document.
+# This affects ingestion script design — resolve before seeding.
+
+lesson_id: "math_g4_ch1_l7"
+subject: math
+grade: 4
+unit: 1
+chapter: 1
+lesson: 7
+title: "Subtract Whole Numbers"
+standards: ["4.NBT.4", "4.NBT.3", "4.OA.3"]
+
+citation:
+  textbook: "GO Math Grade 4 California (Houghton Mifflin Harcourt)"
+  chapter: 1
+  lesson: 7
+  pages: [31, 32, 33, 34]
+
+questions:
+  guided:
+    - id: q_g1
+      type: subtraction_grid
+      # Textbook instructs students to use the place-value grid — implicit visual dependency flagged.
+      has_visual: true
+      visual_handling: cite_only
+      visual_description: "Place-value subtraction grid on p. 32."
+      prompt: "Subtract using the grid: 637,350 − 43,832"
+      answer: "593,518"
+      options:
+        - "593,418"
+        - "593,518"
+        - "583,518"
+      correct_answer: "593,518"
+      citation_page: 32
+
+    - id: q_g2
+      type: subtraction_with_estimate
+      has_visual: false
+      prompt: "14,659 − 11,584"
+      answer: "Estimate ≈ 3,000; Exact: 3,075"
+      options:
+        - "3,175"
+        - "3,075"
+        - "2,075"
+      correct_answer: "3,075"
+      citation_page: 32
+
+    - id: q_g3
+      type: subtraction_with_estimate
+      has_visual: false
+      prompt: "456,912 − 37,800"
+      answer: "Estimate ≈ 419,000; Exact: 419,112"
+      options:
+        - "419,012"
+        - "419,112"
+        - "429,112"
+      correct_answer: "419,112"
+      citation_page: 32
+
+    - id: q_g4
+      type: subtraction_with_estimate
+      has_visual: false
+      prompt: "407,001 − 184,652"
+      answer: "Estimate ≈ 222,000; Exact: 222,349"
+      options:
+        - "223,349"
+        - "222,349"
+        - "222,249"
+      correct_answer: "222,349"
+      citation_page: 32
+
+  independent:
+    - id: q_i1
+      type: subtraction_with_estimate
+      has_visual: false
+      prompt: "942,385 − 461,803"
+      answer: "Estimate ≈ 480,000; Exact: 480,582"
+      options:
+        - "480,482"
+        - "480,582"
+        - "490,582"
+      correct_answer: "480,582"
+      citation_page: 32
+
+    - id: q_i2
+      type: subtraction_with_estimate
+      has_visual: false
+      prompt: "798,300 − 348,659"
+      answer: "Estimate ≈ 450,000; Exact: 449,641"
+      options:
+        - "449,741"
+        - "449,641"
+        - "450,641"
+      correct_answer: "449,641"
+      citation_page: 32
+
+    - id: q_i3
+      type: subtraction_with_estimate
+      has_visual: false
+      prompt: "300,980 − 159,000"
+      answer: "Estimate ≈ 141,000; Exact: 141,980"
+      options:
+        - "141,080"
+        - "141,980"
+        - "142,980"
+      correct_answer: "141,980"
+      citation_page: 32
+
+    - id: q_i4
+      type: copy_and_solve
+      has_visual: false
+      prompt: "653,809 − 256,034. Subtract, then add to check."
+      answer: "397,775; check: 397,775 + 256,034 = 653,809 ✓"
+      options:
+        - "396,775"
+        - "397,775"
+        - "407,775"
+      correct_answer: "397,775"
+      citation_page: 33
+
+    - id: q_i5
+      type: copy_and_solve
+      has_visual: false
+      prompt: "500,000 − 145,609"
+      answer: "354,391"
+      options:
+        - "355,391"
+        - "354,391"
+        - "344,391"
+      correct_answer: "354,391"
+      citation_page: 33
+
+  word_problems:
+    - id: q_w1
+      type: word_problem
+      difficulty: mathematical_practice
+      # Textbook references the Orange Groves data table — implicit visual dependency flagged.
+      has_visual: true
+      visual_handling: cite_only
+      visual_description: "Orange Groves acreage table on p. 33 (years 1966–1996)."
+      prompt: >
+        Use the Orange Groves table. How many more acres were grown in 1996
+        (656,598) than in 1986 (466,256)? Estimate to check reasonableness.
+      answer: "Exact: 190,342; Estimate: 660,000 − 470,000 = 190,000 (reasonable)."
+      options:
+        - "180,342"
+        - "190,342"
+        - "190,442"
+      correct_answer: "190,342"
+      citation_page: 33
+
+    - id: q_w2
+      type: word_problem
+      has_visual: true
+      visual_handling: cite_only
+      visual_description: "Orange Groves acreage table on p. 33."
+      prompt: >
+        Using the Orange Groves table, what is the difference between the
+        greatest (673,086 in 1966) and least (466,256 in 1986) acres?
+      answer: "206,830 acres"
+      options:
+        - "206,820 acres"
+        - "206,830 acres"
+        - "216,830 acres"
+      correct_answer: "206,830 acres"
+      citation_page: 33
+
+    - id: q_w3
+      type: error_analysis
+      difficulty: think_smarter
+      has_visual: false
+      prompt: >
+        Janice computed 268,601 − 12,407 = 144,531.
+        Describe her error and give the correct answer.
+      answer: >
+        Janice did not align the digits by place value — she subtracted
+        as if 12,407 were a 6-digit number, misaligning columns.
+        Correct: 268,601 − 12,407 = 256,194.
+      options:
+        - "156,194"
+        - "256,194"
+        - "266,194"
+      correct_answer: "256,194"
+      citation_page: 34
